@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">kausanhak</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_calendar">Calendar</string>
+    <string name="menu_favorite">Favorite</string>
+    <string name="menu_my_page">MyPage</string>
+</resources>
