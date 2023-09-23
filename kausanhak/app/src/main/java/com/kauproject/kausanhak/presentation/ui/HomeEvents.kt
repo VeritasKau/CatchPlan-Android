@@ -152,7 +152,7 @@ private fun HomeEventPreviewDark(){
     }
 }
 
-private fun getMockList() = listOf<Event>(
+fun getMockList() = listOf<Event>(
     Event(0, "블랙핑크", "올림픽홀", "2023-09-23", "https://ticketimage.interpark.com/Play/image/large/23/23011804_p.gif", "https://ticketimage.interpark.com/Play/image/etc/23/23011804-08.jpg", "https://tickets.interpark.com/goods/23011804"),
     Event(1, "A", "올림픽홀", "2023-09-23", "https://ticketimage.interpark.com/Play/image/large/23/23011804_p.gif", "https://ticketimage.interpark.com/Play/image/etc/23/23011804-08.jpg", "https://tickets.interpark.com/goods/23011804"),
     Event(2, "B", "올림픽홀", "2023-09-23", "https://ticketimage.interpark.com/Play/image/large/23/23011804_p.gif", "https://ticketimage.interpark.com/Play/image/etc/23/23011804-08.jpg", "https://tickets.interpark.com/goods/23011804"),
