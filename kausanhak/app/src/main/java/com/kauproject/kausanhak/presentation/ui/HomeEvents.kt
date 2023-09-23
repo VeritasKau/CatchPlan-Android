@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -63,8 +65,14 @@ private fun HomeEvent(
         modifier = Modifier
             .padding(4.dp)
             .clickable(
-                onClick = { selectEvent(event.id) }
-            ),
+                onClick = {
+                    selectEvent(event.id)
+                    Log.d("HomeEvent", "id:${event.id}")
+                }
+            )
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+        ,
         color = MaterialTheme.colorScheme.background,
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -114,8 +122,7 @@ private fun HomeEvent(
 @Composable
 fun EventView(){
     LazyColumn(
-        contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(1.dp)
     ){
         itemsIndexed(
             items = getMockList(),

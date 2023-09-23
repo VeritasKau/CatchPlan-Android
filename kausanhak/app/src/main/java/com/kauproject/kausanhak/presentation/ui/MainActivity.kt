@@ -47,7 +47,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             KausanhakTheme {
                 MainScreenView()
-
             }
         }
     }
@@ -163,7 +162,7 @@ fun NavigationGraph(navController: NavHostController){
             CalendarScreen()
         }
         composable(BottomNavItem.Ex.screenRoute){
-            ExView()
+            EventView()
         }
     }
 }
