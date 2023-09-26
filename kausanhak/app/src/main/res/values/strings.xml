@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">kausanhak</string>
+    <string name="app_name">캐치플랜</string>
     <string name="menu_home">Home</string>
     <string name="menu_calendar">Calendar</string>
     <string name="menu_favorite">Favorite</string>

@@ -3,7 +3,7 @@ package com.kauproject.kausanhak.presentation.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.Crossfade
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -38,15 +38,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
+import com.kauproject.kausanhak.presentation.ui.login.LoginViewModel
 import com.kauproject.kausanhak.ui.theme.CALENDAR
 import com.kauproject.kausanhak.ui.theme.EXAMPLE
 
 class MainActivity : ComponentActivity() {
+    private val loginViewModel = LoginViewModel(this@MainActivity)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             KausanhakTheme {
-                MainScreenView()
+                LoginScreen(loginViewModel = loginViewModel)
             }
         }
     }
