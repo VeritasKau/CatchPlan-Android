@@ -6,9 +6,37 @@ plugins {
     id 'com.google.dagger.hilt.android'
 }
 
+// local.properties 파일에 추가한 값 사용
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
+    defaultConfig{
+        buildConfigField(
+                "String",
+                "NAVER_CLIENT_ID",
+                properties.getProperty("NAVER_CLIENT_ID")
+        )
+        buildConfigField(
+                "String",
+                "NAVER_CLIENT_KEY",
+                properties.getProperty("NAVER_CLIENT_KEY")
+        )
+        buildConfigField(
+                "String",
+                "KAKAO_NATIVE_KEY",
+                properties.getProperty("KAKAO_NATIVE_KEY")
+        )
+        // manifest용
+        manifestPlaceholders["KAKAO_NATIVE_KEY"] =
+                properties.getProperty("KAKAO_NATIVE_KEY_MF")
+    }
     namespace 'com.kauproject.kausanhak'
     compileSdk 34
+
+    buildFeatures{
+        buildConfig true
+    }
 
     defaultConfig {
         applicationId "com.kauproject.kausanhak"
@@ -107,5 +135,9 @@ dependencies {
     implementation "com.github.skydoves:landscapist-placeholder:2.2.8"
     implementation "com.github.skydoves:landscapist-palette:2.2.8"
 
+    // kakao
+    implementation "com.kakao.sdk:v2-all:2.15.0" // 전체 모듈 설치, 2.11.0 버전부터 지원
 
+    // naver
+    implementation 'com.navercorp.nid:oauth:5.6.0' // jdk 11
 }
