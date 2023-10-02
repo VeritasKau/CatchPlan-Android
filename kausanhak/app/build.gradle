@@ -140,4 +140,7 @@ dependencies {
 
     // naver
     implementation 'com.navercorp.nid:oauth:5.6.0' // jdk 11
+
+    // accompanist
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
 }

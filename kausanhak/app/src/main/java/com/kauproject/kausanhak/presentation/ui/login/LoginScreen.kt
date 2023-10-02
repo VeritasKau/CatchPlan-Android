@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.util.Constants.KAKAO
 import com.kauproject.kausanhak.presentation.util.Constants.NAVER
@@ -37,6 +38,7 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = viewModel()
 ) {
     val userDataState by loginViewModel.userData.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,6 +46,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Image(
             painter = painterResource(id = R.drawable.ic_app_icon),
             contentDescription = "app icon"
