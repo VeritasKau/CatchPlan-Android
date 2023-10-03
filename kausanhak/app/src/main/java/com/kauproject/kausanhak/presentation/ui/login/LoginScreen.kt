@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui.login
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,9 +36,15 @@ import com.kauproject.kausanhak.ui.theme.KausanhakTheme
 
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel = viewModel()
+    context: Context,
+    onLoginButtonClicked: () -> Unit
 ) {
+    val loginViewModel = LoginViewModel(context = context)
+
     val userDataState by loginViewModel.userData.collectAsState()
+    if(userDataState.userId != ""){
+        onLoginButtonClicked()
+    }
 
     Column(
         modifier = Modifier

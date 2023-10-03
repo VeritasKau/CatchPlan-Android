@@ -5,9 +5,16 @@
     <string name="menu_favorite">Favorite</string>
     <string name="menu_my_page">MyPage</string>
 
-    // Setting
+    // Login
+    <string name="choose_login">Choose Login</string>
+
+    // MBTI Setting
+    <string name="choose_mbti">Choose MBTI</string>
     <string name="setting_title">반가워요!</string>
     <string name="setting_title_mbti">MBTI를 설정해주세요</string>
-    <string name="setting_complete">완료</string>
-    <string name="setting_sub_title">*mbti는 추후에 변경가능합니다.</string>
+    <string name="setting_complete">다음</string>
+    <string name="setting_sub_title">*MBTI는 추후에 변경가능합니다.</string>
+
+    // Favorite Setting
+    <string name="choose_favorite">Choose Favorite</string>
 </resources>

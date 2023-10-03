@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -41,6 +42,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.presentation.CatchPlanApp
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginViewModel
 import com.kauproject.kausanhak.ui.theme.CALENDAR
@@ -55,7 +58,7 @@ class MainActivity : ComponentActivity() {
             val useDarkIcons = !isSystemInDarkTheme()
 
             KausanhakTheme {
-                LoginScreen(loginViewModel = loginViewModel)
+                CatchPlanApp(context = this)
             }
         }
     }

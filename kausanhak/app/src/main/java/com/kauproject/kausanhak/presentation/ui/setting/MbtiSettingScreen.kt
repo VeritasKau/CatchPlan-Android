@@ -1,13 +1,9 @@
 package com.kauproject.kausanhak.presentation.ui.setting
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +16,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,8 +34,8 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.ui.theme.KausanhakTheme
 
 @Composable
-fun SettingScreen() {
-    val viewModel: SettingViewModel = viewModel()
+fun MbtiSettingScreen() {
+    val viewModel: MbtiSettingViewModel = viewModel()
 
     Column(
         modifier = Modifier
@@ -65,7 +65,9 @@ fun SettingScreen() {
             )
         }
         Spacer(modifier = Modifier.padding(vertical = 30.dp))
+
         SetMbtiBtn(viewModel = viewModel)
+
         Spacer(modifier = Modifier.padding(vertical = 30.dp))
 
         Button(
@@ -90,8 +92,10 @@ fun SettingScreen() {
 
 @Composable
 fun SetMbtiBtn(
-    viewModel: SettingViewModel
+    viewModel: MbtiSettingViewModel
 ){
+    var selectedButtonIndex by remember { mutableStateOf(-1) } // 선택된 버튼의 인덱스를 저장하는 변수
+
     LazyVerticalGrid(
         modifier = Modifier
             .padding(horizontal = 10.dp)
@@ -100,6 +104,10 @@ fun SetMbtiBtn(
         columns = GridCells.Fixed(2),
     ) {
         itemsIndexed(mbti) { index, item ->
+            val isSelected = selectedButtonIndex == index
+            val bgColor = if (isSelected) colorResource(id = R.color.purple_main) else Color.White
+            val txtColor = if (isSelected) Color.White else colorResource(id = R.color.purple_main)
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -109,14 +117,14 @@ fun SetMbtiBtn(
                         .padding(horizontal = 10.dp)
                     ,
                     border = BorderStroke(0.5.dp, color = colorResource(id = R.color.purple_main)),
+                    colors = ButtonDefaults.buttonColors(containerColor = bgColor),
                     onClick = {
                         viewModel.setUserMbti(item)
-
-
+                        selectedButtonIndex = index // 클릭된 버튼의 인덱스를 저장
                     }
                 ) {
                     Text(
-                        color = colorResource(id = R.color.purple_main),
+                        color = txtColor,
                         text = item
                     )
                 }
@@ -128,10 +136,12 @@ fun SetMbtiBtn(
 }
 
 
+
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewSettingScreen(){
     KausanhakTheme {
-        SettingScreen()
+        MbtiSettingScreen()
     }
 }
