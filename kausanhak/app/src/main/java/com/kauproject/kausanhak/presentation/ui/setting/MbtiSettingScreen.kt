@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui.setting
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,8 +36,11 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.ui.theme.KausanhakTheme
 
 @Composable
-fun MbtiSettingScreen() {
+fun MbtiSettingScreen(
+    onNextButtonClick: () -> Unit
+) {
     val viewModel: MbtiSettingViewModel = viewModel()
+    val userMbti by viewModel.userMbti.collectAsState()
 
     Column(
         modifier = Modifier
@@ -66,7 +71,7 @@ fun MbtiSettingScreen() {
         }
         Spacer(modifier = Modifier.padding(vertical = 30.dp))
 
-        SetMbtiBtn(viewModel = viewModel)
+        SetMbtiButton(viewModel = viewModel)
 
         Spacer(modifier = Modifier.padding(vertical = 30.dp))
 
@@ -76,9 +81,9 @@ fun MbtiSettingScreen() {
                 .padding(horizontal = 100.dp)
             ,
             colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_main)),
-            onClick = { /*TODO*/ },
+            onClick = onNextButtonClick,
             shape = RoundedCornerShape(15.dp),
-            enabled = false
+            enabled = userMbti.mbti != ""
         ) {
             Text(
                 modifier = Modifier,
@@ -91,7 +96,7 @@ fun MbtiSettingScreen() {
 }
 
 @Composable
-fun SetMbtiBtn(
+fun SetMbtiButton(
     viewModel: MbtiSettingViewModel
 ){
     var selectedButtonIndex by remember { mutableStateOf(-1) } // 선택된 버튼의 인덱스를 저장하는 변수
@@ -103,7 +108,7 @@ fun SetMbtiBtn(
         verticalArrangement = Arrangement.Center,
         columns = GridCells.Fixed(2),
     ) {
-        itemsIndexed(mbti) { index, item ->
+        itemsIndexed(mbtiData) { index, item ->
             val isSelected = selectedButtonIndex == index
             val bgColor = if (isSelected) colorResource(id = R.color.purple_main) else Color.White
             val txtColor = if (isSelected) Color.White else colorResource(id = R.color.purple_main)
@@ -142,6 +147,8 @@ fun SetMbtiBtn(
 @Composable
 fun PreviewSettingScreen(){
     KausanhakTheme {
-        MbtiSettingScreen()
+        MbtiSettingScreen(
+            onNextButtonClick = {}
+        )
     }
 }
