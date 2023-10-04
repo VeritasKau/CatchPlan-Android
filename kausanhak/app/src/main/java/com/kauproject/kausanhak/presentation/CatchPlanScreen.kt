@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.presentation.ui.MainScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
 import com.kauproject.kausanhak.presentation.ui.setting.FavoriteSettingScreen
 import com.kauproject.kausanhak.presentation.ui.setting.MbtiSettingScreen
@@ -19,7 +20,8 @@ import com.kauproject.kausanhak.presentation.ui.setting.MbtiSettingScreen
 enum class CatchPlanScreen(@StringRes val title: Int){
     Login(title = R.string.choose_login),
     MBTI(title = R.string.choose_mbti),
-    Favorite(title = R.string.choose_favorite)
+    Favorite(title = R.string.choose_favorite),
+    Main(title = R.string.choose_main)
 }
 
 @Composable
@@ -60,7 +62,18 @@ fun CatchPlanApp(
             )
         }
         composable(route = CatchPlanScreen.Favorite.name){
-            FavoriteSettingScreen()
+            FavoriteSettingScreen(
+                onCompleteButtonClick = {
+                    navController.navigate(CatchPlanScreen.Main.name){
+                        popUpTo(CatchPlanScreen.Favorite.name){
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+        composable(route = CatchPlanScreen.Main.name){
+            MainScreen()
         }
 
     }

@@ -22,4 +22,7 @@
     <string name="favorite_complete">완료</string>
     <string name="favorite_isFull">최대 3개까지 선택 가능합니다</string>
 
+    // Main
+    <string name="choose_main">Choose Main</string>
+
 </resources>

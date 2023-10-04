@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-fun MainScreenView(){
+fun MainScreen(){
     val navController = rememberNavController()
     val buttonVisible = remember { mutableStateOf(true) }
 

@@ -41,7 +41,9 @@ private val selectFavorite = ArrayList<String>()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoriteSettingScreen(){
+fun FavoriteSettingScreen(
+    onCompleteButtonClick: () -> Unit
+){
     val viewModel = FavoriteSettingViewModel()
     val userFavorite by viewModel.userFavorite.collectAsState()
     var cnt by remember{ mutableStateOf(0) }
@@ -89,6 +91,7 @@ fun FavoriteSettingScreen(){
                     enabled = cnt > 0,
                     onClick = {
                         viewModel.setFavorite(getFavoriteList(viewModel))
+                        onCompleteButtonClick()
                     }
                 ){
                     Text(
@@ -179,7 +182,9 @@ fun SetFavoriteButton(
 @Composable
 fun PreviewFavoriteSetting(){
     KausanhakTheme {
-        FavoriteSettingScreen()
+        FavoriteSettingScreen(
+            onCompleteButtonClick = {}
+        )
     }
 
 }
