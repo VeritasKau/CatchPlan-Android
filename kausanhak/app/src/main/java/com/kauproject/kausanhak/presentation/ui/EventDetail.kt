@@ -15,12 +15,11 @@ import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.ui.theme.KausanhakTheme
 
 @Composable
-fun EventDetailView(
+fun EventDetailScreen(
     image: String,
     detailImage: String,
     url: String,
-    date: String,
-    pressOnBack: () -> Unit = {}
+    date: String
 ) {
     Column(
         modifier = Modifier
@@ -56,7 +55,7 @@ fun EventDetailView(
 fun DetailPreview(){
     val mock = Event.mock()
     KausanhakTheme {
-        EventDetailView(
+        EventDetailScreen(
             image = mock.image,
             detailImage = mock.detailImage,
             url = mock.url,

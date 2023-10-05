@@ -1,6 +1,7 @@
 package com.kauproject.kausanhak.presentation.ui
 
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,9 +25,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.ui.theme.KausanhakTheme
 
+enum class EventScreen(@StringRes val title: Int){
+    Event(title = R.string.choose_event),
+    EventDetail(title = R.string.Choose_event_detail)
+}
+
+@Composable
+fun EventsScreen(
+    navController: NavHostController = rememberNavController()
+){
+    NavHost(
+        navController = navController,
+        startDestination = EventScreen.Event.name
+    ){
+        composable(route = EventScreen.Event.name){
+            EventView(
+                onDetailClick = {
+                    navController.navigate(EventScreen.EventDetail.name)
+                }
+            )
+        }
+        composable(route = EventScreen.EventDetail.name){
+
+        }
+
+    }
+
+}
 @Composable
 fun HomeEvents(
     modifier: Modifier = Modifier,
@@ -40,7 +73,7 @@ fun HomeEvents(
     ) {
         events.forEach { event->
             key(event.id){
-                HomeEvent(
+                HomeEventScreen(
                     event = event,
                     selectEvent = selectEvent
                 )
@@ -52,7 +85,7 @@ fun HomeEvents(
 }
 
 @Composable
-private fun HomeEvent(
+private fun HomeEventScreen(
     modifier: Modifier = Modifier,
     event: Event,
     selectEvent: (Int) -> Unit = {},
@@ -116,7 +149,9 @@ private fun HomeEvent(
 }
 
 @Composable
-fun EventView(){
+fun EventView(
+    onDetailClick: () -> Unit
+){
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(1.dp)
     ){
@@ -126,7 +161,7 @@ fun EventView(){
                 item.id
             }
         ){index, item ->
-            HomeEvent(event = item)
+            HomeEventScreen(event = item)
         }
     }
 
@@ -136,7 +171,7 @@ fun EventView(){
 @Preview(name = "Event Light Theme")
 private fun HomeEventPreviewLight(){
     KausanhakTheme(darkTheme = false) {
-        HomeEvent(event = Event.mock())
+        HomeEventScreen(event = Event.mock())
     }
 }
 
@@ -144,7 +179,7 @@ private fun HomeEventPreviewLight(){
 @Preview(name = "Event Dark Theme")
 private fun HomeEventPreviewDark(){
     KausanhakTheme(darkTheme = true) {
-        HomeEvent(event = Event.mock())
+        HomeEventScreen(event = Event.mock())
     }
 }
 

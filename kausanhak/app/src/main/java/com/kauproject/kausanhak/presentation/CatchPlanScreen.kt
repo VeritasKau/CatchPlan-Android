@@ -12,6 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.presentation.pageanimation.horizontallyAnimatedComposable
+import com.kauproject.kausanhak.presentation.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.MainScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
 import com.kauproject.kausanhak.presentation.ui.setting.FavoriteSettingScreen
@@ -39,7 +41,7 @@ fun CatchPlanApp(
         navController = navController,
         startDestination = CatchPlanScreen.Login.name
     ){
-        composable(route = CatchPlanScreen.Login.name){
+        horizontallyAnimatedComposable(route = CatchPlanScreen.Login.name){
             LoginScreen(
                 onLoginButtonClicked = {
                     navController.navigate(CatchPlanScreen.MBTI.name){
@@ -50,7 +52,7 @@ fun CatchPlanApp(
                 context = context
             )
         }
-        composable(route = CatchPlanScreen.MBTI.name){
+        horizontallyAnimatedComposable(route = CatchPlanScreen.MBTI.name){
             MbtiSettingScreen(
                 onNextButtonClick = {
                     navController.navigate(CatchPlanScreen.Favorite.name){
@@ -61,7 +63,7 @@ fun CatchPlanApp(
                 }
             )
         }
-        composable(route = CatchPlanScreen.Favorite.name){
+        horizontallyAnimatedComposable(route = CatchPlanScreen.Favorite.name){
             FavoriteSettingScreen(
                 onCompleteButtonClick = {
                     navController.navigate(CatchPlanScreen.Main.name){
@@ -72,7 +74,7 @@ fun CatchPlanApp(
                 }
             )
         }
-        composable(route = CatchPlanScreen.Main.name){
+        verticallyAnimatedComposable(route = CatchPlanScreen.Main.name){
             MainScreen()
         }
 

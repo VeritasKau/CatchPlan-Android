@@ -174,7 +174,7 @@ fun NavigationGraph(navController: NavHostController){
             CalendarScreen()
         }
         composable(BottomNavItem.Ex.screenRoute){
-            EventView()
+            EventView(onDetailClick = {})
         }
     }
 }

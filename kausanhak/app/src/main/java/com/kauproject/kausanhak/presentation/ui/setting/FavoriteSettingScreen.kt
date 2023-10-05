@@ -52,7 +52,7 @@ fun FavoriteSettingScreen(
         modifier = Modifier
             .padding(horizontal = 20.dp)
         ,
-        containerColor = Color.White
+        containerColor = Color.Transparent
     ) { paddingValues ->
         Column(
             modifier = Modifier

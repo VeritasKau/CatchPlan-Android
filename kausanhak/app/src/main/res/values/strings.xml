@@ -25,4 +25,8 @@
     // Main
     <string name="choose_main">Choose Main</string>
 
+    //Event
+    <string name="choose_event">Choose Event</string>
+    <string name="Choose_event_detail">Choose Event Detail</string>
+
 </resources>
