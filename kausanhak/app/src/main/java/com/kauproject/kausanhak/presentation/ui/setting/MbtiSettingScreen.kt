@@ -39,7 +39,7 @@ import com.kauproject.kausanhak.ui.theme.KausanhakTheme
 fun MbtiSettingScreen(
     onNextButtonClick: () -> Unit
 ) {
-    val viewModel: MbtiSettingViewModel = viewModel()
+    val viewModel: SettingViewModel = viewModel()
     val userMbti by viewModel.userMbti.collectAsState()
 
     Column(
@@ -97,7 +97,7 @@ fun MbtiSettingScreen(
 
 @Composable
 fun SetMbtiButton(
-    viewModel: MbtiSettingViewModel
+    viewModel: SettingViewModel
 ){
     var selectedButtonIndex by remember { mutableStateOf(-1) } // 선택된 버튼의 인덱스를 저장하는 변수
 

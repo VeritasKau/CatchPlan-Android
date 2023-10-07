@@ -8,6 +8,9 @@
     // Login
     <string name="choose_login">Choose Login</string>
 
+    // Setting
+    <string name="question_count"> of %d</string>
+    <string name="choose_setting">Setting Choose</string>
     // MBTI Setting
     <string name="choose_mbti">Choose MBTI</string>
     <string name="setting_title">반가워요!</string>

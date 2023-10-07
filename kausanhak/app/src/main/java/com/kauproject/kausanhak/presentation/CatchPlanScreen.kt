@@ -18,12 +18,12 @@ import com.kauproject.kausanhak.presentation.ui.MainScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
 import com.kauproject.kausanhak.presentation.ui.setting.FavoriteSettingScreen
 import com.kauproject.kausanhak.presentation.ui.setting.MbtiSettingScreen
+import com.kauproject.kausanhak.presentation.ui.setting.SettingScreen
 
 enum class CatchPlanScreen(@StringRes val title: Int){
     Login(title = R.string.choose_login),
-    MBTI(title = R.string.choose_mbti),
-    Favorite(title = R.string.choose_favorite),
-    Main(title = R.string.choose_main)
+    Main(title = R.string.choose_main),
+    Setting(title = R.string.choose_setting)
 }
 
 @Composable
@@ -41,10 +41,10 @@ fun CatchPlanApp(
         navController = navController,
         startDestination = CatchPlanScreen.Login.name
     ){
-        horizontallyAnimatedComposable(route = CatchPlanScreen.Login.name){
+        composable(route = CatchPlanScreen.Login.name){
             LoginScreen(
                 onLoginButtonClicked = {
-                    navController.navigate(CatchPlanScreen.MBTI.name){
+                    navController.navigate(CatchPlanScreen.Setting.name){
                         popUpTo(CatchPlanScreen.Login.name){
                             inclusive = true
                         }
@@ -52,22 +52,11 @@ fun CatchPlanApp(
                 context = context
             )
         }
-        horizontallyAnimatedComposable(route = CatchPlanScreen.MBTI.name){
-            MbtiSettingScreen(
-                onNextButtonClick = {
-                    navController.navigate(CatchPlanScreen.Favorite.name){
-                        popUpTo(CatchPlanScreen.MBTI.name){
-                            inclusive = true
-                        }
-                    }
-                }
-            )
-        }
-        horizontallyAnimatedComposable(route = CatchPlanScreen.Favorite.name){
-            FavoriteSettingScreen(
-                onCompleteButtonClick = {
+        composable(route = CatchPlanScreen.Setting.name){
+            SettingScreen(
+                onComplete = {
                     navController.navigate(CatchPlanScreen.Main.name){
-                        popUpTo(CatchPlanScreen.Favorite.name){
+                        popUpTo(CatchPlanScreen.Setting.name){
                             inclusive = true
                         }
                     }

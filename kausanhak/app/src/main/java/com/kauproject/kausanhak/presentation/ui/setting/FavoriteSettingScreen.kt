@@ -44,7 +44,7 @@ private val selectFavorite = ArrayList<String>()
 fun FavoriteSettingScreen(
     onCompleteButtonClick: () -> Unit
 ){
-    val viewModel = FavoriteSettingViewModel()
+    val viewModel = SettingViewModel()
     val userFavorite by viewModel.userFavorite.collectAsState()
     var cnt by remember{ mutableStateOf(0) }
 
@@ -108,7 +108,7 @@ fun FavoriteSettingScreen(
 }
 
 private fun getFavoriteList(
-    viewModel: FavoriteSettingViewModel
+    viewModel: SettingViewModel
 ): List<String>{
     val size = selectFavorite.size
     val result = mutableListOf<String>()
@@ -125,7 +125,7 @@ private fun getFavoriteList(
 }
 @Composable
 fun SetFavoriteButton(
-    viewModel: FavoriteSettingViewModel,
+    viewModel: SettingViewModel,
     onCompleteBtnCallBack: (Int) -> Unit
 ){
     val selectedList = remember{ mutableStateListOf<Boolean>() }
