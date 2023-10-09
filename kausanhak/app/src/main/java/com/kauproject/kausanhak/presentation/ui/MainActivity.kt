@@ -1,6 +1,7 @@
 package com.kauproject.kausanhak.presentation.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -34,16 +35,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kauproject.kausanhak.presentation.CatchPlanApp
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventView
+import com.kauproject.kausanhak.presentation.ui.event.EventsView
 import com.kauproject.kausanhak.presentation.ui.login.LoginViewModel
 import com.kauproject.kausanhak.ui.theme.CALENDAR
+import com.kauproject.kausanhak.ui.theme.EVENTDETAIL
 import com.kauproject.kausanhak.ui.theme.EXAMPLE
 
 class MainActivity : ComponentActivity() {
@@ -123,10 +128,12 @@ fun BottomBar(
             NavigationBarItem(
                 modifier = Modifier,
                 icon = {
-                       Icon(
-                           imageVector = screen.icon,
-                           contentDescription = null
-                       )
+                    screen.icon?.let {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = null
+                        )
+                    }
                 },
                 selected = currentRoute == screen.screenRoute,
                 onClick = {
@@ -151,7 +158,7 @@ fun BottomBar(
 // 하단바 아이템 설정
 sealed class BottomNavItem(
     val title: String,
-    val icon: ImageVector,
+    val icon: ImageVector?,
     val screenRoute: String
 ){
     object Calendar: BottomNavItem(
@@ -164,6 +171,8 @@ sealed class BottomNavItem(
         EXAMPLE)
 }
 
+
+
 @Composable
 fun NavigationGraph(navController: NavHostController){
     NavHost(navController = navController, startDestination =  BottomNavItem.Calendar.screenRoute){
@@ -171,8 +180,19 @@ fun NavigationGraph(navController: NavHostController){
             CalendarScreen()
         }
         composable(BottomNavItem.Ex.screenRoute){
-            EventView(onDetailClick = {})
+            EventView()
         }
+        /*composable(
+            "event/${BottomNavItem.EventDetail.screenRoute}",
+            arguments = listOf(navArgument(BottomNavItem.EventDetail.screenRoute){
+                type = NavType.LongType
+            })
+        ){backStackEntry ->
+            val arguments = requireNotNull(backStackEntry.arguments)
+            val eventId = arguments.getLong(BottomNavItem.EventDetail.screenRoute)
+
+            EventDetailScreen(eventId = eventId, navController = navController)
+        }*/
     }
 }
 

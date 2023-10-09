@@ -31,11 +31,6 @@ fun CatchPlanApp(
     navController: NavHostController = rememberNavController(),
     context: Context
 ){
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = CatchPlanScreen.valueOf(
-        backStackEntry?.destination?.route ?: CatchPlanScreen.Login.name
-    )
-
     NavHost(
         modifier = Modifier,
         navController = navController,
