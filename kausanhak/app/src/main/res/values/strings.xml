@@ -5,30 +5,51 @@
     <string name="menu_favorite">Favorite</string>
     <string name="menu_my_page">MyPage</string>
 
-    // Login
+    <!--Login-->
     <string name="choose_login">Choose Login</string>
 
-    // Setting
-    <string name="question_count"> of %d</string>
+    <!--Setting-->
     <string name="choose_setting">Setting Choose</string>
-    // MBTI Setting
-    <string name="choose_mbti">Choose MBTI</string>
     <string name="setting_title">반가워요!</string>
+    <string name="setting_complete">완료</string>
+
+    <!--Setting Name-->
+    <string name="setting_input_name">이름</string>
+
+    <!--Setting Gender-->
+    <string name="setting_gender_title">성별</string>
+    <string name="setting_choose_man">남성</string>
+    <string name="setting_choose_woman">여성</string>
+
+    <!--Setting MBTI-->
+    <string name="setting_mbti_title">MBTI 선택</string>
+    <string name="setting_mbti_choose">MBTI를 선택해주세요</string>
+
+    <!--Setting Favorite-->
+    <string name="setting_favorite_title">선호장르 선택</string>
+    <string name="setting_favorite_button_title">선호하는 장르를 선택해주세요</string>
+    <string name="setting_favorite_sub_title">*최대 3개까지 선택 가능합니다</string>
+
+    <!--Dialog-->
+    <string name="setting_dialog_ok">확인</string>
+
+
+    <!--MBTI Setting-->
+    <string name="choose_mbti">Choose MBTI</string>
     <string name="setting_title_mbti">MBTI를 설정해주세요</string>
-    <string name="setting_complete">다음</string>
     <string name="setting_sub_title">*MBTI는 추후에 변경가능합니다.</string>
 
-    // Favorite Setting
+    <!--Favorite Setting-->
     <string name="choose_favorite">Choose Favorite</string>
     <string name="favorite_title">선호하는 장르를 선택해주세요</string>
     <string name="favorite_sub_title">*최대 3개까지 선택 가능합니다</string>
     <string name="favorite_complete">완료</string>
     <string name="favorite_isFull">최대 3개까지 선택 가능합니다</string>
 
-    // Main
+    <!--Main-->
     <string name="choose_main">Choose Main</string>
 
-    //Event
+    <!--Event-->
     <string name="choose_event">Choose Event</string>
     <string name="Choose_event_detail">Choose Event Detail</string>
 

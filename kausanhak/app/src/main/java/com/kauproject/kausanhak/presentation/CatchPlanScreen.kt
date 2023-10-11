@@ -16,8 +16,6 @@ import com.kauproject.kausanhak.presentation.pageanimation.horizontallyAnimatedC
 import com.kauproject.kausanhak.presentation.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.MainScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
-import com.kauproject.kausanhak.presentation.ui.setting.FavoriteSettingScreen
-import com.kauproject.kausanhak.presentation.ui.setting.MbtiSettingScreen
 import com.kauproject.kausanhak.presentation.ui.setting.SettingScreen
 
 enum class CatchPlanScreen(@StringRes val title: Int){
@@ -47,7 +45,7 @@ fun CatchPlanApp(
                 context = context
             )
         }
-        composable(route = CatchPlanScreen.Setting.name){
+        horizontallyAnimatedComposable(route = CatchPlanScreen.Setting.name){
             SettingScreen(
                 onComplete = {
                     navController.navigate(CatchPlanScreen.Main.name){

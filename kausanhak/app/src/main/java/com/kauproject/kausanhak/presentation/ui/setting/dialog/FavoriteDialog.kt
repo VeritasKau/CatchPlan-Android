@@ -1,22 +1,24 @@
-package com.kauproject.kausanhak.presentation.ui.setting
+package com.kauproject.kausanhak.presentation.ui.setting.dialog
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,99 +32,100 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.presentation.ui.setting.SettingViewModel
+import com.kauproject.kausanhak.presentation.ui.setting.favoriteData
 import com.kauproject.kausanhak.ui.theme.KausanhakTheme
 
 private val selectFavorite = ArrayList<String>()
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoriteSettingScreen(
-    onCompleteButtonClick: () -> Unit
+fun FavoriteDialog(
+    showDialog: (Boolean) -> Unit,
+    setFavoriteData: (List<String?>) -> Unit
 ){
-    val viewModel = SettingViewModel()
-    val userFavorite by viewModel.userFavorite.collectAsState()
-    var cnt by remember{ mutableStateOf(0) }
+    val viewModel: SettingViewModel = viewModel()
 
-    Scaffold(
-        modifier = Modifier
-            .padding(horizontal = 20.dp)
-        ,
-        containerColor = Color.Transparent
-    ) { paddingValues ->
-        Column(
+    Dialog(onDismissRequest = { showDialog(false) }) {
+        Surface(
             modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+                .wrapContentWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(10.dp),
+            color = Color.White
         ) {
-            Column(
+            FavoriteDialogContent(
+                viewModel = viewModel,
+                showDialog = showDialog,
+                setFavoriteData = setFavoriteData,
+            )
+        }
+    }
+}
+
+@Composable
+fun FavoriteDialogContent(
+    viewModel: SettingViewModel,
+    showDialog: (Boolean) -> Unit,
+    setFavoriteData: (List<String?>) -> Unit,
+){
+    val favoriteData by viewModel.userInfo.collectAsState()
+    var cnt by remember { mutableStateOf(0) }
+
+    Column(
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(start = 15.dp),
+            text = stringResource(id = R.string.setting_favorite_title)
+        )
+        Text(
+            modifier = Modifier
+                .padding(start = 15.dp),
+            text = stringResource(id = R.string.setting_favorite_sub_title),
+            color = Color.LightGray,
+            fontSize = 12.sp
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        SetFavoriteButton(
+            viewModel = viewModel,
+            onCompleteBtnCallBack = { cnt = it }
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 15.dp)
+            ,
+            Arrangement.End
+        ){
+            Text(
                 modifier = Modifier
-                ,
-            ) {
-                Text(
-                    text = stringResource(id = R.string.favorite_title),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp
-                )
-                Text(
-                    text = stringResource(id = R.string.favorite_sub_title),
-                    color = Color.LightGray
-                )
-                Spacer(modifier = Modifier.padding(vertical = 30.dp))
-
-                SetFavoriteButton(viewModel = viewModel){ it->
-                    cnt = it
-                }
-
-                Spacer(modifier = Modifier.padding(vertical = 30.dp))
-
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 100.dp)
-                    ,
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_main)),
-                    shape = RoundedCornerShape(15.dp),
-                    enabled = cnt > 0,
-                    onClick = {
-                        viewModel.setFavorite(getFavoriteList(viewModel))
-                        onCompleteButtonClick()
+                    .clickable(
+                        enabled = cnt != 0
+                    ){
+                        setFavoriteData(getFavoriteList())
+                        showDialog(false)
                     }
-                ){
-                    Text(
-                        text = stringResource(id = R.string.favorite_complete),
-                        fontWeight = FontWeight.Bold
-                    )
-
-                }
-
-            }
+                ,
+                text = stringResource(id = R.string.setting_dialog_ok),
+                textAlign = TextAlign.End
+            )
         }
-        
-    }
-}
 
-private fun getFavoriteList(
-    viewModel: SettingViewModel
-): List<String>{
-    val size = selectFavorite.size
-    val result = mutableListOf<String>()
 
-    for(i in 0 until 3){
-        if(i < size){
-            result.add(selectFavorite[i])
-        }else{
-            result.add("")
-        }
     }
 
-    return result
 }
+
 @Composable
 fun SetFavoriteButton(
     viewModel: SettingViewModel,
@@ -135,7 +138,7 @@ fun SetFavoriteButton(
     LazyVerticalGrid(
         columns = GridCells.Fixed(2)
     ){
-        itemsIndexed(favoriteData){index, item ->
+        itemsIndexed(favoriteData){ index, item ->
             val selected = selectedList[index]
             val bgColor = if (selected) colorResource(id = R.color.purple_main) else Color.White
             val txtColor = if (selected) Color.White else colorResource(id = R.color.purple_main)
@@ -167,9 +170,9 @@ fun SetFavoriteButton(
                         color = txtColor,
                         text = item
                     )
-                    
+
                 }
-                
+
             }
 
         }
@@ -177,14 +180,25 @@ fun SetFavoriteButton(
 
 }
 
+private fun getFavoriteList(): List<String?>{
+    val size = selectFavorite.size
+    val result = mutableListOf<String?>()
+
+    for(i in 0 until 3){
+        if(i < size){
+            result.add(selectFavorite[i])
+        }else{
+            result.add(null)
+        }
+    }
+    selectFavorite.clear()
+    return result
+}
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewFavoriteSetting(){
+fun PreviewFavoriteDialog(){
     KausanhakTheme {
-        FavoriteSettingScreen(
-            onCompleteButtonClick = {}
-        )
+        FavoriteDialog(showDialog = {}, setFavoriteData = {})
     }
-
 }
