@@ -45,7 +45,7 @@ fun CatchPlanApp(
                 context = context
             )
         }
-        horizontallyAnimatedComposable(route = CatchPlanScreen.Setting.name){
+        composable(route = CatchPlanScreen.Setting.name){
             SettingScreen(
                 onComplete = {
                     navController.navigate(CatchPlanScreen.Main.name){
