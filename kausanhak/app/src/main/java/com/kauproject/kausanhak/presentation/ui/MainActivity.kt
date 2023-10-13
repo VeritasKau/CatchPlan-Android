@@ -1,9 +1,9 @@
 package com.kauproject.kausanhak.presentation.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,43 +13,49 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.List
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.DateRange
-import androidx.compose.material.icons.rounded.List
+import androidx.compose.material.icons.rounded.Email
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
-import com.kauproject.kausanhak.ui.theme.KausanhakTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.CatchPlanApp
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
+import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventView
-import com.kauproject.kausanhak.presentation.ui.event.EventsView
+import com.kauproject.kausanhak.presentation.ui.favorite.FavoriteScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginViewModel
+import com.kauproject.kausanhak.presentation.ui.mypage.MyPageScreen
 import com.kauproject.kausanhak.ui.theme.CALENDAR
-import com.kauproject.kausanhak.ui.theme.EVENTDETAIL
-import com.kauproject.kausanhak.ui.theme.EXAMPLE
+import com.kauproject.kausanhak.ui.theme.CHATBOT
+import com.kauproject.kausanhak.ui.theme.EVENT
+import com.kauproject.kausanhak.ui.theme.FAVORITE
+import com.kauproject.kausanhak.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.ui.theme.MYPAGE
 
 class MainActivity : ComponentActivity() {
     private val loginViewModel = LoginViewModel(this@MainActivity)
@@ -112,7 +118,10 @@ fun BottomBar(
 ){
     val screens = listOf(
         BottomNavItem.Calendar,
-        BottomNavItem.Ex
+        BottomNavItem.Event,
+        BottomNavItem.Favorite,
+        BottomNavItem.Chatbot,
+        BottomNavItem.Mypage
     )
 
     NavigationBar(
@@ -157,18 +166,33 @@ fun BottomBar(
 
 // 하단바 아이템 설정
 sealed class BottomNavItem(
-    val title: String,
+    @StringRes val title: Int,
     val icon: ImageVector?,
     val screenRoute: String
 ){
     object Calendar: BottomNavItem(
-        "캘린더",
+        R.string.calendar_bottomItem,
         Icons.Rounded.DateRange,
         CALENDAR)
-    object Ex: BottomNavItem(
-        "예제",
-        Icons.Rounded.List,
-        EXAMPLE)
+    object Event: BottomNavItem(
+        R.string.event_bottomItem,
+        Icons.AutoMirrored.Rounded.List,
+        EVENT)
+    object Favorite: BottomNavItem(
+        R.string.favorite_bottomItem,
+        Icons.Rounded.Star,
+        FAVORITE
+    )
+    object Chatbot: BottomNavItem(
+        R.string.chatBot_bottomItem,
+        Icons.Rounded.Email,
+        CHATBOT
+    )
+    object Mypage: BottomNavItem(
+        R.string.myPage_bottomItem,
+        Icons.Rounded.AccountCircle,
+        MYPAGE
+    )
 }
 
 
@@ -179,20 +203,18 @@ fun NavigationGraph(navController: NavHostController){
         composable(BottomNavItem.Calendar.screenRoute){
             CalendarScreen()
         }
-        composable(BottomNavItem.Ex.screenRoute){
+        composable(BottomNavItem.Event.screenRoute){
             EventView()
         }
-        /*composable(
-            "event/${BottomNavItem.EventDetail.screenRoute}",
-            arguments = listOf(navArgument(BottomNavItem.EventDetail.screenRoute){
-                type = NavType.LongType
-            })
-        ){backStackEntry ->
-            val arguments = requireNotNull(backStackEntry.arguments)
-            val eventId = arguments.getLong(BottomNavItem.EventDetail.screenRoute)
-
-            EventDetailScreen(eventId = eventId, navController = navController)
-        }*/
+        composable(BottomNavItem.Favorite.screenRoute){
+            FavoriteScreen()
+        }
+        composable(BottomNavItem.Chatbot.screenRoute){
+            ChatBotScreen()
+        }
+        composable(BottomNavItem.Mypage.screenRoute){
+            MyPageScreen()
+        }
     }
 }
 

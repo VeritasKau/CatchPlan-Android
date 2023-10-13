@@ -50,7 +50,20 @@
     <string name="choose_main">Choose Main</string>
 
     <!--Event-->
+    <string name="event_bottomItem">Event</string>
     <string name="choose_event">Choose Event</string>
     <string name="Choose_event_detail">Choose Event Detail</string>
+
+    <!--Calendar-->
+    <string name="calendar_bottomItem">Calendar</string>
+
+    <!--Favorite-->
+    <string name="favorite_bottomItem">Favorite</string>
+
+    <!--ChatBot-->
+    <string name="chatBot_bottomItem">ChatBot</string>
+
+    <!--MyPage-->
+    <string name="myPage_bottomItem">MyPage</string>
 
 </resources>
