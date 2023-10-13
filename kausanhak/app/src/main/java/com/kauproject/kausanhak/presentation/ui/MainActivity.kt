@@ -3,7 +3,9 @@ package com.kauproject.kausanhak.presentation.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,6 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.List
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -32,7 +37,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.integerResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -135,11 +144,16 @@ fun BottomBar(
 
         screens.forEach{screen ->
             NavigationBarItem(
-                modifier = Modifier,
+                modifier = Modifier
+                ,
                 icon = {
                     screen.icon?.let {
-                        Icon(
-                            imageVector = it,
+                        Image(
+                            modifier = Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                            ,
+                            painter = painterResource(id = it),
                             contentDescription = null
                         )
                     }
@@ -167,30 +181,30 @@ fun BottomBar(
 // 하단바 아이템 설정
 sealed class BottomNavItem(
     @StringRes val title: Int,
-    val icon: ImageVector?,
+    @IntegerRes val icon: Int?,
     val screenRoute: String
 ){
     object Calendar: BottomNavItem(
         R.string.calendar_bottomItem,
-        Icons.Rounded.DateRange,
+        R.drawable.ic_calendar.toInt(),
         CALENDAR)
     object Event: BottomNavItem(
         R.string.event_bottomItem,
-        Icons.AutoMirrored.Rounded.List,
+        R.drawable.ic_event.toInt(),
         EVENT)
     object Favorite: BottomNavItem(
         R.string.favorite_bottomItem,
-        Icons.Rounded.Star,
+        R.drawable.ic_favorite.toInt(),
         FAVORITE
     )
     object Chatbot: BottomNavItem(
         R.string.chatBot_bottomItem,
-        Icons.Rounded.Email,
+        R.drawable.ic_chat.toInt(),
         CHATBOT
     )
     object Mypage: BottomNavItem(
         R.string.myPage_bottomItem,
-        Icons.Rounded.AccountCircle,
+        R.drawable.ic_mypage.toInt(),
         MYPAGE
     )
 }
