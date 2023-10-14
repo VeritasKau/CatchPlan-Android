@@ -15,16 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.List
-import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.DateRange
-import androidx.compose.material.icons.rounded.Email
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -37,10 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,7 +42,7 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.CatchPlanApp
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
-import com.kauproject.kausanhak.presentation.ui.event.EventView
+import com.kauproject.kausanhak.presentation.ui.event.EventScreen
 import com.kauproject.kausanhak.presentation.ui.favorite.FavoriteScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginViewModel
 import com.kauproject.kausanhak.presentation.ui.mypage.MyPageScreen
@@ -99,8 +86,8 @@ fun MainScreen(){
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(
-                        width = 0.2.dp,
-                        color = Color.Black
+                        width = 0.1.dp,
+                        color = Color.Black,
                     )
             )
         }) { paddingValues ->
@@ -218,7 +205,7 @@ fun NavigationGraph(navController: NavHostController){
             CalendarScreen()
         }
         composable(BottomNavItem.Event.screenRoute){
-            EventView()
+            EventScreen()
         }
         composable(BottomNavItem.Favorite.screenRoute){
             FavoriteScreen()

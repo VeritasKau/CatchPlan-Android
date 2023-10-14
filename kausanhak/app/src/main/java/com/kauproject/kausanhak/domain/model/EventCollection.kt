@@ -8,12 +8,7 @@ data class EventCollection(
 
 object EventRepo{
     fun getEvents(): List<EventCollection> = eventCollections
-    fun getEvent(eventId: Long) = mockList().find { it.id == eventId }!!
-    fun getMockEventList() = mockList()
-    fun getMockEvents() = mockList()
-    fun getMusical(eventId: Long) = mockMusicalEvents.find{ it.id == eventId }
-    fun getConcert(eventId: Long) = mockConcertEvents.find{ it.id == eventId }
-    fun getTheater(eventId: Long) = mockTheaterEvents.find{ it.id == eventId }
+    fun getEvent(eventId: Long) = getAllEventCollections().find { it.id == eventId }!!
 
 }
 
@@ -40,6 +35,18 @@ private val eventCollections = listOf(
     concert,
     theater
 )
+
+
+
+private fun getAllEventCollections(): List<Event>{
+    val allEventCollections = mutableListOf<Event>()
+
+    allEventCollections.addAll(musical.events)
+    allEventCollections.addAll(concert.events)
+    allEventCollections.addAll(theater.events)
+
+    return allEventCollections
+}
 
 fun mockList() = listOf(
         Event(0L, "블랙핑크", "올림픽홀", "2023-09-23", "https://ticketimage.interpark.com/Play/image/large/23/23011804_p.gif", "https://ticketimage.interpark.com/Play/image/etc/23/23011804-08.jpg", "https://tickets.interpark.com/goods/23011804"),

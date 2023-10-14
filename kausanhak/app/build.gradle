@@ -139,6 +139,7 @@ dependencies {
     implementation "com.github.skydoves:landscapist-animation:2.2.8"
     implementation "com.github.skydoves:landscapist-placeholder:2.2.8"
     implementation "com.github.skydoves:landscapist-palette:2.2.8"
+    implementation "io.coil-kt:coil-compose:2.4.0"
 
     // kakao
     implementation "com.kakao.sdk:v2-all:2.15.0" // 전체 모듈 설치, 2.11.0 버전부터 지원

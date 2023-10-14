@@ -8,11 +8,17 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    // login
+    <!--login-->
     <color name="kakao_login">#FFE812</color>
     <color name="naver_login">#06BD34</color>
 
-    // theme color
+    <!--theme color-->
     <color name="purple_main">#9226FD</color>
     <color name="purple_title">#8313A1</color>
+
+    <!--gradient color-->
+    <color name="rose_4">#FFF985AA</color>
+    <color name="rose_2">#FFFDBBCF</color>
+    <color name="lavender_3">#FFC186FA</color>
+
 </resources>
