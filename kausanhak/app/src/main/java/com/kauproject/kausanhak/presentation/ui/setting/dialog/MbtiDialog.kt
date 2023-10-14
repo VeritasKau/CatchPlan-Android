@@ -81,14 +81,14 @@ fun MbtiDialogContent(
             text = stringResource(id = R.string.setting_mbti_title)
         )
 
-        Spacer(modifier = Modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(vertical = 20.dp))
 
         CreateMbtiSetButton(viewModel, firstMbti, 0)
         CreateMbtiSetButton(viewModel, secondMbti, 1)
         CreateMbtiSetButton(viewModel, thirdMbti, 2)
         CreateMbtiSetButton(viewModel, lastMbti, 3)
 
-        Spacer(modifier = Modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(vertical = 20.dp))
 
         Row(
             modifier = Modifier
@@ -143,7 +143,7 @@ fun CreateMbtiSetButton(
                 OutlinedButton(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 10.dp)
+                        .padding(horizontal = 10.dp, vertical = 3.dp)
                     ,
                     border = BorderStroke(0.5.dp, color = colorResource(id = R.color.purple_main)),
                     colors = ButtonDefaults.buttonColors(containerColor = bgColor),

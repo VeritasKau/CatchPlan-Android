@@ -94,12 +94,12 @@ fun FavoriteDialogContent(
             color = Color.LightGray,
             fontSize = 12.sp
         )
-        Spacer(modifier = Modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(vertical = 20.dp))
         SetFavoriteButton(
             viewModel = viewModel,
             onCompleteBtnCallBack = { cnt = it }
         )
-        Spacer(modifier = Modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(vertical = 20.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -149,7 +149,7 @@ fun SetFavoriteButton(
                 OutlinedButton(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 10.dp)
+                        .padding(horizontal = 10.dp, vertical = 3.dp)
                     ,
                     border = BorderStroke(0.5.dp, color = colorResource(id = R.color.purple_main)),
                     colors = ButtonDefaults.buttonColors(containerColor = bgColor),
