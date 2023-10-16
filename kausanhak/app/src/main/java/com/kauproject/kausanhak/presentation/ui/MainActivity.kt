@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -27,7 +28,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -85,10 +89,7 @@ fun MainScreen(){
                 state = buttonVisible,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(
-                        width = 0.1.dp,
-                        color = Color.Black,
-                    )
+                    .shadow(elevation = 20.dp, shape = RoundedCornerShape(15.dp))
             )
         }) { paddingValues ->
         Box(
@@ -156,7 +157,7 @@ fun BottomBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    unselectedIconColor = Color.Gray, selectedIconColor = Color.White
+                    indicatorColor = colorResource(id = R.color.purple_select)
                 )
             )
         }

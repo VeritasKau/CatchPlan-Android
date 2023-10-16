@@ -220,7 +220,7 @@ private fun MonthHeader(
 ){
     Row(modifier = modifier
         .fillMaxWidth()
-        .background(color = colorResource(id = R.color.purple_main))
+        .background(color = colorResource(id = R.color.purple_calendar_bar))
     ){
         for(dayOfWeek in daysOfWeek){
             Text(

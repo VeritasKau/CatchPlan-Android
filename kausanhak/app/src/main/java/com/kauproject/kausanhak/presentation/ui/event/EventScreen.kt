@@ -44,7 +44,7 @@ fun EventScreen(){
             val arguments = requireNotNull(backStackEntry.arguments)
             val eventId = arguments.getLong(EventDestination.EVENT_DETAIL_ID)
 
-            EventDetailView(
+            EventDetailScreen(
                 eventId = eventId,
                 navController = navController)
         }

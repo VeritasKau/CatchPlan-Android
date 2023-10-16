@@ -87,11 +87,12 @@ fun EventCollection(
                 text = eventCollection.name,
                 color = colorResource(id = R.color.purple_main),
                 maxLines = 1,
+
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .weight(1f)
                     .wrapContentWidth(Alignment.Start)
+                    .weight(1f)
             )
             IconButton(
                 onClick = { /*TODO*/ },
