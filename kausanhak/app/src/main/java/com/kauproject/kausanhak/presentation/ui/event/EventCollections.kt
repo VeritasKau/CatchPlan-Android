@@ -51,7 +51,7 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.domain.model.EventCollection
 import com.kauproject.kausanhak.domain.model.mockTheaterEvents
-import com.kauproject.kausanhak.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 
 private val CardWidth = 170.dp
 private val CardPadding = 16.dp

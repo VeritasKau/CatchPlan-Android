@@ -32,7 +32,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.util.Constants.KAKAO
 import com.kauproject.kausanhak.presentation.util.Constants.NAVER
-import com.kauproject.kausanhak.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 
 @Composable
 fun LoginScreen(

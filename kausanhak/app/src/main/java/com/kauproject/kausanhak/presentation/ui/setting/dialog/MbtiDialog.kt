@@ -37,7 +37,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.ui.setting.SettingViewModel
-import com.kauproject.kausanhak.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 
 @Composable
 fun MbtiDialog(

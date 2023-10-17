@@ -59,11 +59,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.domain.model.UserData
 import com.kauproject.kausanhak.presentation.pageanimation.horizontallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.setting.dialog.FavoriteDialog
 import com.kauproject.kausanhak.presentation.ui.setting.dialog.MbtiDialog
-import com.kauproject.kausanhak.ui.theme.KausanhakTheme
-@OptIn(ExperimentalMaterial3Api::class)
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 @Composable
 fun SettingScreen(
     onComplete: () -> Unit
@@ -288,7 +288,7 @@ fun CreateCompleteButton(
 }
 
 private fun checkFavorite(
-    userInfo: UserInformation
+    userInfo: UserData
 ): Boolean{
     return userInfo.firstFavorite != null ||
             userInfo.secondFavorite != null ||
@@ -296,7 +296,7 @@ private fun checkFavorite(
 }
 
 private fun checkUserAllData(
-    userInfo: UserInformation
+    userInfo: UserData
 ): Boolean{
     return userInfo.name != "" &&
             checkFavorite(userInfo) &&

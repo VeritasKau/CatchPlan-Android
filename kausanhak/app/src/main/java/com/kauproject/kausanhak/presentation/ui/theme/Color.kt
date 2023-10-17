@@ -1,4 +1,4 @@
-package com.kauproject.kausanhak.ui.theme
+package com.kauproject.kausanhak.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

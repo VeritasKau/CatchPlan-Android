@@ -52,7 +52,7 @@ import coil.request.ImageRequest
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.domain.model.EventRepo
-import com.kauproject.kausanhak.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import kotlin.math.max
 import kotlin.math.min
 import androidx.compose.ui.unit.lerp as lerp

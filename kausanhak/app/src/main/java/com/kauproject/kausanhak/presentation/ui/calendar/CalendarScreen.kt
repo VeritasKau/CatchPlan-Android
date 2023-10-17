@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.lightColorScheme
@@ -50,11 +51,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.presentation.ui.BottomNavItem
+import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
 import com.kauproject.kausanhak.presentation.util.clickable
 import com.kauproject.kausanhak.presentation.util.displayText
 import com.kauproject.kausanhak.presentation.util.rememberFirstCompletelyVisibleMonth
-import com.kauproject.kausanhak.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
@@ -72,7 +77,7 @@ private val events = eventsList().groupBy { it.time.toLocalDate() }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarScreen(){
+fun CalendarScreen(navController: NavHostController){
     val currentMonth = remember{ YearMonth.now() }
     val startMonth = remember{ currentMonth.minusMonths(500) }
     val endMonth = remember { currentMonth.plusMonths(500) }
@@ -85,71 +90,81 @@ fun CalendarScreen(){
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        val state = rememberCalendarState(
-            startMonth = startMonth,
-            endMonth = endMonth,
-            firstVisibleMonth = currentMonth,
-            firstDayOfWeek = daysOfWeek.first(),
-            outDateStyle = OutDateStyle.EndOfGrid
-        )
-        val coroutineScope = rememberCoroutineScope()
-        val visibleMonth = rememberFirstCompletelyVisibleMonth(state)
-        LaunchedEffect(visibleMonth){
-            selection = null
+    Scaffold(
+        bottomBar = {
+            CatchPlanBottomBar(navController = navController, currentRoute = BottomNavItem.Calendar.screenRoute)
         }
 
-        CompositionLocalProvider(LocalContentColor provides lightColorScheme().onSurface) {
-            CalendarTitle(
-                modifier = Modifier
-                    .background(Color.White)
-                    .padding(horizontal = 8.dp, vertical = 12.dp),
-                currentMonth = visibleMonth.yearMonth,
-                goToPrevious = {
-                     coroutineScope.launch {
-                         state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.previousMonth)
-                     }
-                },
-                goToNext = {
-                    coroutineScope.launch {
-                        state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.nextMonth)
-                    }
-                },
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(paddingValues)
+        ) {
+            val state = rememberCalendarState(
+                startMonth = startMonth,
+                endMonth = endMonth,
+                firstVisibleMonth = currentMonth,
+                firstDayOfWeek = daysOfWeek.first(),
+                outDateStyle = OutDateStyle.EndOfGrid
             )
-            HorizontalCalendar(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .background(Color.Transparent)
-                ,
-                state = state,
-                dayContent = {day->
-                    val colors = if(day.position == DayPosition.MonthDate){
-                        events[day.date].orEmpty().map { colorResource(it.color) }
-                    }else{
-                        emptyList()
-                    }
-                    Day(
-                        day = day,
-                        isSelected = selection == day,
-                        colors = colors
-                    ){ clicked->
-                        selection = clicked
-                    }
-                },
-                monthHeader = {
-                    MonthHeader(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        daysOfWeek = daysOfWeek,
-                    )
-                }
-            )
-            HorizontalDivider(color = Color.LightGray)
-            LazyColumn(modifier = Modifier.fillMaxWidth()){
-
+            val coroutineScope = rememberCoroutineScope()
+            val visibleMonth = rememberFirstCompletelyVisibleMonth(state)
+            LaunchedEffect(visibleMonth){
+                selection = null
             }
+
+            CompositionLocalProvider(LocalContentColor provides lightColorScheme().onSurface) {
+                CalendarTitle(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(horizontal = 8.dp, vertical = 12.dp),
+                    currentMonth = visibleMonth.yearMonth,
+                    goToPrevious = {
+                        coroutineScope.launch {
+                            state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.previousMonth)
+                        }
+                    },
+                    goToNext = {
+                        coroutineScope.launch {
+                            state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.nextMonth)
+                        }
+                    },
+                )
+                HorizontalCalendar(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .background(Color.Transparent)
+                    ,
+                    state = state,
+                    dayContent = {day->
+                        val colors = if(day.position == DayPosition.MonthDate){
+                            events[day.date].orEmpty().map { colorResource(it.color) }
+                        }else{
+                            emptyList()
+                        }
+                        Day(
+                            day = day,
+                            isSelected = selection == day,
+                            colors = colors
+                        ){ clicked->
+                            selection = clicked
+                        }
+                    },
+                    monthHeader = {
+                        MonthHeader(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            daysOfWeek = daysOfWeek,
+                        )
+                    }
+                )
+                HorizontalDivider(color = Color.LightGray)
+                LazyColumn(modifier = Modifier.fillMaxWidth()){
+
+                }
+            }
+
         }
 
     }
@@ -299,5 +314,6 @@ private object CalendarTh
 @Preview(showBackground = true)
 @Composable
 fun PreviewCalendarScreen(){
-    CalendarScreen()
+    val navController = rememberNavController()
+    CalendarScreen(navController)
 }

@@ -47,12 +47,12 @@ import com.kauproject.kausanhak.presentation.ui.event.EventScreen
 import com.kauproject.kausanhak.presentation.ui.favorite.FavoriteScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginViewModel
 import com.kauproject.kausanhak.presentation.ui.mypage.MyPageScreen
-import com.kauproject.kausanhak.ui.theme.CALENDAR
-import com.kauproject.kausanhak.ui.theme.CHATBOT
-import com.kauproject.kausanhak.ui.theme.EVENT
-import com.kauproject.kausanhak.ui.theme.FAVORITE
-import com.kauproject.kausanhak.ui.theme.KausanhakTheme
-import com.kauproject.kausanhak.ui.theme.MYPAGE
+import com.kauproject.kausanhak.presentation.ui.theme.CALENDAR
+import com.kauproject.kausanhak.presentation.ui.theme.CHATBOT
+import com.kauproject.kausanhak.presentation.ui.theme.EVENT
+import com.kauproject.kausanhak.presentation.ui.theme.FAVORITE
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.ui.theme.MYPAGE
 
 class MainActivity : ComponentActivity() {
     private val loginViewModel = LoginViewModel(this@MainActivity)
@@ -63,157 +63,11 @@ class MainActivity : ComponentActivity() {
             val useDarkIcons = !isSystemInDarkTheme()
 
             KausanhakTheme {
-                CatchPlanApp(context = this)
+                CatchPlanApp()
             }
         }
     }
 }
 
 
-// 메인뷰
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-fun MainScreen(){
-    val navController = rememberNavController()
-    val buttonVisible = remember { mutableStateOf(true) }
-
-    // 레이아웃 구성
-    Scaffold(
-        bottomBar = {
-            BottomBar(
-                navController = navController,
-                state = buttonVisible,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(elevation = 20.dp, shape = RoundedCornerShape(15.dp))
-            )
-        }) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues = paddingValues)
-                .fillMaxSize()
-                .background(Color.White)
-            ,
-            contentAlignment = Alignment.Center
-        ){
-            NavigationGraph(navController = navController)
-        }
-    }
-
-}
-
-// 하단바 구성
-@Composable
-fun BottomBar(
-    navController: NavHostController,
-    state: MutableState<Boolean>,
-    modifier: Modifier
-){
-    val screens = listOf(
-        BottomNavItem.Calendar,
-        BottomNavItem.Event,
-        BottomNavItem.Favorite,
-        BottomNavItem.Chatbot,
-        BottomNavItem.Mypage
-    )
-
-    NavigationBar(
-        modifier = modifier
-            .height(60.dp)
-        ,
-        containerColor = Color.White
-    ){
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-
-        screens.forEach{screen ->
-            NavigationBarItem(
-                modifier = Modifier
-                ,
-                icon = {
-                    screen.icon?.let {
-                        Image(
-                            modifier = Modifier
-                                .width(20.dp)
-                                .height(20.dp)
-                            ,
-                            painter = painterResource(id = it),
-                            contentDescription = null
-                        )
-                    }
-                },
-                selected = currentRoute == screen.screenRoute,
-                onClick = {
-                    navController.navigate(screen.screenRoute){
-                        popUpTo(navController.graph.findStartDestination().id){
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = colorResource(id = R.color.purple_select)
-                )
-            )
-        }
-
-    }
-
-}
-
-// 하단바 아이템 설정
-sealed class BottomNavItem(
-    @StringRes val title: Int,
-    @IntegerRes val icon: Int?,
-    val screenRoute: String
-){
-    object Calendar: BottomNavItem(
-        R.string.calendar_bottomItem,
-        R.drawable.ic_calendar.toInt(),
-        CALENDAR)
-    object Event: BottomNavItem(
-        R.string.event_bottomItem,
-        R.drawable.ic_event.toInt(),
-        EVENT)
-    object Favorite: BottomNavItem(
-        R.string.favorite_bottomItem,
-        R.drawable.ic_favorite.toInt(),
-        FAVORITE
-    )
-    object Chatbot: BottomNavItem(
-        R.string.chatBot_bottomItem,
-        R.drawable.ic_chat.toInt(),
-        CHATBOT
-    )
-    object Mypage: BottomNavItem(
-        R.string.myPage_bottomItem,
-        R.drawable.ic_mypage.toInt(),
-        MYPAGE
-    )
-}
-
-
-
-@Composable
-fun NavigationGraph(navController: NavHostController){
-    NavHost(navController = navController, startDestination =  BottomNavItem.Calendar.screenRoute){
-        composable(BottomNavItem.Calendar.screenRoute){
-            CalendarScreen()
-        }
-        composable(BottomNavItem.Event.screenRoute){
-            EventScreen()
-        }
-        composable(BottomNavItem.Favorite.screenRoute){
-            FavoriteScreen()
-        }
-        composable(BottomNavItem.Chatbot.screenRoute){
-            ChatBotScreen()
-        }
-        composable(BottomNavItem.Mypage.screenRoute){
-            MyPageScreen()
-        }
-    }
-}
 

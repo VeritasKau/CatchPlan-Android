@@ -7,23 +7,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.kauproject.kausanhak.domain.model.UserData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class SettingViewModel: ViewModel() {
-    private val _userInfo = MutableStateFlow(UserInformation())
-    val userInfo: StateFlow<UserInformation>
+    private val _userInfo = MutableStateFlow(UserData())
+    val userInfo: StateFlow<UserData>
         get() = _userInfo.asStateFlow()
 
     private val _choiceMbti = MutableStateFlow(ChoiceMbti())
     val choiceMbti: StateFlow<ChoiceMbti>
         get() = _choiceMbti.asStateFlow()
-
-    private val _userFavorite = MutableLiveData(UserFavorite())
-    val userFavorite: LiveData<UserFavorite>
-        get() = _userFavorite
 
     fun setUserName(name: String){
         _userInfo.update { it->
@@ -89,21 +86,6 @@ class SettingViewModel: ViewModel() {
         }
     }
 }
-
-data class UserInformation(
-    val name: String = "",
-    val gender: String = "",
-    val mbti: String = "",
-    var firstFavorite: String? = null,
-    var secondFavorite: String? = null,
-    var thirdFavorite: String? = null,
-)
-
-data class UserFavorite(
-    var firstFavorite: String? = null,
-    var secondFavorite: String? = null,
-    var thirdFavorite: String? = null,
-)
 
 data class ChoiceMbti(
     val first: String = "",

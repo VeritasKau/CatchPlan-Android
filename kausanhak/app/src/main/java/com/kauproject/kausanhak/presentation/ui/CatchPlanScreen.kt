@@ -4,12 +4,17 @@ import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.pageanimation.verticallyAnimatedComposable
+import com.kauproject.kausanhak.presentation.ui.event.EventDestination
+import com.kauproject.kausanhak.presentation.ui.event.EventDetailScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
 import com.kauproject.kausanhak.presentation.ui.setting.SettingScreen
 
@@ -20,10 +25,10 @@ enum class CatchPlanScreen(@StringRes val title: Int){
 }
 
 @Composable
-fun CatchPlanApp(
-    navController: NavHostController = rememberNavController(),
-    context: Context
-){
+fun CatchPlanApp(){
+    val navController = rememberNavController()
+    val context = LocalContext.current
+
     NavHost(
         modifier = Modifier,
         navController = navController,
@@ -51,7 +56,7 @@ fun CatchPlanApp(
                 }
             )
         }
-        verticallyAnimatedComposable(route = CatchPlanScreen.Main.name){
+        verticallyAnimatedComposable(route = CatchPlanScreen.Main.name) {
             MainScreen()
         }
 

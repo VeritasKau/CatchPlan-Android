@@ -1,4 +1,4 @@
-package com.kauproject.kausanhak.ui.theme
+package com.kauproject.kausanhak.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build
