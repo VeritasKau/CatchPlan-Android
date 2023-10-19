@@ -40,8 +40,8 @@ fun LoginScreen(
     onLoginButtonClicked: () -> Unit
 ) {
     val loginViewModel = LoginViewModel(context = context)
-
     val userDataState by loginViewModel.userData.collectAsState()
+
     if(userDataState.userId != ""){
         onLoginButtonClicked()
     }

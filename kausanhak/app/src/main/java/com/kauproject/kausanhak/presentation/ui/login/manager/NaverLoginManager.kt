@@ -1,6 +1,5 @@
-package com.kauproject.kausanhak.presentation.ui.login
+package com.kauproject.kausanhak.presentation.ui.login.manager
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.kauproject.kausanhak.BuildConfig

@@ -3,8 +3,10 @@ package com.kauproject.kausanhak.presentation.ui
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -12,11 +14,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.domain.repository.UserDataRepository
 import com.kauproject.kausanhak.presentation.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.event.EventDestination
 import com.kauproject.kausanhak.presentation.ui.event.EventDetailScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
+import com.kauproject.kausanhak.presentation.ui.login.LoginViewModel
 import com.kauproject.kausanhak.presentation.ui.setting.SettingScreen
+import javax.inject.Inject
 
 enum class CatchPlanScreen(@StringRes val title: Int){
     Login(title = R.string.choose_login),
@@ -28,6 +33,8 @@ enum class CatchPlanScreen(@StringRes val title: Int){
 fun CatchPlanApp(){
     val navController = rememberNavController()
     val context = LocalContext.current
+
+    //val startScreen = if(isMember.value?.isNotEmpty() == true) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name
 
     NavHost(
         modifier = Modifier,

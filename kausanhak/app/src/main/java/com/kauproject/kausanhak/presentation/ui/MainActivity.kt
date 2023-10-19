@@ -41,6 +41,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.domain.repository.UserDataRepository
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventScreen
@@ -53,15 +54,12 @@ import com.kauproject.kausanhak.presentation.ui.theme.EVENT
 import com.kauproject.kausanhak.presentation.ui.theme.FAVORITE
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kauproject.kausanhak.presentation.ui.theme.MYPAGE
+import javax.inject.Inject
 
-class MainActivity : ComponentActivity() {
-    private val loginViewModel = LoginViewModel(this@MainActivity)
+class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val systemUiController = rememberSystemUiController()
-            val useDarkIcons = !isSystemInDarkTheme()
-
             KausanhakTheme {
                 CatchPlanApp()
             }

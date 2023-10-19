@@ -143,7 +143,7 @@ fun CreateMbtiSetButton(
                 OutlinedButton(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 10.dp, vertical = 3.dp)
+                        .padding(horizontal = 10.dp, vertical = 1.dp)
                     ,
                     border = BorderStroke(0.5.dp, color = colorResource(id = R.color.purple_main)),
                     colors = ButtonDefaults.buttonColors(containerColor = bgColor),

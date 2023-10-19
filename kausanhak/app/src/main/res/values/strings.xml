@@ -66,4 +66,10 @@
     <!--MyPage-->
     <string name="myPage_bottomItem">MyPage</string>
 
+    <!--Detail page-->
+    <string name="detail_date_pick">일정등록</string>
+    <string name="detail_link">예매링크</string>
+    <string name="detail_scrap">스크랩</string>
+    <string name="detail_back">back</string>
+
 </resources>
