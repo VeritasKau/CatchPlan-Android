@@ -1,11 +1,14 @@
 package com.kauproject.kausanhak.data.remote.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.kauproject.kausanhak.domain.model.Dummy
 import com.kauproject.kausanhak.domain.model.UserData
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
@@ -21,7 +24,7 @@ class UserDataRepositoryImpl @Inject constructor(
     private val context: Context
 ): UserDataRepository{
     val Context.dataStore by preferencesDataStore(name = "user_data")
-    private val _userNum = MutableStateFlow<String>("")
+    private val _userNum = MutableLiveData<String>("")
 
     companion object{
         private val USERNUM_KEY = stringPreferencesKey("userNum")
@@ -55,11 +58,11 @@ class UserDataRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserNumData(): StateFlow<String?> {
+    override fun getUserNumData(): LiveData<String?> {
         return _userNum
     }
 
-    override fun getTokenData(): StateFlow<String> {
+    override fun getTokenData(): LiveData<String> {
         TODO("Not yet implemented")
     }
 

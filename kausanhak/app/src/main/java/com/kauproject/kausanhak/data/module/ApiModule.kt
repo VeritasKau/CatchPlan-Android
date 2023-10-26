@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.data.module
 
+import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -7,53 +8,46 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.create
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class ApiModule {
-    private val OPEN_BASE_URL = "https://openapi.seoul.go.kr:8088/"
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class SeoulPersonDataOkHttpClient
+    private val BASE_URL = "http://catchplan-env.eba-ngqypwbe.ap-northeast-2.elasticbeanstalk.com"
 
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class DefaultOkHttpClient
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class SeoulPersonDataRetrofit
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class DefaultRetrofit
-
-    @SeoulPersonDataOkHttpClient
-    @Provides
     @Singleton
-    fun provideOpenAPIOkHttpClient(): OkHttpClient{
+    @Provides
+    fun getOkHttpClient(): OkHttpClient{
         return OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
             .build()
     }
 
-    @SeoulPersonDataRetrofit
-    @Provides
     @Singleton
-    fun provideOpenAPIRetrofit(@SeoulPersonDataOkHttpClient client: OkHttpClient): Retrofit{
+    @Provides
+    fun getInstance(okHttpClient: OkHttpClient): Retrofit{
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
-
-        return Retrofit.Builder().client(client)
+        return Retrofit.Builder().client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .client(provideOpenAPIOkHttpClient())
-            .baseUrl(OPEN_BASE_URL)
+            .baseUrl(BASE_URL)
             .build()
     }
+
+    @Singleton
+    @Provides
+    fun provideSignInService(retrofit: Retrofit): SignInService{
+        return retrofit.create(SignInService::class.java)
+    }
+
 
 
 

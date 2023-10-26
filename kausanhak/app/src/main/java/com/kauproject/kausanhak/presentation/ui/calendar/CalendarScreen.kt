@@ -185,7 +185,7 @@ private fun Day(
             .aspectRatio(1f)
             .border(
                 width = if (isSelected) 1.dp else 0.dp,
-                color = if (isSelected) Color.Green else Color.LightGray,
+                color = if (isSelected) colorResource(id = R.color.lavender_3) else Color.LightGray,
             )
             .padding(1.dp)
             .background(color = Color.White)

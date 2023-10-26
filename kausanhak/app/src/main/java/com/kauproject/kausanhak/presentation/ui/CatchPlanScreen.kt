@@ -1,27 +1,22 @@
 package com.kauproject.kausanhak.presentation.ui
 
-import android.content.Context
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
 import com.kauproject.kausanhak.presentation.pageanimation.verticallyAnimatedComposable
-import com.kauproject.kausanhak.presentation.ui.event.EventDestination
-import com.kauproject.kausanhak.presentation.ui.event.EventDetailScreen
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
-import com.kauproject.kausanhak.presentation.ui.login.LoginViewModel
 import com.kauproject.kausanhak.presentation.ui.setting.SettingScreen
-import javax.inject.Inject
 
 enum class CatchPlanScreen(@StringRes val title: Int){
     Login(title = R.string.choose_login),
@@ -30,16 +25,23 @@ enum class CatchPlanScreen(@StringRes val title: Int){
 }
 
 @Composable
-fun CatchPlanApp(){
+fun CatchPlanApp(
+    userDataRepository: UserDataRepository,
+    signInService: SignInService
+){
     val navController = rememberNavController()
-    val context = LocalContext.current
+    val isMember = remember{ mutableStateOf(false) }
 
-    //val startScreen = if(isMember.value?.isNotEmpty() == true) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name
+    LaunchedEffect(Unit){
+        isMember.value = userDataRepository.getUserData().userNum != null
+    }
+
+    val startScreen = if(isMember.value) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name
 
     NavHost(
         modifier = Modifier,
         navController = navController,
-        startDestination = CatchPlanScreen.Login.name
+        startDestination = startScreen
     ){
         composable(route = CatchPlanScreen.Login.name){
             LoginScreen(
@@ -49,7 +51,8 @@ fun CatchPlanApp(){
                             inclusive = true
                         }
                     } },
-                context = context
+                userDataRepository = userDataRepository,
+                signInService = signInService
             )
         }
         composable(route = CatchPlanScreen.Setting.name){
