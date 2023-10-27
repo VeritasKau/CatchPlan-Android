@@ -4,9 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,51 +18,44 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
@@ -79,8 +69,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.navigation.NavController
@@ -91,6 +79,13 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.domain.model.EventRepo
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import kotlin.math.max
 import kotlin.math.min
 import androidx.compose.ui.unit.lerp as lerp
@@ -106,6 +101,7 @@ private val ExpandedImageSize = 300.dp
 private val CollapsedImageSize = 150.dp
 private val HzPadding = Modifier.padding(horizontal = 24.dp)
 
+
 private val colors
     @Composable
     get() = listOf(
@@ -119,11 +115,21 @@ fun EventDetailScreen(
     navController: NavController
 ){
     val event = remember(eventId) { EventRepo.getEvent(eventId) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var setDate by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         modifier = Modifier,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
-            EventDetailBottomBar(event = event)
-        }
+            EventDetailBottomBar(
+                event = event,
+                onDateSelected = { showDatePicker = it },
+            )
+        },
+
     ) {paddingValues ->
         Box(modifier = Modifier
             .padding(paddingValues)
@@ -136,6 +142,16 @@ fun EventDetailScreen(
             Title(event){ scroll.value }
             Image(event) { scroll.value }
             BackArrow(backPress = {navController.navigateUp()})
+
+            if(showDatePicker){
+                EventDatePickerDialog(
+                    onDateSelected = { Log.d("test getData", it) },
+                    onDismiss = { showDatePicker = false },
+                    event = event,
+                    scope = scope,
+                    snackbarHostState = snackbarHostState
+                )
+            }
         }
     }
 
@@ -144,7 +160,10 @@ fun EventDetailScreen(
 }
 
 @Composable
-private fun EventDetailBottomBar(event: Event){
+private fun EventDetailBottomBar(
+    event: Event,
+    onDateSelected: (Boolean) -> Unit
+){
     var selected by remember { mutableStateOf(false) }
     val isScrap =
         if(selected) painterResource(id = R.drawable.ic_scrap_abled)
@@ -198,7 +217,7 @@ private fun EventDetailBottomBar(event: Event){
                     .weight(0.4f)
                 ,
                 shape = RoundedCornerShape(7.dp),
-                onClick = { /*TODO*/ },
+                onClick = { onDateSelected(true) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.purple_main)
                 )
@@ -255,8 +274,8 @@ private fun Body(
                 ) {
                     Spacer(modifier = Modifier.height(ImageOverlap))
                     Spacer(modifier = Modifier.height(TitleHeight))
-
                     Spacer(modifier = Modifier.height(16.dp))
+
                     AsyncImage(
                         modifier = Modifier.fillMaxSize(),
                         model = ImageRequest.Builder(LocalContext.current)
@@ -304,15 +323,17 @@ private fun Title(event: Event, scrollProvider: () -> Int){
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 12.dp)
                 .width(200.dp)
         )
         Text(
             text = event.date,
             fontSize = 20.sp,
-            modifier = HzPadding
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .padding(vertical = 10.dp)
         )
-        HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
+        HorizontalDivider()
 
     }
 
@@ -414,20 +435,133 @@ private fun BackArrow(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun DatePicker(
+private fun EventDatePickerDialog(
     onDateSelected: (String) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    event: Event,
+    scope: CoroutineScope,
+    snackbarHostState: SnackbarHostState
 ){
-    val datePickerState = rememberDatePickerState(selectableDates = object: SelectableDates{
+    val LAVENDAR = colorResource(id = R.color.lavender_3)
+    val dateScope = event.date.length
+    val date = event.date
+    val start = convertDateToMills(date.firstYear(), date.firstMonth(), date.firstDay())
+    val startEnd = convertDateToMills(date.firstYear(), date.firstMonth(), date.firstDay()+1)
+    var end: Long? = null
+
+
+    if(dateScope >= 11){
+        end = convertDateToMills(date.secondYear(), date.secondMonth(), date.secondDay())
+    }
+    
+    // 최초 날짜 설정
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = startEnd,
+        initialDisplayedMonthMillis = start,
+        selectableDates = object: SelectableDates{
         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-            return utcTimeMillis <= System.currentTimeMillis()
+            return if(dateScope >= 11){
+                (utcTimeMillis > start) && (utcTimeMillis < end!!)
+            }else{
+                (utcTimeMillis > start) && (utcTimeMillis < startEnd)
+            }
         }
     })
 
     val selectedDate = datePickerState.selectedDateMillis?.let {
-        
+        convertMillisToDate(it)
     } ?: ""
 
+    val complete = stringResource(id = R.string.snack_confirm)
+
+    DatePickerDialog(
+        // 색상 커스텀
+        colors = DatePickerDefaults.colors(
+            containerColor = Color.White,
+        )
+        ,
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Black
+                ),
+                onClick = {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = complete,
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                    onDateSelected(selectedDate)
+                    onDismiss()
+                }
+
+            ) {
+                Text(text = "확인")
+            }
+        },
+        dismissButton = {
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Black
+                ),
+                onClick = {
+                    onDismiss()
+                }){
+                Text(text = "취소")
+            }
+        }
+    ) {
+        DatePicker(
+            state = datePickerState,
+            colors = DatePickerDefaults.colors(
+                selectedDayContainerColor = LAVENDAR,
+                todayDateBorderColor = LAVENDAR,
+                todayContentColor = Color.Black
+            )
+        )
+    }
+}
+
+
+
+
+private fun convertMillisToDate(millis: Long): String {
+    return Instant.ofEpochMilli(millis)
+        .atOffset(ZoneOffset.ofHours(9))
+        .format(DateTimeFormatter.ofPattern("uuuu/MM/dd"))
+}
+
+private fun convertDateToMills(year: Int, month: Int, day: Int): Long {
+    val date = LocalDateTime.of(year, month, day, 0, 0)
+    return date.toInstant(ZoneOffset.ofHours(9)).toEpochMilli()
+}
+
+private fun String.firstYear(): Int{
+    return this.substring(0, 4).toInt()
+}
+
+private fun String.firstMonth(): Int{
+    return this.substring(5, 7).toInt()
+}
+
+private fun String.firstDay(): Int{
+    return this.substring(8, 10).toInt()
+}
+
+private fun String.secondYear(): Int{
+    return this.substring(13, 17).toInt()
+}
+
+private fun String.secondMonth(): Int{
+    return this.substring(18, 20).toInt()
+}
+
+private fun String.secondDay(): Int{
+    return this.substring(21, 23).toInt()
 }
 
 @Preview(showBackground = true)

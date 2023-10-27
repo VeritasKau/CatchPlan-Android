@@ -23,7 +23,7 @@ data class Event(
 }
 
 val mockConcertEvents = listOf(
-    Event(0L, "블랙핑크", "올림픽홀", "2023-09-23", "https://ticketimage.interpark.com/Play/image/large/23/23011804_p.gif", "https://ticketimage.interpark.com/Play/image/etc/23/23011804-08.jpg", "https://tickets.interpark.com/goods/23011804"),
+    Event(0L, "블랙핑크", "올림픽홀", "2023-10-27 ~ 2023-10-31", "https://ticketimage.interpark.com/Play/image/large/23/23011804_p.gif", "https://ticketimage.interpark.com/Play/image/etc/23/23011804-08.jpg", "https://tickets.interpark.com/goods/23011804"),
     Event(1L, "A", "올림픽홀", "2023-09-29", "https://ticketimage.interpark.com/Play/image/large/23/23011804_p.gif", "https://ticketimage.interpark.com/Play/image/etc/23/23011804-08.jpg", "https://tickets.interpark.com/goods/23011804"),
     Event(2L, "B", "올림픽홀", "2023-09-21", "https://ticketimage.interpark.com/Play/image/large/23/23011804_p.gif", "https://ticketimage.interpark.com/Play/image/etc/23/23011804-08.jpg", "https://tickets.interpark.com/goods/23011804"),
 )

@@ -72,4 +72,7 @@
     <string name="detail_scrap">스크랩</string>
     <string name="detail_back">back</string>
 
+    <!--Snack Bar-->
+    <string name="snack_confirm">일정등록 완료!</string>
+
 </resources>
