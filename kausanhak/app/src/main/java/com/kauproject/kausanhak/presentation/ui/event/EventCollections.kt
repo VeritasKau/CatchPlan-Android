@@ -74,7 +74,7 @@ private val colors
 @Composable
 fun EventCollection(
     eventCollection: EventCollection,
-    onEventClick: (Long) -> Unit,
+    onEventClick: (Int) -> Unit,
 ){
     Column {
         Row(
@@ -115,7 +115,7 @@ fun EventCollection(
 @Composable
 private fun EventCards(
     events: List<Event>,
-    onEventClick: (Long) -> Unit
+    onEventClick: (Int) -> Unit
 ){
     val gradientWidth = with(LocalDensity.current){
         (6 * (CardWidth + CardPadding).toPx())
@@ -144,7 +144,7 @@ private fun EventCards(
 private fun EventCard(
     event: Event,
     index: Int,
-    onEventClick: (Long) -> Unit,
+    onEventClick: (Int) -> Unit,
     gradientWidth: Float,
     scroll: Int
 ){

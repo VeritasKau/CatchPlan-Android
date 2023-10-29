@@ -25,7 +25,7 @@ import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 @Composable
 fun EventScreen(
-    onEventClick: (Long) -> Unit,
+    onEventClick: (Int) -> Unit,
     navController: NavHostController
 ){
     val collection = remember{ EventRepo.getEvents() }

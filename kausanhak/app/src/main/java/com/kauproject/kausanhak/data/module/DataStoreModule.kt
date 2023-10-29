@@ -1,4 +1,4 @@
-package com.kauproject.kausanhak.data.module.datastore
+package com.kauproject.kausanhak.data.module
 
 import android.content.Context
 import com.kauproject.kausanhak.data.remote.repository.UserDataRepositoryImpl

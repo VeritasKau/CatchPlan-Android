@@ -111,7 +111,7 @@ private val colors
 
 @Composable
 fun EventDetailScreen(
-    eventId: Long,
+    eventId: Int,
     navController: NavController
 ){
     val event = remember(eventId) { EventRepo.getEvent(eventId) }
@@ -569,6 +569,6 @@ private fun String.secondDay(): Int{
 fun PreviewEventDetailScreen(){
     val navController = rememberNavController()
     KausanhakTheme {
-        EventDetailScreen(eventId = 0L, navController = navController)
+        EventDetailScreen(eventId = 0, navController = navController)
     }
 }

@@ -65,7 +65,7 @@ fun MainScreen(){
         }
         composable(route = BottomNavItem.Event.screenRoute){
             EventScreen(
-                onEventClick = {id: Long ->
+                onEventClick = {id: Int ->
                     navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")},
                 navController = navController)
         }
@@ -82,11 +82,11 @@ fun MainScreen(){
         composable(
             route = "${EventDestination.EVENT_DETAIL_ROUTE}/{${EventDestination.EVENT_DETAIL_ID}}",
             arguments = listOf(navArgument(EventDestination.EVENT_DETAIL_ID){
-                type = NavType.LongType }
+                type = NavType.IntType }
             )
         ){backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
-            val eventId = arguments.getLong(EventDestination.EVENT_DETAIL_ID)
+            val eventId = arguments.getInt(EventDestination.EVENT_DETAIL_ID)
 
             EventDetailScreen(
                 eventId = eventId,
