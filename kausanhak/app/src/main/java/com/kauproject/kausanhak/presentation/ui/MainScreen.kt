@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui
 
+import android.content.Context
 import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +40,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.domain.repository.UserDataRepository
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventDestination
@@ -53,8 +56,11 @@ import com.kauproject.kausanhak.presentation.ui.theme.MYPAGE
 
 // 메인뷰
 @Composable
-fun MainScreen(){
+fun MainScreen(
+    onLoginScreen: () -> Unit
+){
     val navController = rememberNavController()
+    val context = LocalContext.current
 
     NavHost(
         navController = navController,
@@ -76,7 +82,11 @@ fun MainScreen(){
             ChatBotScreen(navController = navController)
         }
         composable(route = BottomNavItem.Mypage.screenRoute){
-            MyPageScreen(navController = navController)
+            MyPageScreen(
+                navController = navController,
+                onLoginScreen = onLoginScreen,
+                context = context
+            )
         }
 
         composable(

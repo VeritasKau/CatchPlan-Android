@@ -2,8 +2,9 @@ package com.kauproject.kausanhak.domain.model
 
 data class UserData(
     var name: String = "",
-    var token: String? = null,
-    var num: String? = null,
+    var platform: String = "",
+    var token: String = "",
+    var num: String = "",
     var gender: String = "",
     var mbti: String = "",
     var firstFavorite: String = "",

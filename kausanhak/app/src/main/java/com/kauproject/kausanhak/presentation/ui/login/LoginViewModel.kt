@@ -52,6 +52,7 @@ class LoginViewModel(
                 UserApiClient.instance.me { user, _ ->
                     viewModelScope.launch {
                         userDataRepository.setUserData("userNum", user?.id.toString())
+                        userDataRepository.setUserData("platform", KAKAO)
                     }
                     _userData.update { it->
                         it.copy(
@@ -59,7 +60,7 @@ class LoginViewModel(
                             platform = KAKAO
                         )
                     }
-                    getToken(user?.id.toString())
+                    getToken(user?.id.toString(), userDataRepository)
                 }
             }
         }else{
@@ -71,6 +72,7 @@ class LoginViewModel(
                         val userId = result.profile?.id.toString()
                         viewModelScope.launch {
                             userDataRepository.setUserData("userNum", result.profile?.id.toString())
+                            userDataRepository.setUserData("platform", NAVER)
                         }
                         _userData.update { it->
                             it.copy(
@@ -78,7 +80,7 @@ class LoginViewModel(
                                 platform = NAVER
                             )
                         }
-                        getToken(userId)
+                        getToken(userId, userDataRepository)
                     }
                 })
 
@@ -86,21 +88,25 @@ class LoginViewModel(
         }
     }
 
-    fun getToken(userId: String){
-        viewModelScope.launch(Dispatchers.IO) {
-            val request = SignInRequest(
-                uniqueUserInfo = userId
-            )
-            val signInResponse = signInService.signInInform(request)
-            val token = signInResponse.body()?.accessToken
-            val statusCode = signInResponse.code()
+    fun getToken(
+        userId: String,
+        userDataRepository: UserDataRepository
+    ){
+        if(userDataRepository.getTokenData().value == ""){
+            viewModelScope.launch(Dispatchers.IO) {
+                val request = SignInRequest(
+                    uniqueUserInfo = userId
+                )
+                val signInResponse = signInService.signInInform(request)
+                val token = signInResponse.body()?.accessToken
+                val statusCode = signInResponse.code()
 
-            if(statusCode == 200){
-                userDataRepository.setUserData("token", token!!)
-            }else{
-                Log.d("TokenError", "$statusCode")
+                if(statusCode == 200){
+                    userDataRepository.setUserData("token", token!!)
+                }else{
+                    Log.d("TokenError", "$statusCode")
+                }
             }
-
         }
 
     }

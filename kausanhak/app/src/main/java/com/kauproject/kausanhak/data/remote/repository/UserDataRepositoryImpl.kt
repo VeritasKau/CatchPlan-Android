@@ -32,6 +32,7 @@ class UserDataRepositoryImpl @Inject constructor(
         private val USERNUM_KEY = stringPreferencesKey("userNum")
         private val TOKEN_KEY = stringPreferencesKey("token")
         private val NAME_KEY = stringPreferencesKey("name")
+        private val PLATFORM_KEY = stringPreferencesKey("platform")
         private val GENDER_KEY = stringPreferencesKey("gender")
         private val MBTI_KEY = stringPreferencesKey("mbti")
         private val FAV_FIRST_KEY = stringPreferencesKey("first")
@@ -64,11 +65,16 @@ class UserDataRepositoryImpl @Inject constructor(
                 }
                 "token" -> {
                     _tokenLiveData.postValue(value)
+                    _userData.value.token = value
                     TOKEN_KEY
                 }
                 "name" -> {
                     _userData.value.name = value
                     NAME_KEY
+                }
+                "platform" -> {
+                    _userData.value.platform = value
+                    PLATFORM_KEY
                 }
                 "gender" -> {
                     _userData.value.gender = value
@@ -101,8 +107,9 @@ class UserDataRepositoryImpl @Inject constructor(
     }
 
     private fun mapperToUserData(preferences: Preferences): UserData{
-        val userNum = preferences[USERNUM_KEY]
+        val userNum = preferences[USERNUM_KEY] ?: ""
         val name = preferences[NAME_KEY] ?: ""
+        val platform = preferences[PLATFORM_KEY] ?: ""
         val token = preferences[TOKEN_KEY] ?: ""
         val gender = preferences[GENDER_KEY] ?: ""
         val mbti = preferences[MBTI_KEY] ?: ""
@@ -110,6 +117,6 @@ class UserDataRepositoryImpl @Inject constructor(
         val second = preferences[FAV_SEC_KEY] ?: ""
         val third = preferences[FAV_THR_KEY] ?: ""
 
-        return UserData(name, token, userNum, gender, mbti, first, second, third)
+        return UserData(name, platform, token, userNum, gender, mbti, first, second, third)
     }
 }

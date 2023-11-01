@@ -65,6 +65,8 @@
 
     <!--MyPage-->
     <string name="myPage_bottomItem">MyPage</string>
+    <string name="myPage_logout">로그아웃</string>
+    <string name="myPage_delete">회원탈퇴</string>
 
     <!--Detail page-->
     <string name="detail_date_pick">일정등록</string>

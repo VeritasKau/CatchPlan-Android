@@ -2,6 +2,7 @@ package com.kauproject.kausanhak.data.module
 
 import com.kauproject.kausanhak.data.remote.AppInterceptor
 import com.kauproject.kausanhak.data.remote.service.info.InformSaveService
+import com.kauproject.kausanhak.data.remote.service.login.DeleteUserService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -13,6 +14,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -62,5 +64,10 @@ class ApiModule {
         return retrofit.create(InformSaveService::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun provideDeleteUserService(retrofit: Retrofit): DeleteUserService{
+        return retrofit.create(DeleteUserService::class.java)
+    }
 
 }

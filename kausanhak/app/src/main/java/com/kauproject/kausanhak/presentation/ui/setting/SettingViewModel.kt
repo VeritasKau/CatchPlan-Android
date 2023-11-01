@@ -108,9 +108,9 @@ class SettingViewModel @Inject constructor(
         emit(State.Loading)
 
         val request = InformSaveRequest(
-            genre1 = userInfo.value.firstFavorite,
-            genre2 = userInfo.value.secondFavorite,
-            genre3 = userInfo.value.thirdFavorite,
+            genre1 = mapperToFav(userInfo.value.firstFavorite),
+            genre2 = mapperToFav(userInfo.value.secondFavorite),
+            genre3 = mapperToFav(userInfo.value.thirdFavorite),
             mbti = userInfo.value.mbti,
             name = userInfo.value.name,
             sex = userInfo.value.gender
@@ -139,6 +139,16 @@ class SettingViewModel @Inject constructor(
         }
     }
 }
+
+private fun mapperToFav(fav: String): String{
+    return when(fav){
+        "뮤자컬" -> "musical" "콘서트" -> "concert" "연극" -> "drama"
+        "클래식" -> "classic" "지역행사" -> "korea" "레저/캠핑" -> "camping"
+        "전시회/박물관" -> "exhibition" "아동/가족" -> "kids"
+        else -> ""
+    }
+}
+
 
 
 data class ChoiceMbti(

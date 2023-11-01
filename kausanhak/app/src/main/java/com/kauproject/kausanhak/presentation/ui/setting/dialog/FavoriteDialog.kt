@@ -173,7 +173,7 @@ private fun getFavoriteList(): List<String>{
 
     for(i in 0 until 3){
         if(i < size){
-            result.add(mapperToFav(selectFavorite[i]))
+            result.add(selectFavorite[i])
         }else{
             result.add("")
         }
@@ -182,12 +182,3 @@ private fun getFavoriteList(): List<String>{
     return result
 }
 
-private fun mapperToFav(fav: String): String{
-    return when(fav){
-        "뮤자컬" -> "musical" "콘서트" -> "concert" "연극" -> "drama"
-        "클래식" -> "classic" "지역행사" -> "korea" "레저/캠핑" -> "camping"
-        "전시회/박물관" -> "exhibition" "아동/가족" -> "kids"
-        else -> ""
-    }
-
-}
