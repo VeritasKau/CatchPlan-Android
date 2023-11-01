@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.data.remote.repository
 
+import android.util.Log
 import com.kauproject.kausanhak.data.db.EventDateDAO
 import com.kauproject.kausanhak.data.model.EventDateEntity
 import com.kauproject.kausanhak.domain.Result
@@ -23,15 +24,20 @@ class EventDateRepositoryImpl(
         return eventDateDao.readEventDate()
     }
 
-    fun getAllEvent() = flow {
+    override fun getAllEvent(): Flow<Result<List<EventDateEntity>>> = flow {
         emit(Result.Loading)
         eventDateDao.readEventDate().collect{
             if(it.isEmpty()){
+                Log.d("EventDateRepo", "isEmpty")
                 emit(Result.Empty)
             }else{
+                Log.d("EventDateRepo", "isSuccess")
                 emit(Result.Success(it))
             }
         }
-    }.catch { e -> emit(Result.Error(e)) }
+    }.catch { e ->
+        emit(Result.Error(e))
+        Log.d("EventDateRepo", "ERROR")
+    }
 
 }

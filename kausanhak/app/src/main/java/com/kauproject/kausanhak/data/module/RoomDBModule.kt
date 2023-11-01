@@ -1,5 +1,7 @@
 package com.kauproject.kausanhak.data.module
 
+import android.app.Application
+import androidx.room.Room
 import com.kauproject.kausanhak.data.db.EventDateDAO
 import com.kauproject.kausanhak.data.db.EventDateDB
 import dagger.Module
@@ -15,5 +17,17 @@ object RoomDBModule {
     @Singleton
     fun provideEventDateDAO(eventDateDB: EventDateDB): EventDateDAO{
         return eventDateDB.eventDateDAO()
+    }
+
+    @Provides
+    @Singleton
+    fun provideEventDateDB(application: Application): EventDateDB{
+        return Room.databaseBuilder(
+            application,
+            EventDateDB::class.java,
+            "event_data_db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }

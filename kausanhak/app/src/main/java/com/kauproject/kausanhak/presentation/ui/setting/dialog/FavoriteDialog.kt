@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,10 +20,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,25 +31,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kauproject.kausanhak.R
-import com.kauproject.kausanhak.presentation.ui.setting.SettingViewModel
-import com.kauproject.kausanhak.presentation.ui.setting.favoriteData
-import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.ui.setting.favData
 
 private val selectFavorite = ArrayList<String>()
 
 @Composable
 fun FavoriteDialog(
     showDialog: (Boolean) -> Unit,
-    setFavoriteData: (List<String?>) -> Unit
+    setFavoriteData: (List<String>) -> Unit
 ){
-    val viewModel: SettingViewModel = viewModel()
-
     Dialog(onDismissRequest = { showDialog(false) }) {
         Surface(
             modifier = Modifier
@@ -61,7 +53,6 @@ fun FavoriteDialog(
             color = Color.White
         ) {
             FavoriteDialogContent(
-                viewModel = viewModel,
                 showDialog = showDialog,
                 setFavoriteData = setFavoriteData,
             )
@@ -71,12 +62,10 @@ fun FavoriteDialog(
 
 @Composable
 fun FavoriteDialogContent(
-    viewModel: SettingViewModel,
     showDialog: (Boolean) -> Unit,
-    setFavoriteData: (List<String?>) -> Unit,
+    setFavoriteData: (List<String>) -> Unit,
 ){
-    val favoriteData by viewModel.userInfo.collectAsState()
-    var cnt by remember { mutableStateOf(0) }
+    var cnt by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -96,7 +85,6 @@ fun FavoriteDialogContent(
         )
         Spacer(modifier = Modifier.padding(vertical = 20.dp))
         SetFavoriteButton(
-            viewModel = viewModel,
             onCompleteBtnCallBack = { cnt = it }
         )
         Spacer(modifier = Modifier.padding(vertical = 20.dp))
@@ -128,17 +116,16 @@ fun FavoriteDialogContent(
 
 @Composable
 fun SetFavoriteButton(
-    viewModel: SettingViewModel,
     onCompleteBtnCallBack: (Int) -> Unit
 ){
     val selectedList = remember{ mutableStateListOf<Boolean>() }
-    selectedList.addAll(List(favoriteData.size){false})
+    selectedList.addAll(List(favData.size){false})
     var cnt = 0
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2)
     ){
-        itemsIndexed(favoriteData){ index, item ->
+        itemsIndexed(favData){ index, item ->
             val selected = selectedList[index]
             val bgColor = if (selected) colorResource(id = R.color.purple_main) else Color.White
             val txtColor = if (selected) Color.White else colorResource(id = R.color.purple_main)
@@ -180,25 +167,27 @@ fun SetFavoriteButton(
 
 }
 
-private fun getFavoriteList(): List<String?>{
+private fun getFavoriteList(): List<String>{
     val size = selectFavorite.size
-    val result = mutableListOf<String?>()
+    val result = mutableListOf<String>()
 
     for(i in 0 until 3){
         if(i < size){
-            result.add(selectFavorite[i])
+            result.add(mapperToFav(selectFavorite[i]))
         }else{
-            result.add(null)
+            result.add("")
         }
     }
     selectFavorite.clear()
     return result
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewFavoriteDialog(){
-    KausanhakTheme {
-        FavoriteDialog(showDialog = {}, setFavoriteData = {})
+private fun mapperToFav(fav: String): String{
+    return when(fav){
+        "뮤자컬" -> "musical" "콘서트" -> "concert" "연극" -> "drama"
+        "클래식" -> "classic" "지역행사" -> "korea" "레저/캠핑" -> "camping"
+        "전시회/박물관" -> "exhibition" "아동/가족" -> "kids"
+        else -> ""
     }
+
 }

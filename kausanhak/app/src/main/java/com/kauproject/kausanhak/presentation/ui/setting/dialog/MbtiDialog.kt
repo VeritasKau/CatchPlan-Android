@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.ui.setting.SettingViewModel
@@ -44,7 +45,7 @@ fun MbtiDialog(
     showDialog: (Boolean) -> Unit,
     setMbtiData: (String) -> Unit
 ){
-    val viewModel: SettingViewModel = viewModel()
+    val viewModel: SettingViewModel = hiltViewModel()
     Dialog(onDismissRequest = { showDialog(false) }) {
         Surface(
             modifier = Modifier

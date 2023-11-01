@@ -6,9 +6,7 @@ import com.kauproject.kausanhak.domain.model.UserData
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserDataRepository {
-    suspend fun getUserData(): Dummy
+    suspend fun getUserData(): UserData
     suspend fun setUserData(key: String, value: String)
-
-    fun getUserNumData(): LiveData<String?>
-    fun getTokenData(): LiveData<String>
+    fun getTokenData(): LiveData<String?>
 }

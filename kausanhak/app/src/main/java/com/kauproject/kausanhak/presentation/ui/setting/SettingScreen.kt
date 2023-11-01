@@ -32,6 +32,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,6 +45,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,51 +58,68 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.UserData
 import com.kauproject.kausanhak.presentation.pageanimation.horizontallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.setting.dialog.FavoriteDialog
 import com.kauproject.kausanhak.presentation.ui.setting.dialog.MbtiDialog
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+
 @Composable
 fun SettingScreen(
     onComplete: () -> Unit
 ){
-    val viewModel: SettingViewModel = viewModel()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val viewModel: SettingViewModel = hiltViewModel()
     Surface(
         modifier = Modifier
             .fillMaxSize(),
         color = Color.Transparent
     ) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 10.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                modifier = Modifier.padding(top = 20.dp),
-                text = stringResource(id = R.string.setting_title),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
+        Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            containerColor = Color.Transparent
+        ) {paddingValues ->
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .padding(paddingValues)
+                ,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(top = 20.dp),
+                    text = stringResource(id = R.string.setting_title),
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
 
-            Spacer(modifier = Modifier.padding(10.dp))
-            CreateNameOutTextField(viewModel = viewModel)
-            HorizontalDivider(modifier = Modifier.padding(bottom = 20.dp))
-            CreateGenderButton(viewModel = viewModel)
-            HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
-            CreateMbtiButton(viewModel = viewModel)
-            HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
-            CreateFavoriteButton(viewModel = viewModel)
-            CreateCompleteButton(
-                viewModel = viewModel,
-                onComplete = onComplete
-            )
+                Spacer(modifier = Modifier.padding(10.dp))
+                CreateNameOutTextField(viewModel = viewModel)
+                HorizontalDivider(modifier = Modifier.padding(bottom = 20.dp))
+                CreateGenderButton(viewModel = viewModel)
+                HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
+                CreateMbtiButton(viewModel = viewModel)
+                HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
+                CreateFavoriteButton(viewModel = viewModel)
+                CreateCompleteButton(
+                    viewModel = viewModel,
+                    onComplete = onComplete,
+                    snackbarHostState = snackbarHostState
+                )
+
+            }
 
         }
 
@@ -257,10 +279,13 @@ fun CreateFavoriteButton(
 @Composable
 fun CreateCompleteButton(
     viewModel: SettingViewModel,
-    onComplete: () -> Unit
+    onComplete: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ){
     var checkState by remember { mutableStateOf(false)}
     val userInfo by viewModel.userInfo.collectAsState()
+    val error = stringResource(id = R.string.server_error)
+    val scope = rememberCoroutineScope()
 
     checkState = checkUserAllData(userInfo)
 
@@ -276,7 +301,26 @@ fun CreateCompleteButton(
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_main)),
         enabled = checkState,
-        onClick = onComplete
+        onClick = {
+            scope.launch {
+                viewModel.completeUserData().collect{ state->
+                    when(state){
+                        is State.Loading -> { Log.d("state", "loading")}
+                        is State.Success -> {
+                            Log.d("state", "success")
+                            onComplete()
+                        }
+                        is State.ServerError -> {
+                            snackbarHostState.showSnackbar(
+                                message = error+"${state.data}",
+                                duration = SnackbarDuration.Short)
+                        }
+                        is State.Error -> { Log.d("state", "error") }
+                    }
+                }
+            }
+            viewModel.saveUserData()
+        }
     ) {
         Text(
             text = stringResource(id = R.string.setting_complete),
@@ -290,9 +334,9 @@ fun CreateCompleteButton(
 private fun checkFavorite(
     userInfo: UserData
 ): Boolean{
-    return userInfo.firstFavorite != null ||
-            userInfo.secondFavorite != null ||
-            userInfo.thirdFavorite != null
+    return userInfo.firstFavorite != "" ||
+            userInfo.secondFavorite != "" ||
+            userInfo.thirdFavorite != ""
 }
 
 private fun checkUserAllData(
@@ -308,7 +352,7 @@ private fun checkUserAllData(
 @Preview(showBackground = true)
 @Composable
 fun PreviewSettingView(){
-    val viewModel = SettingViewModel()
+    val viewModel:SettingViewModel = hiltViewModel()
     KausanhakTheme {
         SettingScreen(onComplete = {})
     }

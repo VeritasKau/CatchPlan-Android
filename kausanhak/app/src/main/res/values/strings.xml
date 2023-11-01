@@ -75,4 +75,7 @@
     <!--Snack Bar-->
     <string name="snack_confirm">일정등록 완료!</string>
 
+    <!--Server Response-->
+    <string name="server_error">네트워크 오류:</string>
+
 </resources>

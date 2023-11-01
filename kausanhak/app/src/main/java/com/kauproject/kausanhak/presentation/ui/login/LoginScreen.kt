@@ -56,10 +56,6 @@ fun LoginScreen(
         onLoginButtonClicked()
     }
 
-    LaunchedEffect(Unit){
-        Log.d("TEST login", "${userDataRepository.getUserData().userNum}")
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

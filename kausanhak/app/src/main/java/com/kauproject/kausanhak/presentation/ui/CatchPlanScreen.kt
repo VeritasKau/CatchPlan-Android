@@ -33,7 +33,7 @@ fun CatchPlanApp(
     val isMember = remember{ mutableStateOf(false) }
 
     LaunchedEffect(Unit){
-        isMember.value = userDataRepository.getUserData().userNum != null
+        isMember.value = userDataRepository.getTokenData().value != ""
     }
 
     val startScreen = if(isMember.value) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name

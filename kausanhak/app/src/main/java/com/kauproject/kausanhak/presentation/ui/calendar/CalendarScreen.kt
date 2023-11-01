@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui.calendar
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -51,9 +52,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.domain.Result
 import com.kauproject.kausanhak.presentation.ui.BottomNavItem
 import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
 import com.kauproject.kausanhak.presentation.util.clickable
@@ -68,12 +71,14 @@ import com.kizitonwose.calendar.core.OutDateStyle
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.Year
 import java.time.YearMonth
 
-private val events = eventsList().groupBy { it.time.toLocalDate() }
+private val events = eventsList().groupBy { it.date.toLocalDate() }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,6 +92,13 @@ fun CalendarScreen(navController: NavHostController){
         derivedStateOf {
             val date = selection?.date
             if(date == null) emptyList() else events[date].orEmpty()
+        }
+    }
+    val viewModel: CalendarScreenViewModel = hiltViewModel()
+    LaunchedEffect(Unit){
+        val state = viewModel.date
+        state.onEach {
+            Log.d("Coroutine Test", "$it")
         }
     }
 

@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -119,6 +120,7 @@ fun EventDetailScreen(
     var setDate by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val viewModel: EventDetailViewModel = hiltViewModel()
 
     Scaffold(
         modifier = Modifier,
@@ -145,7 +147,7 @@ fun EventDetailScreen(
 
             if(showDatePicker){
                 EventDatePickerDialog(
-                    onDateSelected = { Log.d("test getData", it) },
+                    onDateSelected = { viewModel.addEventDate(event.id, it, event.name, event.place) },
                     onDismiss = { showDatePicker = false },
                     event = event,
                     scope = scope,

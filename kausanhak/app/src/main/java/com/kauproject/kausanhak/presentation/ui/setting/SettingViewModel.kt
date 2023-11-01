@@ -1,19 +1,37 @@
 package com.kauproject.kausanhak.presentation.ui.setting
 
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.kauproject.kausanhak.data.remote.request.InformSaveRequest
+import com.kauproject.kausanhak.data.remote.service.info.InformSaveService
+import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.UserData
+import com.kauproject.kausanhak.domain.repository.UserDataRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SettingViewModel: ViewModel() {
+@HiltViewModel
+class SettingViewModel @Inject constructor(
+    private val userDataRepository: UserDataRepository,
+): ViewModel() {
+
+    companion object{
+        const val TAG = "SettingVM"
+    }
+
+    @Inject
+    lateinit var informSaveService: InformSaveService
+
     private val _userInfo = MutableStateFlow(UserData())
     val userInfo: StateFlow<UserData>
         get() = _userInfo.asStateFlow()
@@ -76,7 +94,7 @@ class SettingViewModel: ViewModel() {
         }
     }
 
-    fun setUserFavorite(favoriteList: List<String?>){
+    fun setUserFavorite(favoriteList: List<String>){
         _userInfo.update {
             it.copy(
                 firstFavorite = favoriteList[0],
@@ -85,7 +103,43 @@ class SettingViewModel: ViewModel() {
             )
         }
     }
+
+    fun completeUserData(): Flow<State<Int>> = flow {
+        emit(State.Loading)
+
+        val request = InformSaveRequest(
+            genre1 = userInfo.value.firstFavorite,
+            genre2 = userInfo.value.secondFavorite,
+            genre3 = userInfo.value.thirdFavorite,
+            mbti = userInfo.value.mbti,
+            name = userInfo.value.name,
+            sex = userInfo.value.gender
+        )
+        val response = informSaveService.informSave(request)
+        val statusCode = response.code()
+
+        Log.d(TAG, "statusCode:$statusCode")
+        if(statusCode == 200){
+            emit(State.Success(statusCode))
+        }else{
+            emit(State.ServerError(statusCode))
+        }
+    }.catch { e->
+        emit(State.Error(e))
+    }
+
+    fun saveUserData(){
+        viewModelScope.launch {
+            userDataRepository.setUserData("name", userInfo.value.name)
+            userDataRepository.setUserData("gender", userInfo.value.gender)
+            userDataRepository.setUserData("mbti", userInfo.value.mbti)
+            userDataRepository.setUserData("first", userInfo.value.firstFavorite)
+            userDataRepository.setUserData("second", userInfo.value.secondFavorite)
+            userDataRepository.setUserData("third", userInfo.value.thirdFavorite)
+        }
+    }
 }
+
 
 data class ChoiceMbti(
     val first: String = "",

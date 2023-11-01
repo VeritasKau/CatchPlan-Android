@@ -22,24 +22,25 @@ import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.lang.Exception
 import javax.inject.Inject
 
 class LoginViewModel(
     context: Context,
-    userDataRepository: UserDataRepository,
-    signInService: SignInService
+    private val userDataRepository: UserDataRepository,
+    private val signInService: SignInService
 ): ViewModel() {
 
     private val kakaoLoginManager = KakaoLoginManager(context)
     private val naverLoginManager = NaverLoginManager(context)
-    private val userDataRepository = userDataRepository
-    private val signInService = signInService
 
     private val _userData = MutableStateFlow(LoginData())
     val userData: StateFlow<LoginData>
@@ -58,6 +59,7 @@ class LoginViewModel(
                             platform = KAKAO
                         )
                     }
+                    getToken(user?.id.toString())
                 }
             }
         }else{
@@ -76,14 +78,7 @@ class LoginViewModel(
                                 platform = NAVER
                             )
                         }
-                        viewModelScope.launch {
-                            val request = SignInRequest(
-                                uniqueUserInfo = userId
-                            )
-                            val signInResponse = signInService.signInInform(request)
-                            val response = signInResponse.body()
-                            Log.d("TEST API", "token:${response?.accessToken}")
-                        }
+                        getToken(userId)
                     }
                 })
 
@@ -91,11 +86,24 @@ class LoginViewModel(
         }
     }
 
-    fun getUserId(): LiveData<Dummy>{
-        return liveData {
-            emit(userDataRepository.getUserData())
+    fun getToken(userId: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            val request = SignInRequest(
+                uniqueUserInfo = userId
+            )
+            val signInResponse = signInService.signInInform(request)
+            val token = signInResponse.body()?.accessToken
+            val statusCode = signInResponse.code()
+
+            if(statusCode == 200){
+                userDataRepository.setUserData("token", token!!)
+            }else{
+                Log.d("TokenError", "$statusCode")
+            }
+
         }
 
     }
+
 
 }
