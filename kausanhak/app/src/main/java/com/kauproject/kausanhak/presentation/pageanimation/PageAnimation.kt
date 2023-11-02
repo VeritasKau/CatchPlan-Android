@@ -2,6 +2,8 @@ package com.kauproject.kausanhak.presentation.pageanimation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -55,4 +57,17 @@ fun NavGraphBuilder.verticallyAnimatedComposable(
             slideOutOfContainer(SlideDirection.Down, animationSpec = tween(animDurationMillis))
         },
     )
+}
+
+fun NavGraphBuilder.noAnimatedComposable(
+    route: String,
+    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit,
+){
+    composable(
+        route = route,
+        content = content,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }
+    )
+
 }

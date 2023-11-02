@@ -41,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
+import com.kauproject.kausanhak.presentation.pageanimation.noAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventDestination
@@ -66,22 +67,22 @@ fun MainScreen(
         navController = navController,
         startDestination = BottomNavItem.Calendar.screenRoute
         ){
-        composable(route = BottomNavItem.Calendar.screenRoute){
+        noAnimatedComposable(route = BottomNavItem.Calendar.screenRoute){
             CalendarScreen(navController = navController)
         }
-        composable(route = BottomNavItem.Event.screenRoute){
+        noAnimatedComposable(route = BottomNavItem.Event.screenRoute){
             EventScreen(
                 onEventClick = {id: Int ->
                     navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")},
                 navController = navController)
         }
-        composable(route = BottomNavItem.Favorite.screenRoute){
+        noAnimatedComposable(route = BottomNavItem.Favorite.screenRoute){
             FavoriteScreen(navController = navController)
         }
-        composable(route = BottomNavItem.Chatbot.screenRoute){
+        noAnimatedComposable(route = BottomNavItem.Chatbot.screenRoute){
             ChatBotScreen(navController = navController)
         }
-        composable(route = BottomNavItem.Mypage.screenRoute){
+        noAnimatedComposable(route = BottomNavItem.Mypage.screenRoute){
             MyPageScreen(
                 navController = navController,
                 onLoginScreen = onLoginScreen,

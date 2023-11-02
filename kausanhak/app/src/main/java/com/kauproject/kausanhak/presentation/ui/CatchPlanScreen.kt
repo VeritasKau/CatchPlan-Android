@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
+import com.kauproject.kausanhak.presentation.pageanimation.noAnimatedComposable
 import com.kauproject.kausanhak.presentation.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
 import com.kauproject.kausanhak.presentation.ui.setting.SettingScreen
@@ -39,20 +40,21 @@ fun CatchPlanApp(
     val isMember = remember { mutableStateOf(false) }
     val isDelete = remember{ mutableStateOf(false) }
 
-    LaunchedEffect(key1 = userDataRepository.getTokenData().value){
+    LaunchedEffect(Unit){
         isMember.value = userDataRepository.getUserData().token != "" && userDataRepository.getUserData().num != ""
         isDelete.value = userDataRepository.getUserData().firstFavorite == ""
     }
 
     val startScreen = if(isMember.value) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name
     val loginScreen = if(isDelete.value) CatchPlanScreen.Setting.name else CatchPlanScreen.Main.name
+    Log.d(TAG, "start:$startScreen login:$loginScreen")
 
     NavHost(
         modifier = Modifier,
         navController = navController,
         startDestination = startScreen
     ){
-        composable(route = CatchPlanScreen.Login.name){
+        noAnimatedComposable(route = CatchPlanScreen.Login.name){
             LoginScreen(
                 onLoginButtonClicked = {
                     navController.navigate(loginScreen){
@@ -64,7 +66,7 @@ fun CatchPlanApp(
                 signInService = signInService
             )
         }
-        composable(route = CatchPlanScreen.Setting.name){
+        noAnimatedComposable(route = CatchPlanScreen.Setting.name){
             SettingScreen(
                 onComplete = {
                     navController.navigate(CatchPlanScreen.Main.name){

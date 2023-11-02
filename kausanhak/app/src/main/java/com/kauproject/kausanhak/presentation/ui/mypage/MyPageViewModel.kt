@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.sdk.user.UserApiClient
 import com.kauproject.kausanhak.data.remote.service.login.DeleteUserService
+import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
 import com.kauproject.kausanhak.presentation.util.Constants.KAKAO
 import com.kauproject.kausanhak.presentation.util.Constants.NAVER
@@ -13,6 +14,9 @@ import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,26 +34,31 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
-    fun deleteUser(context: Context){
-        viewModelScope.launch {
-            val platform = userDataRepository.getUserData().platform
-            val statusCode = deleteUserService.deleteUser().code()
+    fun deleteUser(
+        context: Context
+    ): Flow<State<Int>> = flow {
+        emit(State.Loading)
 
-            if(statusCode == 200){
-                when(platform){
-                    KAKAO -> { kakaoDelete() }
-                    NAVER -> { naverDelete(context) }
-                }
-                userDataRepository.setUserData("userNum", "")
-                userDataRepository.setUserData("token", "")
-                userDataRepository.setUserData("first", "")
-                userDataRepository.setUserData("second", "")
-                userDataRepository.setUserData("third", "")
-                Log.d(TAG,"SUCCESS DELETE")
-            }else{
-                Log.d(TAG, "DELETE ERROR")
+        val platform = userDataRepository.getUserData().platform
+        val statusCode = deleteUserService.deleteUser().code()
+
+        if(statusCode == 200){
+            emit(State.Success(statusCode))
+            when(platform){
+                KAKAO -> { kakaoDelete() }
+                NAVER -> { naverDelete(context) }
             }
+            userDataRepository.setUserData("userNum", "")
+            userDataRepository.setUserData("token", "")
+            userDataRepository.setUserData("first", "")
+            userDataRepository.setUserData("second", "")
+            userDataRepository.setUserData("third", "")
+            Log.d(TAG,"SUCCESS DELETE")
+        }else{
+            emit(State.ServerError(statusCode))
         }
+    }.catch { e->
+        emit(State.Error(e))
     }
 
     private fun kakaoDelete(){

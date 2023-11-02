@@ -1,6 +1,7 @@
 package com.kauproject.kausanhak.data.module
 
 import com.kauproject.kausanhak.data.remote.AppInterceptor
+import com.kauproject.kausanhak.data.remote.service.event.GetEventService
 import com.kauproject.kausanhak.data.remote.service.info.InformSaveService
 import com.kauproject.kausanhak.data.remote.service.login.DeleteUserService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
@@ -68,6 +69,12 @@ class ApiModule {
     @Provides
     fun provideDeleteUserService(retrofit: Retrofit): DeleteUserService{
         return retrofit.create(DeleteUserService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetEventService(retrofit: Retrofit): GetEventService{
+        return retrofit.create(GetEventService::class.java)
     }
 
 }

@@ -115,12 +115,13 @@ fun EventDetailScreen(
     eventId: Int,
     navController: NavController
 ){
-    val event = remember(eventId) { EventRepo.getEvent(eventId) }
+    //val event = remember(eventId) { EventRepo.getEvent(eventId) }
     var showDatePicker by remember { mutableStateOf(false) }
     var setDate by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val viewModel: EventDetailViewModel = hiltViewModel()
+    val event = remember(eventId) { viewModel.findEvent(eventId) }
 
     Scaffold(
         modifier = Modifier,

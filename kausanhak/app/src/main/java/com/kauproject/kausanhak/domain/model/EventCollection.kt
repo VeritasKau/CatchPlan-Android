@@ -1,9 +1,9 @@
 package com.kauproject.kausanhak.domain.model
 
 data class EventCollection(
-    val id: Int,
-    val name: String,
-    val events: List<Event>
+    val id: Int = -1,
+    val name: String = "",
+    val events: List<Event> = emptyList()
 )
 
 object EventRepo{
