@@ -67,7 +67,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.UserData
-import com.kauproject.kausanhak.presentation.pageanimation.horizontallyAnimatedComposable
+import com.kauproject.kausanhak.presentation.anim.pageanimation.horizontallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.setting.dialog.FavoriteDialog
 import com.kauproject.kausanhak.presentation.ui.setting.dialog.MbtiDialog
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme

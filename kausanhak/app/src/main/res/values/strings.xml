@@ -73,11 +73,16 @@
     <string name="detail_link">예매링크</string>
     <string name="detail_scrap">스크랩</string>
     <string name="detail_back">back</string>
+    <string name="detail_place">장소: </string>
+    <string name="detail_sub_title">모든 행사를 한번에, 캐치플랜!</string>
 
     <!--Snack Bar-->
     <string name="snack_confirm">일정등록 완료!</string>
 
     <!--Server Response-->
     <string name="server_error">네트워크 오류:</string>
+
+    <!--Lottie -->
+    <string name="lottie_title">불러오는중</string>
 
 </resources>

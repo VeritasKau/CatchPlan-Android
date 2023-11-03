@@ -17,8 +17,8 @@ import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
-import com.kauproject.kausanhak.presentation.pageanimation.noAnimatedComposable
-import com.kauproject.kausanhak.presentation.pageanimation.verticallyAnimatedComposable
+import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedComposable
+import com.kauproject.kausanhak.presentation.anim.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
 import com.kauproject.kausanhak.presentation.ui.setting.SettingScreen
 import kotlin.contracts.contract

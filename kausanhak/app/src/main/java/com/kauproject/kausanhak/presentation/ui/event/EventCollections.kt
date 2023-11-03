@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui.event
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +41,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,7 +75,10 @@ private val colors
 fun EventCollection(
     eventCollection: EventCollection,
     onEventClick: (Int) -> Unit,
+    onArrowClick: (Int) -> Unit
 ){
+    val TAG = "EventCollection"
+
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -95,7 +98,9 @@ fun EventCollection(
                     .weight(1f)
             )
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    onArrowClick(eventCollection.id)
+                },
                 modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Icon(
@@ -128,6 +133,7 @@ private fun EventCards(
     ){
         itemsIndexed(events){index, event ->
             EventCard(
+                modifier = Modifier,
                 event = event,
                 index = index,
                 onEventClick = onEventClick,
@@ -141,90 +147,100 @@ private fun EventCards(
 }
 
 @Composable
-private fun EventCard(
+fun EventCard(
+    modifier: Modifier,
     event: Event,
     index: Int,
     onEventClick: (Int) -> Unit,
     gradientWidth: Float,
-    scroll: Int
+    scroll: Int,
 ){
     val left = index * with(LocalDensity.current){
         (CardWidth + CardPadding).toPx()
     }
-    Card(
-        modifier = Modifier
-            .size(
-                width = 170.dp,
-                height = 250.dp
-            )
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(5.dp)
-            )
-        ,
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        )
+    Column(
+        modifier = modifier
     ) {
-        Column(
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .clickable(onClick = {
-                    onEventClick(event.id)
-                })
+                .size(
+                    width = 170.dp,
+                    height = 250.dp
+                )
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(5.dp)
+                )
+            ,
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            )
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .height(160.dp)
-                    .fillMaxWidth()
-            ){
-                val gradientOffset = left - (scroll - 3f)
+                    .fillMaxSize()
+                    .clickable(onClick = {
+                        onEventClick(event.id)
+                    })
+            ) {
                 Box(
                     modifier = Modifier
-                        .height(100.dp)
+                        .height(160.dp)
                         .fillMaxWidth()
-                        .background(
-                            Brush.horizontalGradient(
-                                colors = colors,
-                                startX = -gradientOffset,
-                                endX = gradientWidth - gradientOffset,
-                                tileMode = TileMode.Mirror
+                ){
+                    val gradientOffset = left - (scroll - 3f)
+                    Box(
+                        modifier = Modifier
+                            .height(100.dp)
+                            .fillMaxWidth()
+                            .background(
+                                Brush.horizontalGradient(
+                                    colors = colors,
+                                    startX = -gradientOffset,
+                                    endX = gradientWidth - gradientOffset,
+                                    tileMode = TileMode.Mirror
+                                )
                             )
-                        )
-                )
-                EventImage(
-                    imageUrl = event.image,
+                    )
+                    EventImage(
+                        imageUrl = event.image,
+                        modifier = Modifier
+                            .size(120.dp)
+                            .align(Alignment.BottomCenter)
+                        ,
+                        contentDescription = null)
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
                     modifier = Modifier
-                        .size(120.dp)
-                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 15.dp)
+                        .align(Alignment.CenterHorizontally)
                     ,
-                    contentDescription = null)
+                    text = event.name,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(horizontal = 20.dp)
+                    ,
+                    text = event.place,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelSmall
+                )
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                    ,
+                    text = event.date,
+                    style = MaterialTheme.typography.labelSmall
+                )
+
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                ,
-                text = event.name,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                ,
-                text = event.place,
-                style = MaterialTheme.typography.labelSmall
-            )
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                ,
-                text = event.date,
-                style = MaterialTheme.typography.labelSmall
-            )
 
         }
 
@@ -251,7 +267,6 @@ fun EventImage(
                 .crossfade(true)
                 .build(),
             contentDescription = contentDescription,
-            placeholder = painterResource(id = R.drawable.sample),
             contentScale = ContentScale.Crop
         )
 
@@ -260,19 +275,3 @@ fun EventImage(
 }
 
 
-@Preview
-@Composable
-fun PreviewEventCard(){
-    val event = mockTheaterEvents.first()
-    KausanhakTheme {
-        EventCard(
-            event = event,
-            index = 0,
-            onEventClick = {},
-            gradientWidth = gradientWidth,
-            scroll = 1
-        )
-
-    }
-
-}

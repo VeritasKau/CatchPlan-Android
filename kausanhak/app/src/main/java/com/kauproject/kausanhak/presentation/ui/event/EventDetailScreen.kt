@@ -1,7 +1,7 @@
 package com.kauproject.kausanhak.presentation.ui.event
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,16 +37,13 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +57,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -69,6 +67,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -78,20 +77,18 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.Event
-import com.kauproject.kausanhak.domain.model.EventRepo
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import kotlin.math.max
 import kotlin.math.min
-import androidx.compose.ui.unit.lerp as lerp
 
-private val BottomBarHeight = 56.dp
 private val TitleHeight = 128.dp
 private val GradientScroll = 180.dp
 private val ImageOverlap = 115.dp
@@ -120,7 +117,7 @@ fun EventDetailScreen(
     var setDate by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val viewModel: EventDetailViewModel = hiltViewModel()
+    val viewModel: EventDetailScreenViewModel = hiltViewModel()
     val event = remember(eventId) { viewModel.findEvent(eventId) }
 
     Scaffold(
@@ -143,7 +140,7 @@ fun EventDetailScreen(
             Header()
             Body(scroll = scroll, event = event)
             Title(event){ scroll.value }
-            Image(event) { scroll.value }
+            EventImage(event) { scroll.value }
             BackArrow(backPress = {navController.navigateUp()})
 
             if(showDatePicker){
@@ -171,6 +168,7 @@ private fun EventDetailBottomBar(
     val isScrap =
         if(selected) painterResource(id = R.drawable.ic_scrap_abled)
         else painterResource(id = R.drawable.ic_scrap_enabled)
+    val uriHandler = LocalUriHandler.current
 
     Column(
         modifier = Modifier
@@ -206,7 +204,7 @@ private fun EventDetailBottomBar(
                 ,
                 shape = RoundedCornerShape(7.dp),
                 border = BorderStroke(0.5.dp, colorResource(id = R.color.purple_main)),
-                onClick = { /*TODO*/ }
+                onClick = { uriHandler.openUri(event.url) }
             ) {
                 Text(
                     text = stringResource(id = R.string.detail_link),
@@ -273,11 +271,41 @@ private fun Body(
             ) {
                 Column(
                     modifier = Modifier
-                        .background(Color.White)
+                        .background(Color.White),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val detailContent = event.detailContent
+
                     Spacer(modifier = Modifier.height(ImageOverlap))
                     Spacer(modifier = Modifier.height(TitleHeight))
-                    Spacer(modifier = Modifier.height(16.dp))
+
+
+                    Image(
+                        modifier = Modifier
+                            .size(50.dp)
+                        ,
+                        painter = painterResource(id = R.drawable.ic_app_icon),
+                        contentDescription = null
+                    )
+
+                    Spacer(modifier = Modifier.padding(bottom = 10.dp))
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                        ,
+                        text = event.name,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = colorResource(id = R.color.purple_main)
+                    )
+                    Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                    Text(
+                        text = stringResource(id = R.string.detail_place) + " " + event.place,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.padding(vertical = 2.dp))
+                    Spacer(modifier = Modifier.padding(vertical = 20.dp))
 
                     AsyncImage(
                         modifier = Modifier.fillMaxSize(),
@@ -286,9 +314,19 @@ private fun Body(
                             .crossfade(true)
                             .build(),
                         contentDescription = null,
-                        placeholder = painterResource(id = R.drawable.sample),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+
                     )
+
+                    if(detailContent != ""){
+                        Text(
+                            modifier = Modifier
+                                .padding(horizontal = 15.dp)
+                                .padding(top = 80.dp)
+                            ,
+                            text = detailContent
+                        )
+                    }
                 }
 
             }
@@ -343,7 +381,7 @@ private fun Title(event: Event, scrollProvider: () -> Int){
 }
 
 @Composable
-private fun Image(
+private fun EventImage(
     event: Event,
     scrollProvider: () -> Int
 ){
@@ -449,24 +487,25 @@ private fun EventDatePickerDialog(
     val dateScope = event.date.length
     val date = event.date
     val start = convertDateToMills(date.firstYear(), date.firstMonth(), date.firstDay())
-    val startEnd = convertDateToMills(date.firstYear(), date.firstMonth(), date.firstDay()+1)
+    val current = System.currentTimeMillis()
     var end: Long? = null
 
+    val getStart = if(current > start) current else start
 
-    if(dateScope >= 11){
-        end = convertDateToMills(date.secondYear(), date.secondMonth(), date.secondDay())
+    if(dateScope >= 12){
+        end = convertDateToPlusMills(date.secondYear(), date.secondMonth(), date.secondDay())
     }
     
     // 최초 날짜 설정
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = startEnd,
-        initialDisplayedMonthMillis = start,
+        initialSelectedDateMillis = getStart,
+        initialDisplayedMonthMillis = getStart,
         selectableDates = object: SelectableDates{
         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-            return if(dateScope >= 11){
-                (utcTimeMillis > start) && (utcTimeMillis < end!!)
+            return if(dateScope >= 12){
+                (utcTimeMillis >= getStart) && (utcTimeMillis < end!!)
             }else{
-                (utcTimeMillis > start) && (utcTimeMillis < startEnd)
+                (utcTimeMillis >= getStart) && (utcTimeMillis <= getStart)
             }
         }
     })
@@ -538,9 +577,21 @@ private fun convertMillisToDate(millis: Long): String {
         .format(DateTimeFormatter.ofPattern("uuuu/MM/dd"))
 }
 
+private fun convertDateToPlusMills(year: Int, month: Int, day: Int): Long {
+    val date = LocalDateTime.of(year, month, day, 0, 0)
+    val datePlus = date.plusDays(1)
+    return datePlus.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
+}
+
+private fun convertDateToMinusMills(year: Int, month: Int, day: Int): Long {
+    val date = LocalDateTime.of(year, month, day, 0, 0)
+    val datePlus = date.minusDays(1)
+    return datePlus.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
+}
+
 private fun convertDateToMills(year: Int, month: Int, day: Int): Long {
     val date = LocalDateTime.of(year, month, day, 0, 0)
-    return date.toInstant(ZoneOffset.ofHours(9)).toEpochMilli()
+    return date.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
 }
 
 private fun String.firstYear(): Int{
@@ -556,22 +607,13 @@ private fun String.firstDay(): Int{
 }
 
 private fun String.secondYear(): Int{
-    return this.substring(13, 17).toInt()
+    return this.substring(11, 15).toInt()
 }
 
 private fun String.secondMonth(): Int{
-    return this.substring(18, 20).toInt()
+    return this.substring(16, 18).toInt()
 }
 
 private fun String.secondDay(): Int{
-    return this.substring(21, 23).toInt()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewEventDetailScreen(){
-    val navController = rememberNavController()
-    KausanhakTheme {
-        EventDetailScreen(eventId = 0, navController = navController)
-    }
+    return this.substring(19, 21).toInt()
 }

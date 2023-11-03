@@ -3,6 +3,7 @@ package com.kauproject.kausanhak.data.remote.repository
 import com.kauproject.kausanhak.data.remote.response.GetEventResponse
 import com.kauproject.kausanhak.data.remote.service.event.GetEventService
 import com.kauproject.kausanhak.domain.model.Event
+import com.kauproject.kausanhak.domain.model.EventCollection
 import com.kauproject.kausanhak.domain.repository.EventRepository
 import retrofit2.Response
 
@@ -17,6 +18,7 @@ class EventRepositoryImpl(
     private var exhibitions = emptyList<Event>()
     private var kids = emptyList<Event>()
     private var koreas = emptyList<Event>()
+    private var eventCollection = emptyList<EventCollection>()
 
     override suspend fun fetchEvents() {
         val musicalsResponse = getEvent("musical")
@@ -41,6 +43,51 @@ class EventRepositoryImpl(
             exhibitions = parseResponse(exhibitionResponse)
             kids = parseResponse(kidsResponse)
             koreas = parseResponse(koreaResponse)
+
+            val concert = EventCollection(
+                id = -1,
+                name = "콘서트",
+                events = concerts
+            )
+            val exhibition = EventCollection(
+                id = -2,
+                name = "연극",
+                events = exhibitions
+            )
+            val musical = EventCollection(
+                id = -3,
+                name = "뮤지컬",
+                events = musicals
+            )
+            val drama = EventCollection(
+                id = -4,
+                name = "드라마",
+                events = dramas
+            )
+            val camping = EventCollection(
+                id = -5,
+                name = "캠핑/레저",
+                events = campings
+            )
+            val korea = EventCollection(
+                id = -6,
+                name = "지역행사",
+                events = koreas
+            )
+            val classic = EventCollection(
+                id = -7,
+                name = "클래식",
+                events = classics
+            )
+            val kid = EventCollection(
+                id = -8,
+                name = "아동/가족",
+                events = kids
+            )
+
+            eventCollection = listOf(
+                concert, exhibition, musical, drama, camping, korea, classic, kid
+            )
         }
     }
 
@@ -56,6 +103,7 @@ class EventRepositoryImpl(
                 place = it.place ?: "",
                 date = it.duration ?: "",
                 detailImage = it.detail ?: "",
+                detailContent = it.detail2 ?: "",
                 image = it.image ?: "",
                 url = it.url ?: ""
             )
@@ -63,33 +111,17 @@ class EventRepositoryImpl(
     }
     override fun findEvent(eventId: Int) = getAllEventCollections().find { it.id == eventId }!!
 
+    override fun findEventCollection(eventCollectionId: Int): EventCollection = eventCollection.find { it.id == eventCollectionId }!!
+
     private fun getAllEventCollections(): List<Event>{
         val allEventCollections = mutableListOf<Event>()
 
-        allEventCollections.addAll(musicals)
-        allEventCollections.addAll(campings)
-        allEventCollections.addAll(dramas)
-        allEventCollections.addAll(koreas)
-        allEventCollections.addAll(concerts)
-        allEventCollections.addAll(exhibitions)
-        allEventCollections.addAll(kids)
-        allEventCollections.addAll(classics)
+        eventCollection.forEach { it->
+            allEventCollections.addAll(it.events)
+        }
 
         return allEventCollections
     }
-    override fun getConcert(): List<Event> = concerts
 
-    override fun getDrama(): List<Event> = dramas
-
-    override fun getExhibition(): List<Event> = exhibitions
-
-    override fun getKids(): List<Event> = kids
-
-    override fun getClassic(): List<Event> = classics
-
-    override fun getKorea(): List<Event> = koreas
-
-    override fun getMusicals(): List<Event> = musicals
-
-    override fun getCampings(): List<Event> = campings
+    override fun getEventCollection(): List<EventCollection> = eventCollection
 }

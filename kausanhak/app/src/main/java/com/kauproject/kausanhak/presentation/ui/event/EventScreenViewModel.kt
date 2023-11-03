@@ -32,55 +32,11 @@ class EventScreenViewModel @Inject constructor(
         getEventCollection()
     }
 
-    fun getEventCollection() {
+    private fun getEventCollection() {
         viewModelScope.launch {
             eventRepository.fetchEvents()
 
-            val concert = EventCollection(
-                id = 0,
-                name = "콘서트",
-                events = eventRepository.getConcert()
-            )
-            val exhibition = EventCollection(
-                id = 1,
-                name = "연극",
-                events = eventRepository.getExhibition()
-            )
-            val musical = EventCollection(
-                id = 2,
-                name = "뮤지컬",
-                events = eventRepository.getMusicals()
-            )
-            val drama = EventCollection(
-                id = 3,
-                name = "드라마",
-                events = eventRepository.getDrama()
-            )
-            val camping = EventCollection(
-                id = 4,
-                name = "캠핑/레저",
-                events = eventRepository.getCampings()
-            )
-            val korea = EventCollection(
-                id = 5,
-                name = "지역행사",
-                events = eventRepository.getKorea()
-            )
-            val classic = EventCollection(
-                id = 6,
-                name = "클래식",
-                events = eventRepository.getClassic()
-            )
-            val kids = EventCollection(
-                id = 7,
-                name = "아동/가족",
-                events = eventRepository.getKids()
-            )
-
-            _eventCollection.value = listOf(
-                concert, exhibition, musical, drama, camping, korea, classic, kids
-            )
+            _eventCollection.value = eventRepository.getEventCollection()
         }
     }
-
 }
