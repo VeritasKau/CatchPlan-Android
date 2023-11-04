@@ -14,5 +14,7 @@ data class EventDateEntity(
     @ColumnInfo
     var name: String,
     @ColumnInfo
-    var place: String
+    var place: String,
+    @ColumnInfo
+    var image: String
 )

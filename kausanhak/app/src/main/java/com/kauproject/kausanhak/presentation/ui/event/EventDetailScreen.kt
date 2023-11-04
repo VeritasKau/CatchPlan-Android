@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui.event
 
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -24,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -145,7 +147,7 @@ fun EventDetailScreen(
 
             if(showDatePicker){
                 EventDatePickerDialog(
-                    onDateSelected = { viewModel.addEventDate(event.id, it, event.name, event.place) },
+                    onDateSelected = { viewModel.addEventDate(event.id, it, event.name, event.place, event.image) },
                     onDismiss = { showDatePicker = false },
                     event = event,
                     scope = scope,
@@ -169,6 +171,13 @@ private fun EventDetailBottomBar(
         if(selected) painterResource(id = R.drawable.ic_scrap_abled)
         else painterResource(id = R.drawable.ic_scrap_enabled)
     val uriHandler = LocalUriHandler.current
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, event.url)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -185,8 +194,22 @@ private fun EventDetailBottomBar(
             horizontalArrangement = Arrangement.Center
         ){
             IconButton(
+                onClick = { context.startActivity(shareIntent) }
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp)
+                        .size(30.dp)
+                    ,
+                    imageVector = Icons.Default.Share,
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.purple_main)
+                )
+
+            }
+            IconButton(
                 modifier = Modifier
-                    .padding(horizontal = 10.dp)
+                    .padding(end = 10.dp)
                     .width(30.dp)
                 ,
                 onClick = { selected = !selected },
@@ -574,7 +597,7 @@ private fun EventDatePickerDialog(
 private fun convertMillisToDate(millis: Long): String {
     return Instant.ofEpochMilli(millis)
         .atOffset(ZoneOffset.ofHours(9))
-        .format(DateTimeFormatter.ofPattern("uuuu/MM/dd"))
+        .format(DateTimeFormatter.ofPattern("uuuu-MM-dd"))
 }
 
 private fun convertDateToPlusMills(year: Int, month: Int, day: Int): Long {

@@ -1,6 +1,7 @@
 package com.kauproject.kausanhak.presentation.ui.event
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,6 +60,7 @@ fun EventListScreen(
     Scaffold(
         modifier = Modifier
             .background(Color.White)
+            .fillMaxWidth()
         ,
         topBar = { EventListTopBar(
             eventCollection = eventCollection,
@@ -70,7 +72,9 @@ fun EventListScreen(
                 .padding(paddingValues)
                 .background(Color.White)
             ,
-            columns =GridCells.Fixed(2)
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.Center
         ){
             itemsIndexed(eventCollection.events){ index, item ->  
                 EventCard(

@@ -159,7 +159,9 @@ fun EventCard(
         (CardWidth + CardPadding).toPx()
     }
     Column(
-        modifier = modifier
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
             modifier = Modifier

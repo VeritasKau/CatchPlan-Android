@@ -17,14 +17,16 @@ class EventDetailScreenViewModel @Inject constructor(
     private val eventRepository: EventRepository
 ): ViewModel() {
 
-    fun addEventDate(eventId: Int, date: String, name: String, place: String){
+    fun addEventDate(eventId: Int, date: String, name: String, place: String, image: String){
         viewModelScope.launch(Dispatchers.IO){
             eventDateRepository.addEvent(
                 EventDateEntity(
                     eventId = eventId,
                     date = date,
                     name = name,
-                    place = place))
+                    place = place,
+                    image = image
+                ))
         }
     }
 

@@ -54,10 +54,15 @@ fun MainScreen(
 
     NavHost(
         navController = navController,
-        startDestination = BottomNavItem.Calendar.screenRoute
+        startDestination = BottomNavItem.Event.screenRoute
         ){
         noAnimatedComposable(route = BottomNavItem.Calendar.screenRoute){
-            CalendarScreen(navController = navController)
+            CalendarScreen(
+                navController = navController,
+                onEventClick = { id ->
+                    navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")
+                }
+            )
         }
         noAnimatedComposable(route = BottomNavItem.Event.screenRoute){
             EventScreen(
@@ -142,8 +147,8 @@ fun CatchPlanBottomBar(
 ){
     val screens = listOf(
         BottomNavItem.Calendar,
-        BottomNavItem.Event,
         BottomNavItem.Favorite,
+        BottomNavItem.Event,
         BottomNavItem.Chatbot,
         BottomNavItem.Mypage
     )
