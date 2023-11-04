@@ -112,6 +112,7 @@ fun CalendarScreen(
     }
     var flag by remember{ mutableStateOf(false) }
 
+    // eventsInSelectedDate가 수행된 후 LazyColumn을 수행 (잘못된 index 접근 방지)
     LaunchedEffect(eventsInSelectedDate){
         flag = true
     }
