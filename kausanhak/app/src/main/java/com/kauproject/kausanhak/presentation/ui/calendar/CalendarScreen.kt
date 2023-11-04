@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,6 +51,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -93,7 +95,7 @@ fun CalendarScreen(
     val startMonth = remember{ currentMonth.minusMonths(500) }
     val endMonth = remember { currentMonth.plusMonths(500) }
     var selection by remember {
-        mutableStateOf<CalendarDay>(CalendarDay(date = LocalDate.now(), position = DayPosition.MonthDate))
+        mutableStateOf<CalendarDay?>(CalendarDay(date = LocalDate.now(), position = DayPosition.MonthDate))
     }
     val daysOfWeek = remember { daysOfWeek() }
     val viewModel: CalendarScreenViewModel = hiltViewModel()
@@ -102,14 +104,17 @@ fun CalendarScreen(
     val events = remember(eventsState){
         eventsState.groupBy { it.date.toLocalDate() }
     }
-    val eventsInSelectedDate = remember(events){
+    val eventsInSelectedDate = remember(selection){
         derivedStateOf {
-            val date = selection.date
-            events[date].orEmpty()
+            val date = selection?.date
+            if(date == null) emptyList() else events[date].orEmpty()
         }
     }
+    var flag by remember{ mutableStateOf(false) }
 
-
+    LaunchedEffect(eventsInSelectedDate){
+        flag = true
+    }
 
     Scaffold(
         modifier = Modifier
@@ -179,8 +184,6 @@ fun CalendarScreen(
                         colors = colors
                     ){ clicked->
                         selection = clicked
-                        Log.d(TAG, "${day.date.dayOfMonth} ${day.date.dayOfWeek.getDisplayName(
-                            TextStyle.NARROW, Locale.KOREAN)}")
                     }
                 },
                 monthHeader = {
@@ -191,27 +194,28 @@ fun CalendarScreen(
                 }
             )
             HorizontalDivider(color = Color.LightGray)
-            
-            currentDate(
-                selection = selection,
-                events = eventsInSelectedDate.value
-            )
-            
+
+            selection?.let {
+                currentDate(
+                    selection = it,
+                    events = eventsInSelectedDate.value
+                )
+            }
+
             LazyColumn(modifier = Modifier.fillMaxSize()){
-                items(items = eventsInSelectedDate.value){event->
-                    EventInformation(
-                        events = event,
-                        onEventClick = onEventClick
-                    )
+                if(flag){
+                    itemsIndexed(items = eventsInSelectedDate.value){index, event->
+                        EventInformation(
+                            events = event,
+                            onEventClick = onEventClick
+                        )
+                    }
+                    flag = false
                 }
             }
 
         }
-
     }
-
-
-
 }
 
 @Composable
@@ -362,6 +366,7 @@ private fun LazyItemScope.EventInformation(
             .height(80.dp)
             .background(Color.White)
             .clickable { onEventClick(events.id) }
+            .padding(vertical = 10.dp)
         ,
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -390,10 +395,14 @@ private fun LazyItemScope.EventInformation(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                modifier = Modifier,
+                modifier = Modifier
+                    .padding(end = 40.dp)
+                ,
                 text = events.name,
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
+                fontSize = 18.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = events.place,

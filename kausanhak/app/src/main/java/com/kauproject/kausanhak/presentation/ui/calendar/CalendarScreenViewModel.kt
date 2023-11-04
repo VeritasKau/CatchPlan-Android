@@ -28,6 +28,14 @@ class CalendarScreenViewModel @Inject constructor(
     }
 
     init {
+        initDate()
+    }
+
+    private fun mapperToLocalDate(date: String): LocalDateTime {
+        return LocalDateTime.parse("${date}T00:00:00")
+    }
+
+    fun initDate(){
         viewModelScope.launch(Dispatchers.IO) {
             eventDateRepository.readEvent().distinctUntilChanged().collect{ date->
                 if(date.isNullOrEmpty()){
@@ -47,10 +55,6 @@ class CalendarScreenViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun mapperToLocalDate(date: String): LocalDateTime {
-        return LocalDateTime.parse("${date}T00:00:00")
     }
 
 }

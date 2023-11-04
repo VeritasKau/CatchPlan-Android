@@ -1,14 +1,27 @@
 package com.kauproject.kausanhak.presentation.ui
 
+import android.media.Image
 import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Send
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Send
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -16,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -42,6 +56,8 @@ import com.kauproject.kausanhak.presentation.ui.theme.CHATBOT
 import com.kauproject.kausanhak.presentation.ui.theme.EVENT
 import com.kauproject.kausanhak.presentation.ui.theme.FAVORITE
 import com.kauproject.kausanhak.presentation.ui.theme.MYPAGE
+import kotlin.io.encoding.Base64
+import kotlin.random.Random
 
 private const val animDurationMillis = 400
 // 메인뷰
@@ -166,16 +182,13 @@ fun CatchPlanBottomBar(
                 modifier = Modifier
                 ,
                 icon = {
-                    screen.icon?.let {
-                        Image(
-                            modifier = Modifier
-                                .width(20.dp)
-                                .height(20.dp)
-                            ,
-                            painter = painterResource(id = it),
-                            contentDescription = null
-                        )
-                    }
+                    Icon(
+                        modifier = Modifier
+                            .size(25.dp)
+                        ,
+                        imageVector = screen.icon, 
+                        contentDescription = null
+                    )   
                 },
                 selected = currentRoute == screen.screenRoute,
                 onClick = {
@@ -188,10 +201,13 @@ fun CatchPlanBottomBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = colorResource(id = R.color.purple_select)
+                    indicatorColor = Color.Transparent,
+                    selectedIconColor = colorResource(id = R.color.purple_main),
+                    unselectedIconColor = Color.Black
                 )
             )
         }
+        val imageVector = Icons.AutoMirrored.Outlined.Send
 
     }
 
@@ -200,32 +216,32 @@ fun CatchPlanBottomBar(
 // 하단바 아이템 설정
 sealed class BottomNavItem(
     @StringRes val title: Int,
-    @IntegerRes val icon: Int?,
+    val icon: ImageVector,
     val screenRoute: String
 ){
     object Calendar: BottomNavItem(
         R.string.calendar_bottomItem,
-        R.drawable.ic_calendar.toInt(),
+        Icons.Outlined.DateRange,
         CALENDAR
     )
     object Event: BottomNavItem(
         R.string.event_bottomItem,
-        R.drawable.ic_event.toInt(),
+        Icons.Outlined.Menu,
         EVENT
     )
     object Favorite: BottomNavItem(
         R.string.favorite_bottomItem,
-        R.drawable.ic_favorite.toInt(),
+        Icons.Outlined.FavoriteBorder,
         FAVORITE
     )
     object Chatbot: BottomNavItem(
         R.string.chatBot_bottomItem,
-        R.drawable.ic_chat.toInt(),
+        Icons.AutoMirrored.Outlined.Send,
         CHATBOT
     )
     object Mypage: BottomNavItem(
         R.string.myPage_bottomItem,
-        R.drawable.ic_mypage.toInt(),
+        Icons.Outlined.AccountCircle,
         MYPAGE
     )
 }
