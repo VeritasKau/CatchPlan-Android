@@ -42,7 +42,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.presentation.anim.pageanimation.horizontallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedComposable
+import com.kauproject.kausanhak.presentation.anim.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventDestination
@@ -93,7 +95,7 @@ fun MainScreen(
         noAnimatedComposable(route = BottomNavItem.Favorite.screenRoute){
             FavoriteScreen(navController = navController)
         }
-        noAnimatedComposable(route = BottomNavItem.Chatbot.screenRoute){
+        horizontallyAnimatedComposable(route = BottomNavItem.Chatbot.screenRoute){
             ChatBotScreen(navController = navController)
         }
         noAnimatedComposable(route = BottomNavItem.Mypage.screenRoute){

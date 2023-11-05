@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.kakao.sdk.user.UserApiClient
 import com.kakao.sdk.user.model.User
 import com.kauproject.kausanhak.data.remote.request.SignInRequest
+import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.model.Dummy
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
@@ -36,7 +37,8 @@ import javax.inject.Inject
 class LoginViewModel(
     context: Context,
     private val userDataRepository: UserDataRepository,
-    private val signInService: SignInService
+    private val signInService: SignInService,
+    private val checkMemberService: CheckMemberService
 ): ViewModel() {
 
     private val kakaoLoginManager = KakaoLoginManager(context)
@@ -45,6 +47,9 @@ class LoginViewModel(
     private val _userData = MutableStateFlow(LoginData())
     val userData: StateFlow<LoginData>
         get() = _userData.asStateFlow()
+    private val _isMember = MutableStateFlow<Boolean?>(null)
+    val isMember: StateFlow<Boolean?>
+        get() = _isMember.asStateFlow()
 
     fun startLogin(platform: String){
         if(platform == "카카오"){
@@ -53,6 +58,13 @@ class LoginViewModel(
                     viewModelScope.launch {
                         userDataRepository.setUserData("userNum", user?.id.toString())
                         userDataRepository.setUserData("platform", KAKAO)
+
+                        val response = checkMemberService.checkMember(user?.id.toString())
+                        val statusCode = response.code()
+
+                        if(statusCode == 200){
+                            _isMember.value = response.body()!! && userDataRepository.getUserData().token != ""
+                        }
                     }
                     _userData.update { it->
                         it.copy(
@@ -73,6 +85,12 @@ class LoginViewModel(
                         viewModelScope.launch {
                             userDataRepository.setUserData("userNum", result.profile?.id.toString())
                             userDataRepository.setUserData("platform", NAVER)
+                            val response = checkMemberService.checkMember(result.profile?.id.toString())
+                            val statusCode = response.code()
+
+                            if(statusCode == 200){
+                                _isMember.value = response.body()!! && userDataRepository.getUserData().token != ""
+                            }
                         }
                         _userData.update { it->
                             it.copy(
@@ -92,8 +110,8 @@ class LoginViewModel(
         userId: String,
         userDataRepository: UserDataRepository
     ){
-        if(userDataRepository.getTokenData().value == ""){
-            viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
+            if(userDataRepository.getUserData().token == ""){
                 val request = SignInRequest(
                     uniqueUserInfo = userId
                 )
@@ -107,6 +125,7 @@ class LoginViewModel(
                     Log.d("TokenError", "$statusCode")
                 }
             }
+
         }
 
     }

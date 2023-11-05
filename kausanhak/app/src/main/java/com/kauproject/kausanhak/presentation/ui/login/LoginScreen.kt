@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,26 +35,36 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
+import com.kauproject.kausanhak.presentation.ui.CatchPlanScreen
 import com.kauproject.kausanhak.presentation.util.Constants.KAKAO
 import com.kauproject.kausanhak.presentation.util.Constants.NAVER
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun LoginScreen(
-    onLoginButtonClicked: () -> Unit,
+    onLoginButtonClicked: (String) -> Unit,
     userDataRepository: UserDataRepository,
+    checkMemberService: CheckMemberService,
     signInService: SignInService
 ) {
     val context = LocalContext.current
-    val loginViewModel = LoginViewModel(context, userDataRepository, signInService)
-    val userDataState by loginViewModel.userData.collectAsState()
+    val loginViewModel = LoginViewModel(context, userDataRepository, signInService, checkMemberService)
+    val isMember by loginViewModel.isMember.collectAsState()
 
-    if(userDataState.userId != ""){
-        onLoginButtonClicked()
+    isMember?.let {
+        if(it){
+            onLoginButtonClicked(CatchPlanScreen.Main.name)
+            Log.d("TEST LOGIN", "${isMember}")
+        }else{
+            onLoginButtonClicked(CatchPlanScreen.Setting.name)
+            Log.d("TEST LOGIN", "${isMember}")
+        }
     }
 
     Column(

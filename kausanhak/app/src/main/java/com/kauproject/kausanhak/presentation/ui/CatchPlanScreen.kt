@@ -1,27 +1,24 @@
 package com.kauproject.kausanhak.presentation.ui
 
-import android.content.Context
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
 import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedComposable
 import com.kauproject.kausanhak.presentation.anim.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
 import com.kauproject.kausanhak.presentation.ui.setting.SettingScreen
-import kotlin.contracts.contract
 
 enum class CatchPlanScreen(@StringRes val title: Int){
     Login(title = R.string.choose_login),
@@ -34,20 +31,17 @@ const val TAG = "CatchPlanScreen"
 @Composable
 fun CatchPlanApp(
     userDataRepository: UserDataRepository,
-    signInService: SignInService
+    signInService: SignInService,
+    checkMemberService: CheckMemberService
 ){
     val navController = rememberNavController()
-    val isMember = remember { mutableStateOf(false) }
-    val isDelete = remember{ mutableStateOf(false) }
+    var isMember by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit){
-        isMember.value = userDataRepository.getUserData().token != "" && userDataRepository.getUserData().num != ""
-        isDelete.value = userDataRepository.getUserData().firstFavorite == ""
+        isMember = userDataRepository.getUserData().token != ""
     }
 
-    val startScreen = if(isMember.value) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name
-    val loginScreen = if(isDelete.value) CatchPlanScreen.Setting.name else CatchPlanScreen.Main.name
-    Log.d(TAG, "start:$startScreen login:$loginScreen")
+    val startScreen = if(isMember) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name
 
     NavHost(
         modifier = Modifier,
@@ -56,14 +50,15 @@ fun CatchPlanApp(
     ){
         noAnimatedComposable(route = CatchPlanScreen.Login.name){
             LoginScreen(
-                onLoginButtonClicked = {
-                    navController.navigate(loginScreen){
+                onLoginButtonClicked = { it->
+                    navController.navigate(it){
                         popUpTo(CatchPlanScreen.Login.name){
                             inclusive = true
                         }
                     } },
                 userDataRepository = userDataRepository,
-                signInService = signInService
+                signInService = signInService,
+                checkMemberService = checkMemberService
             )
         }
         noAnimatedComposable(route = CatchPlanScreen.Setting.name){

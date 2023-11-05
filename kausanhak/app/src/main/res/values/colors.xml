@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray_0">#C9C9C9</color>
+    <color name="gray_1">#F4F3F3</color>
 
     <!--login-->
     <color name="kakao_login">#FFE812</color>
@@ -23,5 +24,8 @@
     <color name="rose_4">#FFF985AA</color>
     <color name="rose_2">#FFFDBBCF</color>
     <color name="lavender_3">#FFC186FA</color>
+
+    <!--chat color-->
+    <color name="lavender_4">#EDE2F8</color>
 
 </resources>

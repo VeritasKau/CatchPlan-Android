@@ -1,15 +1,19 @@
 package com.kauproject.kausanhak.data.module
 
+import android.content.Context
 import com.kauproject.kausanhak.data.remote.AppInterceptor
 import com.kauproject.kausanhak.data.remote.service.event.GetEventService
 import com.kauproject.kausanhak.data.remote.service.info.InformSaveService
+import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.DeleteUserService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
+import com.kauproject.kausanhak.presentation.util.ApplicationClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -75,6 +79,18 @@ class ApiModule {
     @Provides
     fun provideGetEventService(retrofit: Retrofit): GetEventService{
         return retrofit.create(GetEventService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCheckMember(retrofit: Retrofit): CheckMemberService{
+        return retrofit.create(CheckMemberService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideApplication(@ApplicationContext app: Context): ApplicationClass{
+        return app as ApplicationClass
     }
 
 }

@@ -15,13 +15,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -54,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -397,7 +405,7 @@ private fun LazyItemScope.EventInformation(
         ) {
             Text(
                 modifier = Modifier
-                    .padding(end = 40.dp)
+                    .width(240.dp)
                 ,
                 text = events.name,
                 fontWeight = FontWeight.Bold,
@@ -410,6 +418,20 @@ private fun LazyItemScope.EventInformation(
                 fontWeight = FontWeight.SemiBold,
                 color = Color.LightGray,
                 fontSize = 14.sp
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 10.dp)
+            ,
+            horizontalAlignment = Alignment.End
+        ) {
+            Icon(
+                modifier = Modifier
+                ,
+                imageVector = Icons.Default.Clear,
+                contentDescription = null
             )
         }
     }
@@ -445,6 +467,24 @@ private fun currentDate(
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.purple_main)
             )
+            
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                ,
+                horizontalAlignment = Alignment.End
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 10.dp)
+                    ,
+                    imageVector = Icons.Outlined.AddCircle,
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.lavender_3)
+                )
+                
+            }
 
         }
         if(events.isEmpty()){
@@ -470,6 +510,30 @@ private fun currentDate(
             }
         }
     }
+}
 
+@Composable
+private fun showDeleteDialog(
+    showDialog: (Boolean) -> Unit
+) {
+    Dialog(onDismissRequest = { showDialog(false) }) {
+        Surface(
+            modifier = Modifier
+                .wrapContentWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(10.dp),
+            color = Color.White
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(vertical = 10.dp)
+                ,
+            ) {
+
+            }
+
+
+        }
+    }
 }
 

@@ -71,7 +71,7 @@ fun MyPageScreen(
                 ,
                 onClick = {
                     scope.launch {
-                        viewModel.deleteUser(context).collect{ state->
+                        viewModel.deleteUser().collect{ state->
                             when(state){
                                 is State.Loading -> {}
                                 is State.Success -> { onLoginScreen() }

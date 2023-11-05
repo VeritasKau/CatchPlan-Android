@@ -8,12 +8,15 @@ import com.kakao.sdk.user.UserApiClient
 import com.kauproject.kausanhak.data.remote.service.login.DeleteUserService
 import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
+import com.kauproject.kausanhak.presentation.util.ApplicationClass
 import com.kauproject.kausanhak.presentation.util.Constants.KAKAO
 import com.kauproject.kausanhak.presentation.util.Constants.NAVER
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -23,7 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    private val deleteUserService: DeleteUserService
+    private val deleteUserService: DeleteUserService,
+    private val application: ApplicationClass
 ): ViewModel() {
     companion object{
         const val TAG = "MyPageViewModel"
@@ -35,7 +39,7 @@ class MyPageViewModel @Inject constructor(
     }
 
     fun deleteUser(
-        context: Context
+        //context: Context
     ): Flow<State<Int>> = flow {
         emit(State.Loading)
 
@@ -46,7 +50,7 @@ class MyPageViewModel @Inject constructor(
             emit(State.Success(statusCode))
             when(platform){
                 KAKAO -> { kakaoDelete() }
-                NAVER -> { naverDelete(context) }
+                NAVER -> { naverDelete(application.applicationContext) }
             }
             userDataRepository.setUserData("userNum", "")
             userDataRepository.setUserData("token", "")
