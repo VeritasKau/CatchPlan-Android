@@ -10,19 +10,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.automirrored.outlined.Send
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,13 +38,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
-import com.kauproject.kausanhak.presentation.ui.BottomNavItem
-import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.util.clickable
 
 @Composable
 fun ChatBotScreen(
@@ -69,6 +66,13 @@ fun ChatBotScreen(
                 .padding(paddingValues = paddingValues)
                 .background(colorResource(id = R.color.lavender_4))
         ) {
+            LazyColumn(
+                modifier = Modifier
+            ){
+                item{
+                    chatBubble(content = stringResource(id = R.string.chatBot_base_chat), isMe = false)
+                }
+            }
 
         }
 
@@ -129,18 +133,18 @@ private fun InputChat(){
         modifier = Modifier
             .height(60.dp)
         ,
-        verticalArrangement = Arrangement.Center
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
             ,
-            horizontalArrangement = Arrangement.Center
+            verticalAlignment = Alignment.CenterVertically
         ) {
             TextField(
                 modifier = Modifier
                     .padding(vertical = 7.dp)
-                    .padding(start = 10.dp, end = 100.dp)
+                    .padding(start = 10.dp)
+                    .weight(0.85f)
                 ,
                 value = textFieldState,
                 onValueChange = {},
@@ -152,17 +156,15 @@ private fun InputChat(){
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
-
-            IconButton(
+            Image(
                 modifier = Modifier
-                    .size(30.dp)
+                    .weight(0.15f)
+                    .padding(5.dp)
+                    .clickable { }
                 ,
-                onClick = { /*TODO*/ }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.Send,
-                    contentDescription = null)
-            }
+                painter = painterResource(id = R.drawable.ic_send),
+                contentDescription = null
+            )
         }
     }
 
@@ -175,10 +177,54 @@ private fun chatBubble(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(vertical = 10.dp)
+            .padding(start = 10.dp)
         ,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = if(isMe) Arrangement.End else Arrangement.Start
     ){
+        if(isMe){
+            
+        }else{
+            Surface(
+                modifier = Modifier
+                    .size(40.dp)
+                ,
+                shape = CircleShape
+            ) {
+                Image(
+                    modifier = Modifier
+                        .padding(5.dp)
+                    ,
+                    painter = painterResource(id = R.drawable.ic_app_icon),
+                    contentDescription = null)
+            }
+            Column(
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                ,
+            ) {
+                Text(
+                    modifier = Modifier
+                    ,
+                    text = stringResource(id = R.string.chatBot_name),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = R.color.purple_main)
+                )
+                Text(
+                    modifier = Modifier
+                        .background(
+                            color = Color.White,
+                            shape = RoundedCornerShape(5.dp)
+                        )
+                        .padding(vertical = 7.dp, horizontal = 5.dp),
+                    text = content,
+
+                )
+            }
+        }
 
     }
 

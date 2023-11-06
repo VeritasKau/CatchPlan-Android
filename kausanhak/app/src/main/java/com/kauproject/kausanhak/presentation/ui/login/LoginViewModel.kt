@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.kakao.sdk.user.UserApiClient
 import com.kakao.sdk.user.model.User
 import com.kauproject.kausanhak.data.remote.request.SignInRequest
+import com.kauproject.kausanhak.data.remote.service.info.GetUserInfoService
 import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.model.Dummy
@@ -38,15 +39,13 @@ class LoginViewModel(
     context: Context,
     private val userDataRepository: UserDataRepository,
     private val signInService: SignInService,
-    private val checkMemberService: CheckMemberService
+    private val checkMemberService: CheckMemberService,
+    private val getUserInfoService: GetUserInfoService
 ): ViewModel() {
 
     private val kakaoLoginManager = KakaoLoginManager(context)
     private val naverLoginManager = NaverLoginManager(context)
 
-    private val _userData = MutableStateFlow(LoginData())
-    val userData: StateFlow<LoginData>
-        get() = _userData.asStateFlow()
     private val _isMember = MutableStateFlow<Boolean?>(null)
     val isMember: StateFlow<Boolean?>
         get() = _isMember.asStateFlow()
@@ -66,13 +65,8 @@ class LoginViewModel(
                             _isMember.value = response.body()!! && userDataRepository.getUserData().token != ""
                         }
                     }
-                    _userData.update { it->
-                        it.copy(
-                            userId = user?.id.toString(),
-                            platform = KAKAO
-                        )
-                    }
                     getToken(user?.id.toString(), userDataRepository)
+                    getUserInfo(user?.id.toString(), userDataRepository)
                 }
             }
         }else{
@@ -92,13 +86,8 @@ class LoginViewModel(
                                 _isMember.value = response.body()!! && userDataRepository.getUserData().token != ""
                             }
                         }
-                        _userData.update { it->
-                            it.copy(
-                                userId = userId,
-                                platform = NAVER
-                            )
-                        }
                         getToken(userId, userDataRepository)
+                        getUserInfo(userId, userDataRepository)
                     }
                 })
 
@@ -106,26 +95,41 @@ class LoginViewModel(
         }
     }
 
-    fun getToken(
+    private fun getToken(
         userId: String,
         userDataRepository: UserDataRepository
     ){
         viewModelScope.launch {
-            if(userDataRepository.getUserData().token == ""){
-                val request = SignInRequest(
-                    uniqueUserInfo = userId
-                )
-                val signInResponse = signInService.signInInform(request)
-                val token = signInResponse.body()?.accessToken
-                val statusCode = signInResponse.code()
+            val request = SignInRequest(
+                uniqueUserInfo = userId
+            )
+            val signInResponse = signInService.signInInform(request)
+            val token = signInResponse.body()?.accessToken
+            val statusCode = signInResponse.code()
+
+            if(statusCode == 200){
+                userDataRepository.setUserData("token", token!!)
+            }else{
+                Log.d("TokenError", "$statusCode")
+            }
+        }
+    }
+
+    private fun getUserInfo(
+        userId: String,
+        userDataRepository: UserDataRepository
+    ){
+        viewModelScope.launch(Dispatchers.IO) {
+            if(userDataRepository.getUserData().num == ""){
+                val response = getUserInfoService.getUserInfo(userId)
+                val statusCode = response.code()
 
                 if(statusCode == 200){
-                    userDataRepository.setUserData("token", token!!)
-                }else{
-                    Log.d("TokenError", "$statusCode")
+                    userDataRepository.setUserData("userNum", userId)
+                    Log.d("TEST USER", "${response.body()}")
                 }
-            }
 
+            }
         }
 
     }

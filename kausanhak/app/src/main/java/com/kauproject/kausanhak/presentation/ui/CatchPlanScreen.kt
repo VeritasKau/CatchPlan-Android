@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.data.remote.service.info.GetUserInfoService
 import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
@@ -32,7 +33,8 @@ const val TAG = "CatchPlanScreen"
 fun CatchPlanApp(
     userDataRepository: UserDataRepository,
     signInService: SignInService,
-    checkMemberService: CheckMemberService
+    checkMemberService: CheckMemberService,
+    getUserInfoService: GetUserInfoService
 ){
     val navController = rememberNavController()
     var isMember by remember { mutableStateOf(false) }
@@ -58,7 +60,8 @@ fun CatchPlanApp(
                     } },
                 userDataRepository = userDataRepository,
                 signInService = signInService,
-                checkMemberService = checkMemberService
+                checkMemberService = checkMemberService,
+                getUserInfoService = getUserInfoService
             )
         }
         noAnimatedComposable(route = CatchPlanScreen.Setting.name){

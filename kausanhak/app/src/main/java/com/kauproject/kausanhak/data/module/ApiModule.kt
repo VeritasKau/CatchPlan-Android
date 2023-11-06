@@ -3,6 +3,7 @@ package com.kauproject.kausanhak.data.module
 import android.content.Context
 import com.kauproject.kausanhak.data.remote.AppInterceptor
 import com.kauproject.kausanhak.data.remote.service.event.GetEventService
+import com.kauproject.kausanhak.data.remote.service.info.GetUserInfoService
 import com.kauproject.kausanhak.data.remote.service.info.InformSaveService
 import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.DeleteUserService
@@ -91,6 +92,12 @@ class ApiModule {
     @Provides
     fun provideApplication(@ApplicationContext app: Context): ApplicationClass{
         return app as ApplicationClass
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetUserInfo(retrofit: Retrofit): GetUserInfoService{
+        return retrofit.create(GetUserInfoService::class.java)
     }
 
 }

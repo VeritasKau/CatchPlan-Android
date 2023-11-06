@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
+import com.kauproject.kausanhak.data.remote.service.info.GetUserInfoService
 import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
@@ -22,6 +23,8 @@ class MainActivity(): ComponentActivity() {
     lateinit var signInService: SignInService
     @Inject
     lateinit var checkMemberService: CheckMemberService
+    @Inject
+    lateinit var getUserInfoService: GetUserInfoService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +33,8 @@ class MainActivity(): ComponentActivity() {
                 CatchPlanApp(
                     userDataRepository = userDataRepository,
                     signInService = signInService,
-                    checkMemberService = checkMemberService
+                    checkMemberService = checkMemberService,
+                    getUserInfoService = getUserInfoService
                 )
             }
         }

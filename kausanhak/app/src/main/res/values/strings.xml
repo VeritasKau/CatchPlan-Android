@@ -54,6 +54,8 @@
 
     <!--ChatBot-->
     <string name="chatBot_bottomItem">ChatBot</string>
+    <string name="chatBot_base_chat">안녕하세요! 무엇을 도와드릴까요?</string>
+    <string name="chatBot_name">캐플</string>
 
     <!--MyPage-->
     <string name="myPage_bottomItem">MyPage</string>
