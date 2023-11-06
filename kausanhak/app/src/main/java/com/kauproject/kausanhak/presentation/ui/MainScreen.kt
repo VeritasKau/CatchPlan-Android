@@ -1,17 +1,11 @@
 package com.kauproject.kausanhak.presentation.ui
 
-import android.media.Image
-import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Send
@@ -19,8 +13,6 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.material.icons.outlined.Send
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -32,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -44,22 +35,19 @@ import androidx.navigation.navArgument
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.anim.pageanimation.horizontallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedComposable
-import com.kauproject.kausanhak.presentation.anim.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventDestination
 import com.kauproject.kausanhak.presentation.ui.event.EventDetailScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventListScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventScreen
-import com.kauproject.kausanhak.presentation.ui.favorite.FavoriteScreen
 import com.kauproject.kausanhak.presentation.ui.mypage.MyPageScreen
+import com.kauproject.kausanhak.presentation.ui.recommend.ReccomendScreen
 import com.kauproject.kausanhak.presentation.ui.theme.CALENDAR
 import com.kauproject.kausanhak.presentation.ui.theme.CHATBOT
 import com.kauproject.kausanhak.presentation.ui.theme.EVENT
 import com.kauproject.kausanhak.presentation.ui.theme.FAVORITE
 import com.kauproject.kausanhak.presentation.ui.theme.MYPAGE
-import kotlin.io.encoding.Base64
-import kotlin.random.Random
 
 private const val animDurationMillis = 400
 // 메인뷰
@@ -93,7 +81,7 @@ fun MainScreen(
             )
         }
         noAnimatedComposable(route = BottomNavItem.Favorite.screenRoute){
-            FavoriteScreen(navController = navController)
+            ReccomendScreen(navController = navController)
         }
         horizontallyAnimatedComposable(route = BottomNavItem.Chatbot.screenRoute){
             ChatBotScreen(navController = navController)

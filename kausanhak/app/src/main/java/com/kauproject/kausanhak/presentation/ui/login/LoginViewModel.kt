@@ -83,7 +83,7 @@ class LoginViewModel(
                             val statusCode = response.code()
 
                             if(statusCode == 200){
-                                _isMember.value = response.body()!! && userDataRepository.getUserData().token != ""
+                                _isMember.value = response.body()!!
                             }
                         }
                         getToken(userId, userDataRepository)
