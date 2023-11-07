@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -132,6 +133,7 @@ private fun InputChat(){
     Column(
         modifier = Modifier
             .height(60.dp)
+            .background(Color.White)
         ,
     ) {
         Row(
@@ -158,9 +160,11 @@ private fun InputChat(){
             )
             Image(
                 modifier = Modifier
+                    .size(45.dp)
                     .weight(0.15f)
                     .padding(5.dp)
                     .clickable { }
+                    .wrapContentSize()
                 ,
                 painter = painterResource(id = R.drawable.ic_send),
                 contentDescription = null

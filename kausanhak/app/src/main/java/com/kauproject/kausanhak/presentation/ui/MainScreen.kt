@@ -81,7 +81,11 @@ fun MainScreen(
             )
         }
         noAnimatedComposable(route = BottomNavItem.Favorite.screenRoute){
-            ReccomendScreen(navController = navController)
+            ReccomendScreen(
+                navController = navController,
+                onEventClick = {id: Int ->
+                    navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")},
+            )
         }
         horizontallyAnimatedComposable(route = BottomNavItem.Chatbot.screenRoute){
             ChatBotScreen(navController = navController)

@@ -77,7 +77,7 @@ fun MyPageScreen(
                                 is State.Success -> { onLoginScreen() }
                                 is State.ServerError -> {
                                     snackbarHostState.showSnackbar(
-                                        message = error + "${state.data}",
+                                        message = error + "${state.code}",
                                         duration = SnackbarDuration.Short
                                     )
                                 }

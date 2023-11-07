@@ -48,6 +48,8 @@
     <!--Calendar-->
     <string name="calendar_bottomItem">Calendar</string>
     <string name="calendar_no_schedule">일정이 없어요</string>
+    <string name="calendar_dialog_title">알림</string>
+    <string name="calendar_dialog_subtitle">등록된 행사를 삭제하시겠습니까?</string>
 
     <!--Favorite-->
     <string name="favorite_bottomItem">Favorite</string>
@@ -78,5 +80,12 @@
 
     <!--Lottie -->
     <string name="lottie_title">불러오는중</string>
+    
+    <!--Dialog-->
+    <string name="dialog_yes">네</string>
+    <string name="dialog_no">아니오</string>
+
+    <!--Error-->
+    <string name="error_userInfo">유저정보를 조회할 수 없습니다</string>
 
 </resources>

@@ -1,6 +1,5 @@
 package com.kauproject.kausanhak.presentation.ui.calendar
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,21 +20,21 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -59,6 +59,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -69,8 +70,8 @@ import coil.request.ImageRequest
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.ui.BottomNavItem
 import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kauproject.kausanhak.presentation.util.clickable
-import com.kauproject.kausanhak.presentation.util.displayText
 import com.kauproject.kausanhak.presentation.util.rememberFirstCompletelyVisibleMonth
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -83,11 +84,8 @@ import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
-import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -112,7 +110,7 @@ fun CalendarScreen(
     val events = remember(eventsState){
         eventsState.groupBy { it.date.toLocalDate() }
     }
-    val eventsInSelectedDate = remember(selection){
+    val eventsInSelectedDate = remember(selection, events){
         derivedStateOf {
             val date = selection?.date
             if(date == null) emptyList() else events[date].orEmpty()
@@ -216,7 +214,8 @@ fun CalendarScreen(
                     itemsIndexed(items = eventsInSelectedDate.value){index, event->
                         EventInformation(
                             events = event,
-                            onEventClick = onEventClick
+                            onEventClick = onEventClick,
+                            viewModel = viewModel
                         )
                     }
                     flag = false
@@ -367,8 +366,18 @@ private fun CalendarNavigationIcon(
 @Composable
 private fun LazyItemScope.EventInformation(
     events: Events,
-    onEventClick: (Int) -> Unit
+    onEventClick: (Int) -> Unit,
+    viewModel: CalendarScreenViewModel
 ){
+    var showDialog by remember { mutableStateOf(false) }
+
+    if(showDialog){
+        ShowDeleteDialog(
+            showDialog = {showDialog = it},
+            viewModel = viewModel,
+            eventId = events.id
+        )
+    }
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -429,6 +438,9 @@ private fun LazyItemScope.EventInformation(
         ) {
             Icon(
                 modifier = Modifier
+                    .clickable {
+                        showDialog = true
+                    }
                 ,
                 imageVector = Icons.Default.Clear,
                 contentDescription = null
@@ -513,13 +525,15 @@ private fun currentDate(
 }
 
 @Composable
-private fun showDeleteDialog(
-    showDialog: (Boolean) -> Unit
+private fun ShowDeleteDialog(
+    showDialog: (Boolean) -> Unit,
+    viewModel: CalendarScreenViewModel,
+    eventId: Int
 ) {
     Dialog(onDismissRequest = { showDialog(false) }) {
         Surface(
             modifier = Modifier
-                .wrapContentWidth()
+                .width(400.dp)
                 .wrapContentHeight(),
             shape = RoundedCornerShape(10.dp),
             color = Color.White
@@ -529,11 +543,48 @@ private fun showDeleteDialog(
                     .padding(vertical = 10.dp)
                 ,
             ) {
-
+                Spacer(modifier = Modifier.padding(vertical = 25.dp))
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                    ,
+                    text = stringResource(id = R.string.calendar_dialog_subtitle),
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.padding(vertical = 15.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                    ,
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    TextButton(
+                        onClick = { showDialog(false) }
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.dialog_no),
+                            color = Color.Black
+                        )
+                    }
+                    TextButton(
+                        onClick = {
+                            showDialog(false)
+                            viewModel.deleteDate(eventId) },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.dialog_yes),
+                            color = Color.Red
+                        )
+                    }
+                }
             }
 
 
         }
     }
 }
+
+
 

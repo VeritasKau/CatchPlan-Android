@@ -1,11 +1,12 @@
 package com.kauproject.kausanhak.domain.repository
 
+import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.domain.model.EventCollection
+import kotlinx.coroutines.flow.Flow
 
 interface EventRepository {
-    suspend fun fetchEvents()
+    fun fetchEvents(): Flow<State<List<EventCollection>>>
     fun findEvent(eventId: Int): Event
-    fun getEventCollection(): List<EventCollection>
     fun findEventCollection(eventCollectionId: Int): EventCollection
 }

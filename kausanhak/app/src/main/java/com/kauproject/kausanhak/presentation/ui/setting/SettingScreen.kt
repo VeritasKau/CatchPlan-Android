@@ -312,7 +312,7 @@ fun CreateCompleteButton(
                         }
                         is State.ServerError -> {
                             snackbarHostState.showSnackbar(
-                                message = error+"${state.data}",
+                                message = error+"${state.code}",
                                 duration = SnackbarDuration.Short)
                         }
                         is State.Error -> { Log.d("state", "error") }

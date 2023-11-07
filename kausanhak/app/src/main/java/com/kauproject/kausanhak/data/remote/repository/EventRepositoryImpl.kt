@@ -2,9 +2,14 @@ package com.kauproject.kausanhak.data.remote.repository
 
 import com.kauproject.kausanhak.data.remote.response.GetEventResponse
 import com.kauproject.kausanhak.data.remote.service.event.GetEventService
+import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.domain.model.EventCollection
 import com.kauproject.kausanhak.domain.repository.EventRepository
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 
 class EventRepositoryImpl(
@@ -20,7 +25,9 @@ class EventRepositoryImpl(
     private var koreas = emptyList<Event>()
     private var eventCollection = emptyList<EventCollection>()
 
-    override suspend fun fetchEvents() {
+    override fun fetchEvents(): Flow<State<List<EventCollection>>> = flow {
+        emit(State.Loading)
+
         val musicalsResponse = getEvent("musical")
         val campingsResponse = getEvent("camping")
         val classicResponse = getEvent("classic")
@@ -88,7 +95,13 @@ class EventRepositoryImpl(
             eventCollection = listOf(
                 concert, exhibition, musical, drama, camping, korea, classic, kid
             )
+            emit(State.Success(eventCollection))
         }
+        else{
+            emit(State.ServerError(musicalsResponse.code()))
+        }
+    }.catch { e->
+        emit(State.Error(e))
     }
 
     private suspend fun getEvent(event: String): Response<List<GetEventResponse>> {
@@ -122,6 +135,4 @@ class EventRepositoryImpl(
 
         return allEventCollections
     }
-
-    override fun getEventCollection(): List<EventCollection> = eventCollection
 }

@@ -31,11 +31,18 @@ class CalendarScreenViewModel @Inject constructor(
         initDate()
     }
 
+    fun deleteDate(eventId: Int){
+        viewModelScope.launch {
+            eventDateRepository.deleteEvent(eventId = eventId)
+            initDate()
+        }
+    }
+
     private fun mapperToLocalDate(date: String): LocalDateTime {
         return LocalDateTime.parse("${date}T00:00:00")
     }
 
-    fun initDate(){
+    private fun initDate(){
         viewModelScope.launch(Dispatchers.IO) {
             eventDateRepository.readEvent().distinctUntilChanged().collect{ date->
                 if(date.isNullOrEmpty()){
