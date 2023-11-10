@@ -7,8 +7,9 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.entitiy.MemoEntity
 import com.kauproject.kausanhak.domain.repository.EventDateRepository
 import com.kauproject.kausanhak.domain.repository.MemoRepository
+import com.kauproject.kausanhak.presentation.ui.calendar.data.Events
+import com.kauproject.kausanhak.presentation.ui.calendar.data.Memo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged

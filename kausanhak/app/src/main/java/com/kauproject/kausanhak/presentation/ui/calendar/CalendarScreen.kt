@@ -15,33 +15,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -53,28 +41,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.ui.BottomNavItem
 import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
+import com.kauproject.kausanhak.presentation.ui.calendar.data.Events
+import com.kauproject.kausanhak.presentation.ui.calendar.data.Memo
+import com.kauproject.kausanhak.presentation.ui.calendar.dialog.ShowMemoDialog
+import com.kauproject.kausanhak.presentation.ui.calendar.information.EventInformation
+import com.kauproject.kausanhak.presentation.ui.calendar.information.MemoInformation
 import com.kauproject.kausanhak.presentation.util.clickable
 import com.kauproject.kausanhak.presentation.util.rememberFirstCompletelyVisibleMonth
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -428,115 +413,6 @@ private fun CalendarNavigationIcon(
 }
 
 @Composable
-private fun LazyItemScope.EventInformation(
-    events: Events,
-    onEventClick: (Int) -> Unit,
-    viewModel: CalendarScreenViewModel,
-    date: String
-){
-    var showDeleteDialog by remember { mutableStateOf(false) }
-
-
-    if(showDeleteDialog){
-        ShowDeleteDialog(
-            showDialog = {showDeleteDialog = it},
-            viewModel = viewModel,
-            eventId = events.id
-        )
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .height(80.dp)
-            .background(Color.White)
-            .clickable { onEventClick(events.id) }
-            .padding(vertical = 10.dp)
-        ,
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Surface(
-            modifier = Modifier
-                .padding(start = 10.dp, end = 5.dp)
-                .size(60.dp)
-            ,
-            shape = CircleShape,
-            color = Color.White
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(events.image)
-                    .crossfade(true)
-                    .build()
-                ,
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(start = 5.dp)
-            ,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                modifier = Modifier
-                    .width(240.dp)
-                ,
-                text = events.name,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = events.place,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.LightGray,
-                fontSize = 14.sp
-            )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 10.dp)
-            ,
-            horizontalAlignment = Alignment.End
-        ) {
-            Icon(
-                modifier = Modifier
-                    .clickable {
-                        showDeleteDialog = true
-                    }
-                ,
-                imageVector = Icons.Default.Clear,
-                contentDescription = null
-            )
-        }
-    }
-    HorizontalDivider(thickness = 1.dp,color = Color.LightGray)
-}
-
-@Composable
-private fun LazyItemScope.MemoInformation(
-    memo: Memo,
-    viewModel: CalendarScreenViewModel
-){
-    Row {
-        Text(text = memo.content)
-        Icon(
-            modifier = Modifier
-                .clickable { viewModel.deleteMemo(no = memo.no) }
-            ,
-            imageVector = Icons.Default.Clear,
-            contentDescription = null
-        )
-
-    }
-
-}
-
-@Composable
 private fun currentDate(
     selection: CalendarDay,
     events: List<Events>,
@@ -629,168 +505,7 @@ private fun currentDate(
     }
 }
 
-@Composable
-private fun ShowDeleteDialog(
-    showDialog: (Boolean) -> Unit,
-    viewModel: CalendarScreenViewModel,
-    eventId: Int
-) {
-    Dialog(onDismissRequest = { showDialog(false) }) {
-        Surface(
-            modifier = Modifier
-                .width(400.dp)
-                .wrapContentHeight(),
-            shape = RoundedCornerShape(10.dp),
-            color = Color.White
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(vertical = 10.dp)
-                ,
-            ) {
-                Spacer(modifier = Modifier.padding(vertical = 25.dp))
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                    ,
-                    text = stringResource(id = R.string.calendar_dialog_subtitle),
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.padding(vertical = 15.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                    ,
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    TextButton(
-                        onClick = { showDialog(false) }
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.dialog_no),
-                            color = Color.Black
-                        )
-                    }
-                    TextButton(
-                        onClick = {
-                            showDialog(false)
-                            viewModel.deleteDate(eventId) },
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.dialog_yes),
-                            color = Color.Red
-                        )
-                    }
-                }
-            }
 
 
-        }
-    }
-}
-
-// to-do List 작성
-@Composable
-private fun ShowMemoDialog(
-    showDialog: (Boolean) -> Unit,
-    viewModel: CalendarScreenViewModel,
-    date: String
-){
-    var textFieldState by remember{ mutableStateOf("") }
-    val focusManager = LocalFocusManager.current
-
-    Dialog(onDismissRequest = { showDialog(false) }) {
-        Surface(
-            modifier = Modifier
-                .width(400.dp)
-                .wrapContentHeight(),
-            shape = RoundedCornerShape(10.dp),
-            color = Color.White
-        ){
-            Column(
-                modifier = Modifier,
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(vertical = 20.dp)
-                    ,
-                ){
-                    Image(
-                        modifier = Modifier
-                            .size(30.dp)
-                        ,
-                        painter = painterResource(id = R.drawable.ic_app_icon),
-                        contentDescription = null
-                    )
-                    Text(
-                        text = "To-do List",
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                OutlinedTextField(
-                    value = textFieldState,
-                    onValueChange = {
-                        textFieldState = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = stringResource(id = R.string.calendar_dialog_todo_hint),
-                            color = Color.LightGray
-                        )
-                    },
-                    enabled = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = { focusManager.clearFocus() }
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent,
-                    )
-                )
-                Spacer(modifier = Modifier.padding(vertical = 15.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                    ,
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    TextButton(
-                        onClick = { showDialog(false) }
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.calendar_dialog_cancel),
-                            color = Color.Black
-                        )
-                    }
-                    TextButton(
-                        onClick = {
-                            viewModel.addMemo(
-                                date = date,
-                                content = textFieldState
-                            )
-                            showDialog(false)
-                           },
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.calendar_dialog_ok),
-                            color = colorResource(id = R.color.purple_main),
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-            }
-
-        }
-
-    }
-
-}
 
 
