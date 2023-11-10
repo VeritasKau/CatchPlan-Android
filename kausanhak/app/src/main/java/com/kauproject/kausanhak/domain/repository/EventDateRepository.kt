@@ -1,6 +1,6 @@
 package com.kauproject.kausanhak.domain.repository
 
-import com.kauproject.kausanhak.data.model.EventDateEntity
+import com.kauproject.kausanhak.domain.model.entitiy.EventDateEntity
 import kotlinx.coroutines.flow.Flow
 
 

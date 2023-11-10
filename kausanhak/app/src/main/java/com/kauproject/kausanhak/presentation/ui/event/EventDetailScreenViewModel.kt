@@ -2,7 +2,7 @@ package com.kauproject.kausanhak.presentation.ui.event
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kauproject.kausanhak.data.model.EventDateEntity
+import com.kauproject.kausanhak.domain.model.entitiy.EventDateEntity
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.domain.repository.EventDateRepository
 import com.kauproject.kausanhak.domain.repository.EventRepository
@@ -26,7 +26,8 @@ class EventDetailScreenViewModel @Inject constructor(
                     name = name,
                     place = place,
                     image = image
-                ))
+                )
+            )
         }
     }
 

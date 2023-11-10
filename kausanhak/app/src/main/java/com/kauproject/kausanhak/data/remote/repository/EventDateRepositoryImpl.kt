@@ -1,7 +1,7 @@
 package com.kauproject.kausanhak.data.remote.repository
 
 import com.kauproject.kausanhak.data.db.EventDateDAO
-import com.kauproject.kausanhak.data.model.EventDateEntity
+import com.kauproject.kausanhak.domain.model.entitiy.EventDateEntity
 import com.kauproject.kausanhak.domain.repository.EventDateRepository
 import kotlinx.coroutines.flow.Flow
 

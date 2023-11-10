@@ -49,7 +49,11 @@
     <string name="calendar_bottomItem">Calendar</string>
     <string name="calendar_no_schedule">일정이 없어요</string>
     <string name="calendar_dialog_title">알림</string>
-    <string name="calendar_dialog_subtitle">등록된 행사를 삭제하시겠습니까?</string>
+    <string name="calendar_dialog_subtitle">등록된 일정을 삭제하시겠습니까?</string>
+    <string name="calendar_dialog_todo_title">할 일</string>
+    <string name="calendar_dialog_todo_hint">할 일을 입력하세요.</string>
+    <string name="calendar_dialog_ok">추가</string>
+    <string name="calendar_dialog_cancel">취소</string>
 
     <!--Favorite-->
     <string name="favorite_bottomItem">Favorite</string>

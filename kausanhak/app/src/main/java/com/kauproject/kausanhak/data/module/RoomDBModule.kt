@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import com.kauproject.kausanhak.data.db.EventDateDAO
 import com.kauproject.kausanhak.data.db.EventDateDB
+import com.kauproject.kausanhak.data.db.MemoDAO
+import com.kauproject.kausanhak.data.db.MemoDB
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +28,24 @@ object RoomDBModule {
             application,
             EventDateDB::class.java,
             "event_data_db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMemoDAO(memoDB: MemoDB): MemoDAO{
+        return memoDB.memoDAO()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMemoDB(application: Application): MemoDB{
+        return Room.databaseBuilder(
+            application,
+            MemoDB::class.java,
+            "memo_db"
         )
             .fallbackToDestructiveMigration()
             .build()

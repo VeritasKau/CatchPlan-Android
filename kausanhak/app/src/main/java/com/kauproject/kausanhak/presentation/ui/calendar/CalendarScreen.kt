@@ -1,8 +1,8 @@
 package com.kauproject.kausanhak.presentation.ui.calendar
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,23 +23,27 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,15 +55,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -70,7 +75,6 @@ import coil.request.ImageRequest
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.ui.BottomNavItem
 import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
-import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kauproject.kausanhak.presentation.util.clickable
 import com.kauproject.kausanhak.presentation.util.rememberFirstCompletelyVisibleMonth
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -91,6 +95,9 @@ import java.util.Locale
 
 const val TAG = "CalendarScreen"
 
+/*
+캘린더 메인화면
+*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
@@ -107,20 +114,25 @@ fun CalendarScreen(
     val viewModel: CalendarScreenViewModel = hiltViewModel()
 
     val eventsState by viewModel.date.collectAsState()
-    val events = remember(eventsState){
-        eventsState.groupBy { it.date.toLocalDate() }
+    val eventsInSelectedDate by remember(eventsState, selection) {
+        mutableStateOf<List<Events>>(if (selection?.date == null) emptyList() else eventsState[selection?.date].orEmpty())
     }
-    val eventsInSelectedDate = remember(selection, events){
-        derivedStateOf {
-            val date = selection?.date
-            if(date == null) emptyList() else events[date].orEmpty()
-        }
-    }
-    var flag by remember{ mutableStateOf(false) }
 
-    // eventsInSelectedDate가 수행된 후 LazyColumn을 수행 (잘못된 index 접근 방지)
-    LaunchedEffect(eventsInSelectedDate){
-        flag = true
+    val memoState by viewModel.memo.collectAsState()
+    val memoInSelectedDate by remember(memoState, selection) {
+        mutableStateOf<List<Memo>>(if (selection?.date == null) emptyList() else memoState[selection?.date].orEmpty())
+    }
+
+    var eventFlag by remember{ mutableStateOf(false) }
+    var memoFlag by remember{ mutableStateOf(false) }
+
+    LaunchedEffect(eventsInSelectedDate, memoInSelectedDate){
+        Log.d(TAG, "EVENT FLAG TRUE")
+        eventFlag = true
+    }
+    LaunchedEffect(eventsInSelectedDate, memoInSelectedDate){
+        Log.d(TAG, "MEMO FLAG TRUE")
+        memoFlag = true
     }
 
     Scaffold(
@@ -180,15 +192,24 @@ fun CalendarScreen(
                 ,
                 state = state,
                 dayContent = {day->
-                    val colors = if(day.position == DayPosition.MonthDate){
-                        events[day.date].orEmpty().map { colorResource(it.color) }
-                    }else{
-                        emptyList()
-                    }
+                    val colors =
+                        if(day.position == DayPosition.MonthDate){
+                            eventsState[day.date].orEmpty().map { colorResource(it.color) }
+                        }else{
+                            emptyList()
+                        }
+                    val memoColors =
+                        if(day.position == DayPosition.MonthDate){
+                            memoState[day.date].orEmpty().map { colorResource(id = it.color) }
+                        }else{
+                            emptyList()
+                        }
+
                     Day(
                         day = day,
                         isSelected = selection == day,
-                        colors = colors
+                        colors = colors,
+                        memoColors = memoColors
                     ){ clicked->
                         selection = clicked
                     }
@@ -205,20 +226,39 @@ fun CalendarScreen(
             selection?.let {
                 currentDate(
                     selection = it,
-                    events = eventsInSelectedDate.value
+                    events = eventsInSelectedDate,
+                    viewModel = viewModel,
+                    memoSelectableDates = memoInSelectedDate
                 )
             }
 
-            LazyColumn(modifier = Modifier.fillMaxSize()){
-                if(flag){
-                    itemsIndexed(items = eventsInSelectedDate.value){index, event->
-                        EventInformation(
-                            events = event,
-                            onEventClick = onEventClick,
-                            viewModel = viewModel
-                        )
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth().wrapContentWidth(),
+            ){
+                if(memoFlag){
+                    itemsIndexed(items = memoInSelectedDate){ _, memo ->
+                        key(memo.no) {
+                            MemoInformation(memo = memo, viewModel = viewModel)
+                        }
                     }
-                    flag = false
+                    memoFlag = false
+                }
+            }
+
+
+            LazyColumn(modifier = Modifier.fillMaxSize()){
+                if(eventFlag){
+                    itemsIndexed(items = eventsInSelectedDate) { _, event->
+                        key(event.id) {
+                            EventInformation(
+                                events = event,
+                                onEventClick = onEventClick,
+                                viewModel = viewModel,
+                                date = selection?.date.toString()
+                            )
+                        }
+                    }
+                    eventFlag = false
                 }
             }
 
@@ -231,50 +271,74 @@ private fun Day(
     day: CalendarDay,
     isSelected: Boolean = false,
     colors: List<Color> = emptyList(),
+    memoColors: List<Color> = emptyList(),
     onClick: (CalendarDay) -> Unit = {},
 ){
     Box(
         modifier = Modifier
             .aspectRatio(1f)
-            .border(
-                width = if (isSelected) 1.dp else 0.dp,
-                color = if (isSelected) colorResource(id = R.color.lavender_3) else Color.LightGray,
-            )
             .padding(1.dp)
             .background(color = Color.White)
             .clickable(
                 enabled = day.position == DayPosition.MonthDate,
-                onClick = { onClick(day) }
+                onClick = {
+                    onClick(day)
+                    Log.d(TAG, "Click:${day.date}")
+                }
             ),
     ){
         val textColor = when(day.position){
             DayPosition.MonthDate -> Color.Unspecified
             DayPosition.InDate, DayPosition.OutDate -> Color.LightGray
         }
-        Text(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 3.dp, end = 4.dp),
-            text = day.date.dayOfMonth.toString(),
-            color = textColor,
-            fontSize = 12.sp
-        )
+        val selectDayColor = if(isSelected) colorResource(id = R.color.lavender_3) else Color.Transparent
+        val selectTextColor = if(isSelected) Color.White else Color.Unspecified
+
         Column(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+                .align(Alignment.Center)
+            ,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            for(color in colors){
-                Box(
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(25.dp)
+                    .background(color = selectDayColor)
+                    .align(Alignment.CenterHorizontally)
+                ,
+            ){
+                Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(5.dp)
-                        .background(color)
+                        .align(Alignment.Center)
+                    ,
+                    text = day.date.dayOfMonth.toString(),
+                    color = if(isSelected) selectTextColor else textColor,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
+            Spacer(modifier = Modifier.padding(vertical = 2.dp))
+            if(colors.isNotEmpty() || memoColors.isNotEmpty()){
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(6.dp)
+                        .background(color = colorResource(id = R.color.purple_main))
+                    ,
+                )
+            }else{
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(6.dp)
+                        .background(color = Color.Transparent)
+                    ,
+                )
 
+            }
         }
 
     }
@@ -300,7 +364,7 @@ private fun MonthHeader(
                 fontSize = 14.sp,
                 color = Color.White,
                 text = dayOfWeek.getDisplayName(TextStyle.NARROW, Locale.KOREAN),
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
             )
         }
     }
@@ -367,17 +431,20 @@ private fun CalendarNavigationIcon(
 private fun LazyItemScope.EventInformation(
     events: Events,
     onEventClick: (Int) -> Unit,
-    viewModel: CalendarScreenViewModel
+    viewModel: CalendarScreenViewModel,
+    date: String
 ){
-    var showDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
-    if(showDialog){
+
+    if(showDeleteDialog){
         ShowDeleteDialog(
-            showDialog = {showDialog = it},
+            showDialog = {showDeleteDialog = it},
             viewModel = viewModel,
             eventId = events.id
         )
     }
+
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -439,7 +506,7 @@ private fun LazyItemScope.EventInformation(
             Icon(
                 modifier = Modifier
                     .clickable {
-                        showDialog = true
+                        showDeleteDialog = true
                     }
                 ,
                 imageVector = Icons.Default.Clear,
@@ -451,10 +518,41 @@ private fun LazyItemScope.EventInformation(
 }
 
 @Composable
+private fun LazyItemScope.MemoInformation(
+    memo: Memo,
+    viewModel: CalendarScreenViewModel
+){
+    Row {
+        Text(text = memo.content)
+        Icon(
+            modifier = Modifier
+                .clickable { viewModel.deleteMemo(no = memo.no) }
+            ,
+            imageVector = Icons.Default.Clear,
+            contentDescription = null
+        )
+
+    }
+
+}
+
+@Composable
 private fun currentDate(
     selection: CalendarDay,
-    events: List<Events>
+    events: List<Events>,
+    viewModel: CalendarScreenViewModel,
+    memoSelectableDates: List<Memo>,
 ){
+    var showMemoDialog by remember { mutableStateOf(false) }
+
+    if(showMemoDialog){
+        ShowMemoDialog(
+            showDialog = { showMemoDialog = it },
+            viewModel = viewModel,
+            date = selection.date.toString()
+        )
+    }
+
     Column {
         Row(
             modifier = Modifier
@@ -486,20 +584,27 @@ private fun currentDate(
                 ,
                 horizontalAlignment = Alignment.End
             ) {
-                Icon(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .padding(end = 10.dp)
-                    ,
-                    imageVector = Icons.Outlined.AddCircle,
-                    contentDescription = null,
-                    tint = colorResource(id = R.color.lavender_3)
-                )
+                IconButton(
+                    onClick = {
+                        showMemoDialog = true
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(end = 10.dp)
+                        ,
+                        imageVector = Icons.Outlined.AddCircle,
+                        contentDescription = null,
+                        tint = colorResource(id = R.color.lavender_3)
+                    )
+
+                }
                 
             }
 
         }
-        if(events.isEmpty()){
+        if(events.isEmpty() && memoSelectableDates.isEmpty()){
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -549,7 +654,7 @@ private fun ShowDeleteDialog(
                         .fillMaxWidth()
                     ,
                     text = stringResource(id = R.string.calendar_dialog_subtitle),
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.padding(vertical = 15.dp))
@@ -586,5 +691,106 @@ private fun ShowDeleteDialog(
     }
 }
 
+// to-do List 작성
+@Composable
+private fun ShowMemoDialog(
+    showDialog: (Boolean) -> Unit,
+    viewModel: CalendarScreenViewModel,
+    date: String
+){
+    var textFieldState by remember{ mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
+
+    Dialog(onDismissRequest = { showDialog(false) }) {
+        Surface(
+            modifier = Modifier
+                .width(400.dp)
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(10.dp),
+            color = Color.White
+        ){
+            Column(
+                modifier = Modifier,
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(vertical = 20.dp)
+                    ,
+                ){
+                    Image(
+                        modifier = Modifier
+                            .size(30.dp)
+                        ,
+                        painter = painterResource(id = R.drawable.ic_app_icon),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "To-do List",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                OutlinedTextField(
+                    value = textFieldState,
+                    onValueChange = {
+                        textFieldState = it
+                    },
+                    placeholder = {
+                        Text(
+                            text = stringResource(id = R.string.calendar_dialog_todo_hint),
+                            color = Color.LightGray
+                        )
+                    },
+                    enabled = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                    )
+                )
+                Spacer(modifier = Modifier.padding(vertical = 15.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                    ,
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    TextButton(
+                        onClick = { showDialog(false) }
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.calendar_dialog_cancel),
+                            color = Color.Black
+                        )
+                    }
+                    TextButton(
+                        onClick = {
+                            viewModel.addMemo(
+                                date = date,
+                                content = textFieldState
+                            )
+                            showDialog(false)
+                           },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.calendar_dialog_ok),
+                            color = colorResource(id = R.color.purple_main),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+
+        }
+
+    }
+
+}
 
 

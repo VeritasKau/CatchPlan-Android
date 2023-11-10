@@ -1,4 +1,4 @@
-package com.kauproject.kausanhak.data.model
+package com.kauproject.kausanhak.domain.model.entitiy
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
