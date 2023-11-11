@@ -113,7 +113,7 @@ class SettingViewModel @Inject constructor(
             genre3 = mapperToFav(userInfo.value.thirdFavorite),
             mbti = userInfo.value.mbti,
             name = userInfo.value.name,
-            sex = userInfo.value.gender
+            sex = mapperToGender(userInfo.value.gender)
         )
         val response = informSaveService.informSave(request)
         val statusCode = response.code()
@@ -142,10 +142,18 @@ class SettingViewModel @Inject constructor(
 
 private fun mapperToFav(fav: String): String{
     return when(fav){
-        "뮤자컬" -> "musical" "콘서트" -> "concert" "연극" -> "drama"
+        "뮤지컬" -> "musical" "콘서트" -> "concert" "연극" -> "drama"
         "클래식" -> "classic" "지역행사" -> "korea" "레저/캠핑" -> "camping"
         "전시회/박물관" -> "exhibition" "아동/가족" -> "kids"
         else -> ""
+    }
+}
+
+private fun mapperToGender(gender: String): String{
+    return when(gender){
+        "남성" -> "M"
+        "여성" -> "F"
+        else -> throw IllegalArgumentException("Unknown gender: $gender")
     }
 }
 
