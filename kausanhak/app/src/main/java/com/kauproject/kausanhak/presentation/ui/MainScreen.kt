@@ -38,11 +38,12 @@ import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedCompos
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventDestination
-import com.kauproject.kausanhak.presentation.ui.event.EventDetailScreen
-import com.kauproject.kausanhak.presentation.ui.event.EventListScreen
+import com.kauproject.kausanhak.presentation.ui.event.detail.EventDetailScreen
+import com.kauproject.kausanhak.presentation.ui.event.list.EventListScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventScreen
 import com.kauproject.kausanhak.presentation.ui.mypage.MyPageScreen
 import com.kauproject.kausanhak.presentation.ui.recommend.ReccomendScreen
+import com.kauproject.kausanhak.presentation.ui.scrap.ScrapScreen
 import com.kauproject.kausanhak.presentation.ui.theme.CALENDAR
 import com.kauproject.kausanhak.presentation.ui.theme.CHATBOT
 import com.kauproject.kausanhak.presentation.ui.theme.EVENT
@@ -90,10 +91,12 @@ fun MainScreen(
         horizontallyAnimatedComposable(route = BottomNavItem.Chatbot.screenRoute){
             ChatBotScreen(navController = navController)
         }
+
         noAnimatedComposable(route = BottomNavItem.Mypage.screenRoute){
             MyPageScreen(
                 navController = navController,
                 onLoginScreen = onLoginScreen,
+                onScrapScreen = { navController.navigate(EventDestination.EVENT_SCRAP_ROUTE) },
                 context = context
             )
         }
@@ -141,12 +144,18 @@ fun MainScreen(
             )
         }
 
+        horizontallyAnimatedComposable(route = EventDestination.EVENT_SCRAP_ROUTE){
+            ScrapScreen(
+                onEventClick = {id: Int ->
+                    navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")},
+                navController = navController
+            )
+        }
+
+
+
     }
-
-
-
 }
-
 
 
 // 하단바 구성

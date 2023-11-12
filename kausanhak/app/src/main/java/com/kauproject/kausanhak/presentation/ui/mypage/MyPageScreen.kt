@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -19,13 +21,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.presentation.ui.BottomNavItem
 import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.util.clickable
 import kotlinx.coroutines.launch
 
 const val TAG = "MyPageScreen"
@@ -33,6 +39,7 @@ const val TAG = "MyPageScreen"
 fun MyPageScreen(
     navController: NavHostController,
     onLoginScreen: () -> Unit,
+    onScrapScreen: () -> Unit,
     context: Context
 ){
     val viewModel:MyPageViewModel = hiltViewModel()
@@ -44,7 +51,8 @@ fun MyPageScreen(
         bottomBar = {
             CatchPlanBottomBar(navController = navController, currentRoute = BottomNavItem.Mypage.screenRoute)
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        containerColor = Color.White,
     ) {paddingValues ->
         Column(
             modifier = Modifier
@@ -53,46 +61,122 @@ fun MyPageScreen(
                 .padding(vertical = 10.dp)
                 .background(Color.White)
         ) {
-            Button(
+            Text(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .wrapContentSize()
+                    .clickable {  }
                 ,
-                onClick = {
-                    viewModel.getLogOut()
-                    onLoginScreen()
-                }
-            ) {
-                Text(text = stringResource(id = R.string.myPage_logout))
-            }
+                text = stringResource(id = R.string.myPage_modifier),
+                fontSize = 18.sp
+            )
+            HorizontalDivider()
+            Text(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .wrapContentSize()
+                    .clickable { onScrapScreen() }
+                ,
+                text = stringResource(id = R.string.myPage_scrap),
+                fontSize = 18.sp
+            )
+            HorizontalDivider()
+            Text(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .wrapContentSize()
+                    .clickable {
+                        viewModel.getLogOut()
+                        onLoginScreen()
+                    },
+                text = stringResource(id = R.string.myPage_logout),
+                fontSize = 18.sp
+            )
+            HorizontalDivider()
+            Text(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .wrapContentSize()
+                    .clickable {
+                        scope.launch {
+                            viewModel.deleteUser().collect { state ->
+                                when (state) {
+                                    is State.Loading -> {}
+                                    is State.Success -> {
+                                        onLoginScreen()
+                                    }
 
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                ,
-                onClick = {
-                    scope.launch {
-                        viewModel.deleteUser().collect{ state->
-                            when(state){
-                                is State.Loading -> {}
-                                is State.Success -> { onLoginScreen() }
-                                is State.ServerError -> {
-                                    snackbarHostState.showSnackbar(
-                                        message = error + "${state.code}",
-                                        duration = SnackbarDuration.Short
-                                    )
+                                    is State.ServerError -> {
+                                        snackbarHostState.showSnackbar(
+                                            message = error + "${state.code}",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+
+                                    is State.Error -> {
+                                        Log.d(TAG, "Error:${state.exception}")
+                                    }
                                 }
-                                is State.Error -> { Log.d(TAG, "Error:${state.exception}") }
                             }
                         }
-                    }
-                }
-            ) {
-                Text(text = stringResource(id = R.string.myPage_delete))
-            }
-
-
+                    },
+                text = stringResource(id = R.string.myPage_delete),
+                fontSize = 18.sp
+            )
+            HorizontalDivider()
         }
+    }
+}
+
+@Composable
+private fun MypageScreenEx(){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+        ,
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(10.dp)
+            ,
+            text = stringResource(id = R.string.myPage_modifier),
+            fontSize = 18.sp
+        )
+        HorizontalDivider()
+        Text(
+            modifier = Modifier
+                .padding(10.dp)
+            ,
+            text = stringResource(id = R.string.myPage_scrap),
+            fontSize = 18.sp
+        )
+        HorizontalDivider()
+        Text(
+            modifier = Modifier
+                .padding(10.dp)
+            ,
+            text = stringResource(id = R.string.myPage_logout),
+            fontSize = 18.sp
+        )
+        HorizontalDivider()
+        Text(
+            modifier = Modifier
+                .padding(10.dp)
+            ,
+            text = stringResource(id = R.string.myPage_delete),
+            fontSize = 18.sp
+        )
+        HorizontalDivider()
+
+    }
+}
 
 
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewMypage(){
+    KausanhakTheme {
+        MypageScreenEx()
     }
 }

@@ -6,6 +6,8 @@ import com.kauproject.kausanhak.data.db.EventDateDAO
 import com.kauproject.kausanhak.data.db.EventDateDB
 import com.kauproject.kausanhak.data.db.MemoDAO
 import com.kauproject.kausanhak.data.db.MemoDB
+import com.kauproject.kausanhak.data.db.ScrapDAO
+import com.kauproject.kausanhak.data.db.ScrapDB
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,6 +48,24 @@ object RoomDBModule {
             application,
             MemoDB::class.java,
             "memo_db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideScrapDAO(scrapDB: ScrapDB): ScrapDAO{
+        return scrapDB.scrapDAO()
+    }
+
+    @Provides
+    @Singleton
+    fun provideScrapDB(application: Application): ScrapDB{
+        return Room.databaseBuilder(
+            application,
+            ScrapDB::class.java,
+            "scrap_db"
         )
             .fallbackToDestructiveMigration()
             .build()

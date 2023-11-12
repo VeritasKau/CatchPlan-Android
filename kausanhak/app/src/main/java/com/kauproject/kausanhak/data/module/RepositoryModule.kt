@@ -2,13 +2,16 @@ package com.kauproject.kausanhak.data.module
 
 import com.kauproject.kausanhak.data.db.EventDateDAO
 import com.kauproject.kausanhak.data.db.MemoDAO
+import com.kauproject.kausanhak.data.db.ScrapDAO
 import com.kauproject.kausanhak.data.remote.repository.EventDateRepositoryImpl
 import com.kauproject.kausanhak.data.remote.repository.EventRepositoryImpl
 import com.kauproject.kausanhak.data.remote.repository.MemoRepositoryImpl
+import com.kauproject.kausanhak.data.remote.repository.ScrapRepositoryImpl
 import com.kauproject.kausanhak.data.remote.service.event.GetEventService
 import com.kauproject.kausanhak.domain.repository.EventDateRepository
 import com.kauproject.kausanhak.domain.repository.EventRepository
 import com.kauproject.kausanhak.domain.repository.MemoRepository
+import com.kauproject.kausanhak.domain.repository.ScrapRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,5 +37,11 @@ object RepositoryModule {
     @Provides
     fun provideMemoRepository(memoDAO: MemoDAO): MemoRepository{
         return MemoRepositoryImpl(memoDAO)
+    }
+
+    @Singleton
+    @Provides
+    fun provideScrapRepository(scrapDAO: ScrapDAO): ScrapRepository{
+        return ScrapRepositoryImpl(scrapDAO)
     }
 }

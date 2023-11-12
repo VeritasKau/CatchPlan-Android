@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -36,6 +37,7 @@ fun LazyItemScope.MemoInformation(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .padding(start = 5.dp)
         ,
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
@@ -55,36 +57,4 @@ fun LazyItemScope.MemoInformation(
 
     }
 
-}
-
-@Composable
-private fun test(){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            modifier = Modifier
-                .size(20.dp)
-            ,
-            painter = painterResource(id = R.drawable.ic_vertical_bar_lavendar),
-            contentDescription = null)
-        Text(
-            modifier = Modifier,
-            text = "물사러가기",
-            fontWeight = FontWeight.Bold
-        )
-
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun preview(){
-    KausanhakTheme {
-        test()
-    }
 }

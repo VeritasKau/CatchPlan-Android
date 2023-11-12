@@ -1,4 +1,4 @@
-package com.kauproject.kausanhak.presentation.ui.event
+package com.kauproject.kausanhak.presentation.ui.event.list
 
 import androidx.lifecycle.ViewModel
 import com.kauproject.kausanhak.domain.model.EventCollection

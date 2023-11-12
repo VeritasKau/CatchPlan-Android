@@ -1,6 +1,7 @@
-package com.kauproject.kausanhak.presentation.ui.event
+package com.kauproject.kausanhak.presentation.ui.event.detail
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -46,6 +47,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,7 +67,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -74,16 +75,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.Event
-import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.ui.event.TAG
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.Instant
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -129,6 +128,8 @@ fun EventDetailScreen(
             EventDetailBottomBar(
                 event = event,
                 onDateSelected = { showDatePicker = it },
+                viewModel = viewModel,
+                snackbarHostState = snackbarHostState
             )
         },
 
@@ -164,11 +165,14 @@ fun EventDetailScreen(
 @Composable
 private fun EventDetailBottomBar(
     event: Event,
-    onDateSelected: (Boolean) -> Unit
+    onDateSelected: (Boolean) -> Unit,
+    viewModel: EventDetailScreenViewModel,
+    snackbarHostState: SnackbarHostState
 ){
-    var selected by remember { mutableStateOf(false) }
-    val isScrap =
-        if(selected) painterResource(id = R.drawable.ic_scrap_abled)
+    viewModel.findScrap(eventId = event.id)
+    val isScrap = viewModel.isScrap.collectAsState()
+    val scrapBtn =
+        if(isScrap.value) painterResource(id = R.drawable.ic_scrap_abled)
         else painterResource(id = R.drawable.ic_scrap_enabled)
     val uriHandler = LocalUriHandler.current
     val sendIntent: Intent = Intent().apply {
@@ -178,6 +182,11 @@ private fun EventDetailBottomBar(
     }
     val shareIntent = Intent.createChooser(sendIntent, null)
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val scrapComplete = stringResource(id = R.string.snack_scrap_complete)
+    val scrapDelete = stringResource(id = R.string.snack_scrap_delete)
+
+    Log.d(TAG, "SCRAP TEST: ${isScrap.value}")
 
     Column(
         modifier = Modifier
@@ -212,12 +221,35 @@ private fun EventDetailBottomBar(
                     .padding(end = 10.dp)
                     .width(30.dp)
                 ,
-                onClick = { selected = !selected },
+                onClick = {
+                    if(isScrap.value){
+                        viewModel.deleteScrap(eventId = event.id)
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = scrapDelete,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }else{
+                        viewModel.addScrap(
+                            eventId = event.id,
+                            date = event.date,
+                            name = event.name,
+                            place = event.place,
+                            image = event.image
+                        )
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = scrapComplete,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    } },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = colorResource(id = R.color.purple_main),
                 )
             ) {
-                Icon(painter = isScrap, contentDescription = null)
+                Icon(painter = scrapBtn, contentDescription = null)
 
             }
             OutlinedButton(

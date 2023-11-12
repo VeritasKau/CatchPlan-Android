@@ -40,6 +40,9 @@
     <!--Main-->
     <string name="choose_main">Choose Main</string>
 
+    <!--Scrap-->
+    <string name="scrap_top_bar">스크랩한 행사</string>
+
     <!--Event-->
     <string name="event_bottomItem">Event</string>
     <string name="choose_event">Choose Event</string>
@@ -67,6 +70,8 @@
     <string name="myPage_bottomItem">MyPage</string>
     <string name="myPage_logout">로그아웃</string>
     <string name="myPage_delete">회원탈퇴</string>
+    <string name="myPage_modifier">프로필 수정</string>
+    <string name="myPage_scrap">스크랩한 행사</string>
 
     <!--Detail page-->
     <string name="detail_date_pick">일정등록</string>
@@ -78,6 +83,8 @@
 
     <!--Snack Bar-->
     <string name="snack_confirm">일정등록 완료!</string>
+    <string name="snack_scrap_complete">스크랩 추가완료!</string>
+    <string name="snack_scrap_delete">스크랩 삭제완료!</string>
 
     <!--Server Response-->
     <string name="server_error">네트워크 오류:</string>

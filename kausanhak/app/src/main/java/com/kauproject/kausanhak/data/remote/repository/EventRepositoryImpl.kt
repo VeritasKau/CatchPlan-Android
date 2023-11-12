@@ -109,7 +109,7 @@ class EventRepositoryImpl(
     }
 
     private fun parseResponse(response: Response<List<GetEventResponse>>): List<Event> {
-        return response.body()?.map {
+        return response.body()?.filter { it.status == 1 }?.map {
             Event(
                 id = it.id ?: 0,
                 name = it.text ?: "",

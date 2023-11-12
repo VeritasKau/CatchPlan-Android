@@ -121,7 +121,7 @@ private fun chatTopBar(
                 text = "ChatBot",
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.purple_main),
-                fontSize = 24.sp
+                fontSize = 20.sp
             )
         }
     }
