@@ -40,6 +40,7 @@ fun MyPageScreen(
     navController: NavHostController,
     onLoginScreen: () -> Unit,
     onScrapScreen: () -> Unit,
+    onProfileScreen: () -> Unit,
     context: Context
 ){
     val viewModel:MyPageViewModel = hiltViewModel()
@@ -58,14 +59,13 @@ fun MyPageScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues = paddingValues)
-                .padding(vertical = 10.dp)
                 .background(Color.White)
         ) {
             Text(
                 modifier = Modifier
                     .padding(10.dp)
                     .wrapContentSize()
-                    .clickable {  }
+                    .clickable { onProfileScreen() }
                 ,
                 text = stringResource(id = R.string.myPage_modifier),
                 fontSize = 18.sp

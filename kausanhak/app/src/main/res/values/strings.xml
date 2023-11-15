@@ -73,6 +73,9 @@
     <string name="myPage_modifier">프로필 수정</string>
     <string name="myPage_scrap">스크랩한 행사</string>
 
+    <!--Profile-->
+    <string name="profile_top_bar">프로필 수정</string>
+
     <!--Detail page-->
     <string name="detail_date_pick">일정등록</string>
     <string name="detail_link">예매링크</string>

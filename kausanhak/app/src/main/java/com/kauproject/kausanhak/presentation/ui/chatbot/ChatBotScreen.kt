@@ -36,13 +36,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
-import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kauproject.kausanhak.presentation.util.clickable
 
 @Composable
@@ -56,25 +53,21 @@ fun ChatBotScreen(
         topBar = {
             chatTopBar(
             backPress = { navController.navigateUp() }
-        ) },
-        bottomBar = {
-            InputChat()
-        }
+        ) }
     ) {paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(paddingValues = paddingValues)
                 .background(colorResource(id = R.color.lavender_4))
         ) {
             LazyColumn(
                 modifier = Modifier
+                    .weight(0.9f)
             ){
                 item{
                     chatBubble(content = stringResource(id = R.string.chatBot_base_chat), isMe = false)
                 }
             }
-
         }
 
     }
@@ -130,6 +123,7 @@ private fun chatTopBar(
 @Composable
 private fun InputChat(){
     var textFieldState by remember{ mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .height(60.dp)
@@ -232,13 +226,4 @@ private fun chatBubble(
 
     }
 
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun Preview(){
-    val navController = rememberNavController()
-    KausanhakTheme {
-        ChatBotScreen(navController = navController)
-    }
 }

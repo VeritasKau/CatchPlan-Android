@@ -37,11 +37,11 @@ import com.kauproject.kausanhak.presentation.anim.pageanimation.horizontallyAnim
 import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
-import com.kauproject.kausanhak.presentation.ui.event.EventDestination
+import com.kauproject.kausanhak.presentation.ui.event.EventScreen
 import com.kauproject.kausanhak.presentation.ui.event.detail.EventDetailScreen
 import com.kauproject.kausanhak.presentation.ui.event.list.EventListScreen
-import com.kauproject.kausanhak.presentation.ui.event.EventScreen
 import com.kauproject.kausanhak.presentation.ui.mypage.MyPageScreen
+import com.kauproject.kausanhak.presentation.ui.mypage.profile.ProfileScreen
 import com.kauproject.kausanhak.presentation.ui.recommend.ReccomendScreen
 import com.kauproject.kausanhak.presentation.ui.scrap.ScrapScreen
 import com.kauproject.kausanhak.presentation.ui.theme.CALENDAR
@@ -67,16 +67,16 @@ fun MainScreen(
             CalendarScreen(
                 navController = navController,
                 onEventClick = { id ->
-                    navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")
                 }
             )
         }
         noAnimatedComposable(route = BottomNavItem.Event.screenRoute){
             EventScreen(
                 onEventClick = {id: Int ->
-                    navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")},
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")},
                 onArrowClick = {id: Int ->
-                    navController.navigate("${EventDestination.EVENT_ARROW_ROUTE}/$id")
+                    navController.navigate("${Destination.EVENT_ARROW_ROUTE}/$id")
                 },
                 navController = navController
             )
@@ -85,7 +85,7 @@ fun MainScreen(
             ReccomendScreen(
                 navController = navController,
                 onEventClick = {id: Int ->
-                    navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")},
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")},
             )
         }
         horizontallyAnimatedComposable(route = BottomNavItem.Chatbot.screenRoute){
@@ -96,19 +96,20 @@ fun MainScreen(
             MyPageScreen(
                 navController = navController,
                 onLoginScreen = onLoginScreen,
-                onScrapScreen = { navController.navigate(EventDestination.EVENT_SCRAP_ROUTE) },
+                onScrapScreen = { navController.navigate(Destination.EVENT_SCRAP_ROUTE) },
+                onProfileScreen = { navController.navigate(Destination.MYPAGE_PROFILE) },
                 context = context
             )
         }
 
         composable(
-            route = "${EventDestination.EVENT_DETAIL_ROUTE}/{${EventDestination.EVENT_DETAIL_ID}}",
-            arguments = listOf(navArgument(EventDestination.EVENT_DETAIL_ID){
+            route = "${Destination.EVENT_DETAIL_ROUTE}/{${Destination.EVENT_DETAIL_ID}}",
+            arguments = listOf(navArgument(Destination.EVENT_DETAIL_ID){
                 type = NavType.IntType }
             )
         ){backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
-            val eventId = arguments.getInt(EventDestination.EVENT_DETAIL_ID)
+            val eventId = arguments.getInt(Destination.EVENT_DETAIL_ID)
 
             EventDetailScreen(
                 eventId = eventId,
@@ -116,8 +117,8 @@ fun MainScreen(
         }
 
         composable(
-            route = "${EventDestination.EVENT_ARROW_ROUTE}/{${EventDestination.EVENT_ARROW_ID}}",
-            arguments = listOf(navArgument(EventDestination.EVENT_ARROW_ID){
+            route = "${Destination.EVENT_ARROW_ROUTE}/{${Destination.EVENT_ARROW_ID}}",
+            arguments = listOf(navArgument(Destination.EVENT_ARROW_ID){
                 type = NavType.IntType }
             ),
             enterTransition = {
@@ -134,25 +135,29 @@ fun MainScreen(
             },
         ){ backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
-            val eventCollectionId = arguments.getInt(EventDestination.EVENT_ARROW_ID)
+            val eventCollectionId = arguments.getInt(Destination.EVENT_ARROW_ID)
 
             EventListScreen(
                 eventCollectionId = eventCollectionId,
                 onEventClick = {id: Int ->
-                    navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")},
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")},
                 navController = navController,
             )
         }
 
-        horizontallyAnimatedComposable(route = EventDestination.EVENT_SCRAP_ROUTE){
+        horizontallyAnimatedComposable(route = Destination.EVENT_SCRAP_ROUTE){
             ScrapScreen(
                 onEventClick = {id: Int ->
-                    navController.navigate("${EventDestination.EVENT_DETAIL_ROUTE}/$id")},
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")},
                 navController = navController
             )
         }
 
-
+        horizontallyAnimatedComposable(route = Destination.MYPAGE_PROFILE){
+            ProfileScreen(
+                navController = navController
+            )
+        }
 
     }
 }

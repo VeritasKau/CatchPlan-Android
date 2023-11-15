@@ -78,6 +78,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.presentation.ui.event.TAG
 import kotlinx.coroutines.CoroutineScope
@@ -231,18 +232,32 @@ private fun EventDetailBottomBar(
                             )
                         }
                     }else{
-                        viewModel.addScrap(
-                            eventId = event.id,
-                            date = event.date,
-                            name = event.name,
-                            place = event.place,
-                            image = event.image
-                        )
                         scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = scrapComplete,
-                                duration = SnackbarDuration.Short
-                            )
+                            viewModel.addScrap(eventId = event.id, date = event.date,
+                                name = event.name, place = event.place, image = event.image).collect{ state->
+                                when(state){
+                                    is State.Loading -> { Log.d(TAG, "Loading") }
+                                    is State.Success -> {
+                                        snackbarHostState.showSnackbar(
+                                            message = scrapComplete,
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                    is State.ServerError -> {
+                                        snackbarHostState.showSnackbar(
+                                            message = "Server Error:${state.code}",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                    is State.Error -> {
+                                        snackbarHostState.showSnackbar(
+                                            message = "Error: ${state.exception}",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                }
+                            }
+
                         }
                     } },
                 colors = IconButtonDefaults.iconButtonColors(
