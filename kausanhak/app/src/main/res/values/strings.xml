@@ -76,6 +76,9 @@
     <!--Profile-->
     <string name="profile_top_bar">프로필 수정</string>
 
+    <!--Chat-->
+    <string name="chat_hint">메세지 입력</string>
+
     <!--Detail page-->
     <string name="detail_date_pick">일정등록</string>
     <string name="detail_link">예매링크</string>

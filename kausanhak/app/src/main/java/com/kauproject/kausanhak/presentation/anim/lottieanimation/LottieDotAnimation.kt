@@ -3,6 +3,7 @@ package com.kauproject.kausanhak.presentation.anim.lottieanimation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +38,30 @@ fun LottieLoadingAnimation(
             ,
             composition = composition,
             iterations = if (isCompleted) 1 else LottieConstants.IterateForever
+        )
+
+    }
+}
+
+@Composable
+fun LottieChatAnimation(
+    modifier: Modifier,
+    isCompleted: Boolean
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_chat_loading))
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LottieAnimation(
+            modifier = Modifier
+                .wrapContentSize()
+            ,
+            composition = composition,
+            iterations = if (isCompleted) 1 else LottieConstants.IterateForever,
+            isPlaying = isCompleted
         )
 
     }
