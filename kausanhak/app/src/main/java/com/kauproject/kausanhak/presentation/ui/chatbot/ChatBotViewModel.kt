@@ -26,7 +26,7 @@ class ChatBotViewModel: ViewModel() {
 
     companion object{
         const val TAG = "ChatBotVM"
-        const val CHAT_URL = "http://43.201.223.94/stream_test"
+        const val CHAT_URL = "http://43.201.223.94/stream_chat"
     }
     fun sendChat(content: String){
         _messageData.value = _messageData.value.toMutableList().apply {

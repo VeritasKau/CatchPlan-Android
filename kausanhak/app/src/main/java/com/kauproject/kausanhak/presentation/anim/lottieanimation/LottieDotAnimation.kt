@@ -50,20 +50,20 @@ fun LottieChatAnimation(
 ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_chat_loading))
 
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        LottieAnimation(
-            modifier = Modifier
-                .wrapContentSize()
-            ,
-            composition = composition,
-            iterations = if (isCompleted) 1 else LottieConstants.IterateForever,
-            isPlaying = isCompleted
-        )
-
+    if(!isCompleted){
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LottieAnimation(
+                modifier = modifier
+                ,
+                composition = composition,
+                iterations = LottieConstants.IterateForever,
+                isPlaying = true
+            )
+        }
     }
 }
 @Composable

@@ -69,6 +69,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 
 @Composable
@@ -299,7 +300,11 @@ private fun ChatBotBubble(content: String, isInit: Boolean) {
             val query = JSONObject()
             query.put("content", content)
 
-            val client = OkHttpClient()
+            val client = OkHttpClient.Builder()
+                .connectTimeout(40, TimeUnit.SECONDS)
+                .readTimeout(40, TimeUnit.SECONDS)
+                .writeTimeout(40, TimeUnit.SECONDS)
+                .build()
             val request = Request.Builder()
                 .url(ChatBotViewModel.CHAT_URL)
                 .post(
@@ -364,8 +369,7 @@ private fun ChatBotBubble(content: String, isInit: Boolean) {
             )
             if(answer == "" && !isInit){
                 LottieChatAnimation(
-                    modifier = Modifier
-                    ,
+                    modifier = Modifier,
                     isCompleted = false
                 )
             }else{

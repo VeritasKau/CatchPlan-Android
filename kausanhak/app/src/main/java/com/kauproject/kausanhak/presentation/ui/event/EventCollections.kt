@@ -126,22 +126,21 @@ private fun EventCards(
         (6 * (CardWidth + CardPadding).toPx())
     }
     val scroll = rememberScrollState(0)
+    val divideEvents = events.take(10) // 10개만 받아오는 take 함수
     LazyRow(
         modifier = Modifier,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
     ){
-        itemsIndexed(events){index, event ->
+        itemsIndexed(divideEvents){index, event ->
             EventCard(
                 modifier = Modifier,
                 event = event,
                 index = index,
                 onEventClick = onEventClick,
                 gradientWidth = gradientWidth,
-                scroll = scroll.value
-            )
+                scroll = scroll.value)
         }
-
     }
 
 }
