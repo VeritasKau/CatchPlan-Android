@@ -8,6 +8,7 @@ import com.kauproject.kausanhak.data.remote.service.info.InformSaveService
 import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.DeleteUserService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
+import com.kauproject.kausanhak.data.remote.service.recommend.RecommendService
 import com.kauproject.kausanhak.data.remote.service.scrap.ScrapSignService
 import com.kauproject.kausanhak.presentation.util.ApplicationClass
 import com.squareup.moshi.Moshi
@@ -29,6 +30,7 @@ import javax.inject.Singleton
 class ApiModule {
     companion object{
         const val BASE_URL = "http://catchplan-env.eba-ngqypwbe.ap-northeast-2.elasticbeanstalk.com"
+        const val RECOMMEND_URL = "http://13.209.165.130"
     }
 
     @Qualifier
@@ -38,6 +40,10 @@ class ApiModule {
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class ChatRetrofit
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class RecommendRetrofit
 
 
     @BaseRetrofit
@@ -70,6 +76,31 @@ class ApiModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(getOkHttpClient(getInterceptor()))
             .baseUrl(BASE_URL)
+            .build()
+    }
+
+    @RecommendRetrofit
+    @Singleton
+    @Provides
+    fun getRecommendOkHttpClient(): OkHttpClient{
+        return OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+    }
+
+    @RecommendRetrofit
+    @Singleton
+    @Provides
+    fun getRecommendInstance(@RecommendRetrofit okHttpClient: OkHttpClient): Retrofit{
+        val moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+        return Retrofit.Builder().client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(getOkHttpClient(getInterceptor()))
+            .baseUrl(RECOMMEND_URL)
             .build()
     }
 
@@ -119,5 +150,11 @@ class ApiModule {
     @Provides
     fun provideScrapSign(@BaseRetrofit retrofit: Retrofit): ScrapSignService{
         return retrofit.create(ScrapSignService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRecommend(@RecommendRetrofit retrofit: Retrofit): RecommendService{
+        return retrofit.create(RecommendService::class.java)
     }
 }

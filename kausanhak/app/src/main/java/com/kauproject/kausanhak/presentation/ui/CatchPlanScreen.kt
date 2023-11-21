@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui
 
+import android.content.Context
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
@@ -34,7 +35,8 @@ fun CatchPlanApp(
     userDataRepository: UserDataRepository,
     signInService: SignInService,
     checkMemberService: CheckMemberService,
-    getUserInfoService: GetUserInfoService
+    getUserInfoService: GetUserInfoService,
+    context: Context
 ){
     val navController = rememberNavController()
     var isMember by remember { mutableStateOf(false) }
@@ -61,7 +63,8 @@ fun CatchPlanApp(
                 userDataRepository = userDataRepository,
                 signInService = signInService,
                 checkMemberService = checkMemberService,
-                getUserInfoService = getUserInfoService
+                getUserInfoService = getUserInfoService,
+                context = context
             )
         }
         noAnimatedComposable(route = CatchPlanScreen.Setting.name){

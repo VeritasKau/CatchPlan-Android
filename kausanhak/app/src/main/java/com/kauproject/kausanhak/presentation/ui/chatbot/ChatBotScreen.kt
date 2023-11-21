@@ -39,6 +39,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -292,7 +293,7 @@ private fun ChatBubble(
 
 @Composable
 private fun ChatBotBubble(content: String, isInit: Boolean) {
-    var answer by remember{ mutableStateOf("") }
+    var answer by remember { mutableStateOf("") }
     val initText = stringResource(id = R.string.chatBot_base_chat)
 
     LaunchedEffect(Unit){
@@ -305,6 +306,7 @@ private fun ChatBotBubble(content: String, isInit: Boolean) {
                 .readTimeout(40, TimeUnit.SECONDS)
                 .writeTimeout(40, TimeUnit.SECONDS)
                 .build()
+            
             val request = Request.Builder()
                 .url(ChatBotViewModel.CHAT_URL)
                 .post(

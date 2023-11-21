@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.EventCollection
+import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotIcon
 import com.kauproject.kausanhak.presentation.ui.event.EventCard
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 
@@ -87,7 +88,6 @@ fun EventListScreen(
                     scroll = scroll.value
                 )
             }
-
         }
 
     }

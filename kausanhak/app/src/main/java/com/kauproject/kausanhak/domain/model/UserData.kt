@@ -4,6 +4,7 @@ data class UserData(
     var name: String = "",
     var platform: String = "",
     var token: String = "",
+    var location: String = "",
     var num: String = "",
     var gender: String = "",
     var mbti: String = "",

@@ -32,6 +32,7 @@ class UserDataRepositoryImpl @Inject constructor(
         private val USERNUM_KEY = stringPreferencesKey("userNum")
         private val TOKEN_KEY = stringPreferencesKey("token")
         private val NAME_KEY = stringPreferencesKey("name")
+        private val LOCATION_KEY = stringPreferencesKey("location")
         private val PLATFORM_KEY = stringPreferencesKey("platform")
         private val GENDER_KEY = stringPreferencesKey("gender")
         private val MBTI_KEY = stringPreferencesKey("mbti")
@@ -72,6 +73,10 @@ class UserDataRepositoryImpl @Inject constructor(
                     _userData.value.name = value
                     NAME_KEY
                 }
+                "location" -> {
+                    _userData.value.location = value
+                    LOCATION_KEY
+                }
                 "platform" -> {
                     _userData.value.platform = value
                     PLATFORM_KEY
@@ -110,6 +115,7 @@ class UserDataRepositoryImpl @Inject constructor(
         val userNum = preferences[USERNUM_KEY] ?: ""
         val name = preferences[NAME_KEY] ?: ""
         val platform = preferences[PLATFORM_KEY] ?: ""
+        val location = preferences[LOCATION_KEY] ?: ""
         val token = preferences[TOKEN_KEY] ?: ""
         val gender = preferences[GENDER_KEY] ?: ""
         val mbti = preferences[MBTI_KEY] ?: ""
@@ -117,6 +123,6 @@ class UserDataRepositoryImpl @Inject constructor(
         val second = preferences[FAV_SEC_KEY] ?: ""
         val third = preferences[FAV_THR_KEY] ?: ""
 
-        return UserData(name, platform, token, userNum, gender, mbti, first, second, third)
+        return UserData(name, platform, token, location, userNum, gender, mbti, first, second, third)
     }
 }

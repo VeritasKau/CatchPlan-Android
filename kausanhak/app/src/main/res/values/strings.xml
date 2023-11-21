@@ -1,9 +1,21 @@
 <resources>
     <string name="app_name">캐치플랜</string>
+
     <string name="menu_home">Home</string>
     <string name="menu_calendar">Calendar</string>
     <string name="menu_favorite">Favorite</string>
     <string name="menu_my_page">MyPage</string>
+
+    <!--Bottom bar-->
+    <string name="bottom_calendar">캘린더</string>
+    <string name="bottom_recommend">추천</string>
+    <string name="bottom_promotion">홍보</string>
+    <string name="bottom_main">행사</string>
+    <string name="bottom_chat">챗봇</string>
+    <string name="bottom_mypage">마이페이지</string>
+
+    <!--Promotion-->
+    <string name="promotion_bottomItem">Promotion</string>
 
     <!--Login-->
     <string name="choose_login">Choose Login</string>

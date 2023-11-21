@@ -7,4 +7,5 @@ object Destination {
     const val EVENT_ARROW_ID = "arrowId"
     const val EVENT_SCRAP_ROUTE = "scrap"
     const val MYPAGE_PROFILE = "profile"
+    const val CHAT_BOT_ROUTE = "chatBot"
 }

@@ -22,8 +22,7 @@ import com.kauproject.kausanhak.R
 
 @Composable
 fun LottieLoadingAnimation(
-    modifier: Modifier,
-    isCompleted: Boolean
+    modifier: Modifier
     ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_loading))
 
@@ -37,9 +36,9 @@ fun LottieLoadingAnimation(
                 .size(200.dp)
             ,
             composition = composition,
-            iterations = if (isCompleted) 1 else LottieConstants.IterateForever
+            iterations = LottieConstants.IterateForever,
+            isPlaying = true
         )
-
     }
 }
 

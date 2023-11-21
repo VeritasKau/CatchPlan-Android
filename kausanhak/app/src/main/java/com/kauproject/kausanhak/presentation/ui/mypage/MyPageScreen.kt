@@ -30,6 +30,7 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.presentation.ui.BottomNavItem
 import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
+import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotIcon
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kauproject.kausanhak.presentation.util.clickable
 import kotlinx.coroutines.launch
@@ -99,25 +100,27 @@ fun MyPageScreen(
                     .wrapContentSize()
                     .clickable {
                         scope.launch {
-                            viewModel.deleteUser().collect { state ->
-                                when (state) {
-                                    is State.Loading -> {}
-                                    is State.Success -> {
-                                        onLoginScreen()
-                                    }
+                            viewModel
+                                .deleteUser()
+                                .collect { state ->
+                                    when (state) {
+                                        is State.Loading -> {}
+                                        is State.Success -> {
+                                            onLoginScreen()
+                                        }
 
-                                    is State.ServerError -> {
-                                        snackbarHostState.showSnackbar(
-                                            message = error + "${state.code}",
-                                            duration = SnackbarDuration.Short
-                                        )
-                                    }
+                                        is State.ServerError -> {
+                                            snackbarHostState.showSnackbar(
+                                                message = error + "${state.code}",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
 
-                                    is State.Error -> {
-                                        Log.d(TAG, "Error:${state.exception}")
+                                        is State.Error -> {
+                                            Log.d(TAG, "Error:${state.exception}")
+                                        }
                                     }
                                 }
-                            }
                         }
                     },
                 text = stringResource(id = R.string.myPage_delete),

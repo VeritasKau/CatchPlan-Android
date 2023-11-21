@@ -53,9 +53,9 @@ fun LoginScreen(
     userDataRepository: UserDataRepository,
     checkMemberService: CheckMemberService,
     signInService: SignInService,
-    getUserInfoService: GetUserInfoService
+    getUserInfoService: GetUserInfoService,
+    context: Context
 ) {
-    val context = LocalContext.current
     val loginViewModel = LoginViewModel(
         context = context,
         userDataRepository = userDataRepository,

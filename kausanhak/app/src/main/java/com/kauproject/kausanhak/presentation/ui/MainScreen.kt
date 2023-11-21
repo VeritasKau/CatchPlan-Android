@@ -11,20 +11,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -35,6 +38,7 @@ import androidx.navigation.navArgument
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.anim.pageanimation.horizontallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedComposable
+import com.kauproject.kausanhak.presentation.anim.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventScreen
@@ -42,13 +46,18 @@ import com.kauproject.kausanhak.presentation.ui.event.detail.EventDetailScreen
 import com.kauproject.kausanhak.presentation.ui.event.list.EventListScreen
 import com.kauproject.kausanhak.presentation.ui.mypage.MyPageScreen
 import com.kauproject.kausanhak.presentation.ui.mypage.profile.ProfileScreen
-import com.kauproject.kausanhak.presentation.ui.recommend.ReccomendScreen
+import com.kauproject.kausanhak.presentation.ui.promotion.PromotionScreen
+import com.kauproject.kausanhak.presentation.ui.recommend.RecommendScreen
 import com.kauproject.kausanhak.presentation.ui.scrap.ScrapScreen
 import com.kauproject.kausanhak.presentation.ui.theme.CALENDAR
 import com.kauproject.kausanhak.presentation.ui.theme.CHATBOT
 import com.kauproject.kausanhak.presentation.ui.theme.EVENT
-import com.kauproject.kausanhak.presentation.ui.theme.FAVORITE
 import com.kauproject.kausanhak.presentation.ui.theme.MYPAGE
+import com.kauproject.kausanhak.presentation.ui.theme.PROMOTION
+import com.kauproject.kausanhak.presentation.ui.theme.RECOMMEND
+import com.kauproject.kausanhak.presentation.util.icon.IconPack
+import com.kauproject.kausanhak.presentation.util.icon.iconpack.Promotion
+import com.kauproject.kausanhak.presentation.util.icon.iconpack.Recommend
 
 private const val animDurationMillis = 400
 // 메인뷰
@@ -81,16 +90,6 @@ fun MainScreen(
                 navController = navController
             )
         }
-        noAnimatedComposable(route = BottomNavItem.Favorite.screenRoute){
-            ReccomendScreen(
-                navController = navController,
-                onEventClick = {id: Int ->
-                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")},
-            )
-        }
-        horizontallyAnimatedComposable(route = BottomNavItem.Chatbot.screenRoute){
-            ChatBotScreen(navController = navController)
-        }
 
         noAnimatedComposable(route = BottomNavItem.Mypage.screenRoute){
             MyPageScreen(
@@ -100,6 +99,14 @@ fun MainScreen(
                 onProfileScreen = { navController.navigate(Destination.MYPAGE_PROFILE) },
                 context = context
             )
+        }
+
+        noAnimatedComposable(route = BottomNavItem.Promotion.screenRoute){
+            PromotionScreen(navController = navController)
+        }
+
+        noAnimatedComposable(route = BottomNavItem.Recommend.screenRoute){
+            RecommendScreen(navController = navController)
         }
 
         composable(
@@ -144,6 +151,10 @@ fun MainScreen(
                 navController = navController,
             )
         }
+        
+        verticallyAnimatedComposable(route = Destination.CHAT_BOT_ROUTE){
+            ChatBotScreen(navController = navController)
+        }
 
         horizontallyAnimatedComposable(route = Destination.EVENT_SCRAP_ROUTE){
             ScrapScreen(
@@ -171,9 +182,9 @@ fun CatchPlanBottomBar(
 ){
     val screens = listOf(
         BottomNavItem.Calendar,
-        BottomNavItem.Favorite,
+        BottomNavItem.Promotion,
         BottomNavItem.Event,
-        BottomNavItem.Chatbot,
+        BottomNavItem.Recommend,
         BottomNavItem.Mypage
     )
 
@@ -211,11 +222,12 @@ fun CatchPlanBottomBar(
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = Color.Transparent,
                     selectedIconColor = colorResource(id = R.color.purple_main),
-                    unselectedIconColor = Color.Black
-                )
+                    unselectedIconColor = Color.LightGray,
+                    selectedTextColor = colorResource(id = R.color.purple_main),
+                    unselectedTextColor = Color.LightGray
+                ),
             )
         }
-        val imageVector = Icons.AutoMirrored.Outlined.Send
 
     }
 
@@ -225,31 +237,37 @@ fun CatchPlanBottomBar(
 sealed class BottomNavItem(
     @StringRes val title: Int,
     val icon: ImageVector,
-    val screenRoute: String
+    val screenRoute: String,
+    @StringRes val name: Int
 ){
     object Calendar: BottomNavItem(
         R.string.calendar_bottomItem,
         Icons.Outlined.DateRange,
-        CALENDAR
+        CALENDAR,
+        R.string.bottom_calendar
     )
     object Event: BottomNavItem(
         R.string.event_bottomItem,
         Icons.Outlined.Menu,
-        EVENT
-    )
-    object Favorite: BottomNavItem(
-        R.string.favorite_bottomItem,
-        Icons.Outlined.FavoriteBorder,
-        FAVORITE
-    )
-    object Chatbot: BottomNavItem(
-        R.string.chatBot_bottomItem,
-        Icons.AutoMirrored.Outlined.Send,
-        CHATBOT
+        EVENT,
+        R.string.bottom_main
     )
     object Mypage: BottomNavItem(
         R.string.myPage_bottomItem,
         Icons.Outlined.AccountCircle,
-        MYPAGE
+        MYPAGE,
+        R.string.bottom_mypage
+    )
+    object Promotion: BottomNavItem(
+        R.string.promotion_bottomItem,
+        IconPack.Promotion,
+        PROMOTION,
+        R.string.bottom_promotion
+    )
+    object Recommend: BottomNavItem(
+        R.string.bottom_recommend,
+        IconPack.Recommend,
+        RECOMMEND,
+        R.string.bottom_recommend
     )
 }

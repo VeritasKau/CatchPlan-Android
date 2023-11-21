@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,41 +36,29 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.EventCollection
 import com.kauproject.kausanhak.presentation.ui.BottomNavItem
 import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
+import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotIcon
 import com.kauproject.kausanhak.presentation.ui.event.EventCard
 
 private val CardWidth = 170.dp
 private val CardPadding = 16.dp
 
 @Composable
-fun ReccomendScreen(
-    navController: NavHostController,
-    onEventClick: (Int) -> Unit
+fun RecommendScreen(
+    navController: NavHostController
 ){
     val viewModel: RecommendScreenViewModel = hiltViewModel()
-    val scroll = rememberScrollState(0)
-    val gradientWidth = with(LocalDensity.current){
-        (6 * (CardWidth + CardPadding).toPx())
-    }
-
     Scaffold(
-        bottomBar = {
-            CatchPlanBottomBar(navController = navController, currentRoute = BottomNavItem.Favorite.screenRoute)
-        },
-        topBar = { TopBar(name = viewModel.names.value ?: "") }
+        modifier = Modifier
+            .fillMaxSize(),
+        bottomBar = { CatchPlanBottomBar(navController = navController, currentRoute = BottomNavItem.Recommend.screenRoute) },
+        containerColor = Color.White
     ) {paddingValues ->
-        LazyVerticalGrid(
-            modifier = Modifier
-                .padding(paddingValues)
-                .background(Color.White)
-            ,
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.Center,
-            horizontalArrangement = Arrangement.Center
-        ){
+        Column(
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            ChatBotIcon(navController = navController)
 
         }
-
-
     }
 
 }

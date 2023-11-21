@@ -166,4 +166,8 @@ dependencies {
 
     // Lottie
     implementation "com.airbnb.android:lottie-compose:6.1.0"
+
+    // Location
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    
 }

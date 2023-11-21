@@ -125,8 +125,15 @@ class LoginViewModel(
                 val statusCode = response.code()
 
                 if(statusCode == 200){
-                    userDataRepository.setUserData("userNum", userId)
-                    Log.d("TEST USER", "${response.body()}")
+                    response.body()?.let {
+                        userDataRepository.setUserData("userNum", userId)
+                        userDataRepository.setUserData("name", it.name!!)
+                        userDataRepository.setUserData("gender", it.sex!!)
+                        userDataRepository.setUserData("mbti", it.mbti!!)
+                        userDataRepository.setUserData("first", it.genre1!!)
+                        userDataRepository.setUserData("second", it.genre2!!)
+                        userDataRepository.setUserData("third", it.genre3!!)
+                    }
                 }
 
             }
