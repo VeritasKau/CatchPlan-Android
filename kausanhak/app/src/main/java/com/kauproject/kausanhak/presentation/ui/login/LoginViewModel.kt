@@ -2,19 +2,13 @@ package com.kauproject.kausanhak.presentation.ui.login
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.kakao.sdk.user.UserApiClient
-import com.kakao.sdk.user.model.User
 import com.kauproject.kausanhak.data.remote.request.SignInRequest
 import com.kauproject.kausanhak.data.remote.service.info.GetUserInfoService
 import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
-import com.kauproject.kausanhak.domain.model.Dummy
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
 import com.kauproject.kausanhak.presentation.ui.login.manager.KakaoLoginManager
 import com.kauproject.kausanhak.presentation.ui.login.manager.NaverLoginManager
@@ -23,17 +17,11 @@ import com.kauproject.kausanhak.presentation.util.Constants.NAVER
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.IOException
-import java.lang.Exception
-import javax.inject.Inject
 
 class LoginViewModel(
     context: Context,

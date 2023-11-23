@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -55,6 +56,8 @@ import com.kauproject.kausanhak.presentation.ui.theme.EVENT
 import com.kauproject.kausanhak.presentation.ui.theme.MYPAGE
 import com.kauproject.kausanhak.presentation.ui.theme.PROMOTION
 import com.kauproject.kausanhak.presentation.ui.theme.RECOMMEND
+import com.kauproject.kausanhak.presentation.ui.upload.UpLoadFormRoute
+import com.kauproject.kausanhak.presentation.ui.upload.UpLoadScreen
 import com.kauproject.kausanhak.presentation.util.icon.IconPack
 import com.kauproject.kausanhak.presentation.util.icon.iconpack.Promotion
 import com.kauproject.kausanhak.presentation.util.icon.iconpack.Recommend
@@ -97,7 +100,33 @@ fun MainScreen(
                 onLoginScreen = onLoginScreen,
                 onScrapScreen = { navController.navigate(Destination.EVENT_SCRAP_ROUTE) },
                 onProfileScreen = { navController.navigate(Destination.MYPAGE_PROFILE) },
+                onUpLoadScreen = { navController.navigate(Destination.UPLOAD_ROUTE) },
                 context = context
+            )
+        }
+
+        verticallyAnimatedComposable(route = Destination.UPLOAD_ROUTE){
+            UpLoadScreen(
+                onDoneButton = { navController.navigate(Destination.UPLOAD_FORM_ROUTE) },
+                onCancelButton = { navController.navigateUp() }
+            )
+        }
+        
+        horizontallyAnimatedComposable(route = Destination.UPLOAD_FORM_ROUTE){
+            UpLoadFormRoute(
+                navController = navController,
+                onClosePressed = {
+                    navController.navigate(
+                        route = BottomNavItem.Mypage.screenRoute,
+                        navOptions = NavOptions.Builder().setPopUpTo(Destination.UPLOAD_ROUTE, inclusive = true).build()
+                    )
+                },
+                onComplete = {
+                    navController.navigate(
+                        route = BottomNavItem.Mypage.screenRoute,
+                        navOptions = NavOptions.Builder().setPopUpTo(Destination.UPLOAD_ROUTE, inclusive = true).build()
+                    )
+                }
             )
         }
 

@@ -1,0 +1,94 @@
+package com.kauproject.kausanhak.presentation.ui.promotion
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import com.kauproject.kausanhak.domain.model.PromotionEvent
+import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
+
+@Composable
+fun PromotionCard(
+    event: PromotionEvent
+){
+    Card(
+        modifier = Modifier
+            .width(300.dp)
+            .height(400.dp)
+            .shadow(shape = RoundedCornerShape(10.dp), elevation = 5.dp)
+        ,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
+    ) {
+        Image(
+            modifier = Modifier
+                .weight(0.7f)
+                .fillMaxSize()
+            ,
+            painter = rememberAsyncImagePainter(event.image),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds,
+        )
+        Column(
+            modifier = Modifier
+                .weight(0.3f)
+                .padding(horizontal = 10.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = event.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.padding(vertical = 1.dp))
+            Text(
+                text = event.place
+            )
+            Spacer(modifier = Modifier.padding(vertical = 5.dp))
+            Text(
+                text = event.startDate + "~" + event.endDate
+            )
+
+        }
+
+    }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewPromotionCard(){
+    val event = PromotionEvent(
+        title = "동아리 연극",
+        place = "항공대학교",
+        startDate = "2023-10-10",
+        endDate = "2023-10-12",
+        image = null,
+        content = ""
+    )
+    KausanhakTheme {
+        PromotionCard(event = event)
+    }
+}

@@ -42,6 +42,7 @@ fun MyPageScreen(
     onLoginScreen: () -> Unit,
     onScrapScreen: () -> Unit,
     onProfileScreen: () -> Unit,
+    onUpLoadScreen: () -> Unit,
     context: Context
 ){
     val viewModel:MyPageViewModel = hiltViewModel()
@@ -79,6 +80,16 @@ fun MyPageScreen(
                     .clickable { onScrapScreen() }
                 ,
                 text = stringResource(id = R.string.myPage_scrap),
+                fontSize = 18.sp
+            )
+            HorizontalDivider()
+            Text(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .wrapContentSize()
+                    .clickable { onUpLoadScreen() }
+                ,
+                text = stringResource(id = R.string.myPage_upload),
                 fontSize = 18.sp
             )
             HorizontalDivider()
@@ -128,58 +139,5 @@ fun MyPageScreen(
             )
             HorizontalDivider()
         }
-    }
-}
-
-@Composable
-private fun MypageScreenEx(){
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-        ,
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(10.dp)
-            ,
-            text = stringResource(id = R.string.myPage_modifier),
-            fontSize = 18.sp
-        )
-        HorizontalDivider()
-        Text(
-            modifier = Modifier
-                .padding(10.dp)
-            ,
-            text = stringResource(id = R.string.myPage_scrap),
-            fontSize = 18.sp
-        )
-        HorizontalDivider()
-        Text(
-            modifier = Modifier
-                .padding(10.dp)
-            ,
-            text = stringResource(id = R.string.myPage_logout),
-            fontSize = 18.sp
-        )
-        HorizontalDivider()
-        Text(
-            modifier = Modifier
-                .padding(10.dp)
-            ,
-            text = stringResource(id = R.string.myPage_delete),
-            fontSize = 18.sp
-        )
-        HorizontalDivider()
-
-    }
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewMypage(){
-    KausanhakTheme {
-        MypageScreenEx()
     }
 }

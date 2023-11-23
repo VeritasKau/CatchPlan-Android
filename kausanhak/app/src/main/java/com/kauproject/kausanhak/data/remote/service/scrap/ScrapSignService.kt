@@ -7,7 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface ScrapSignService {
-    @POST("/api/scraps")
+    @POST("/api/scrap/save")
     suspend fun scrapSign(
         @Body scrapRequest: ScrapRequest
     ): Response<ResponseBody>

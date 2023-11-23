@@ -1,6 +1,7 @@
 package com.kauproject.kausanhak.presentation.anim.lottieanimation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -65,6 +66,21 @@ fun LottieChatAnimation(
         }
     }
 }
+
+@Composable
+fun LottieUpLoadAnimation(
+    modifier: Modifier
+){
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_upload_welcom))
+    Box(modifier = modifier){
+        LottieAnimation(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            isPlaying = true
+        )
+    }
+
+}
 @Composable
 fun LottieDotAnimation(
     modifier: Modifier,
@@ -84,6 +100,20 @@ fun LottieDotAnimation(
             composition = composition,
             iterations = if (isCompleted) 1 else LottieConstants.IterateForever,
             contentScale = ContentScale.Crop
+        )
+    }
+}
+
+@Composable
+fun LottieCongratsAnimation(
+    modifier: Modifier
+){
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_congrats))
+
+    Box(modifier = modifier){
+        LottieAnimation(
+            composition = composition,
+            iterations = 1
         )
     }
 }

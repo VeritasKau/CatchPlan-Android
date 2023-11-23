@@ -84,6 +84,7 @@
     <string name="myPage_delete">회원탈퇴</string>
     <string name="myPage_modifier">프로필 수정</string>
     <string name="myPage_scrap">스크랩한 행사</string>
+    <string name="myPage_upload">이벤트 등록</string>
 
     <!--Profile-->
     <string name="profile_top_bar">프로필 수정</string>
@@ -117,4 +118,30 @@
     <!--Error-->
     <string name="error_userInfo">유저정보를 조회할 수 없습니다</string>
 
+    <!--UpLoad-->
+    <string name="upload_count">\u00A0of %d</string>
+    <string name="upload_next">다음</string>
+    <string name="upload_previous">이전</string>
+    <string name="upload_complete">등록하기(₩1,000)</string>
+    <string name="upload_subTitle">이제는 당신이 주인공,</string>
+    <string name="upload_title">이벤트를 등록해보세요!</string>
+    <string name="upload_money">* 본 서비스는 유료서비스입니다. (게시글 당 ₩1,000)</string>
+    <string name="upload_ok">등록하기</string>
+    <string name="upload_no">다음에 할게요.</string>
+    <string name="upload_set_title">이벤트명 (최대 20자 작성가능)</string>
+    <string name="upload_content_title">이벤트에 대한 설명을 적어주세요.</string>
+    <string name="upload_content_subTitle">* 캐치플랜은 깨끗하고 건강한 이벤트 문화를 만들기 위해 게시글 이용규칙을 제정하여 운영하고 있습니다. \n욕설, 비방, 음란물 등 이용자에게 불쾌감을 줄 수 있는 표현이 담긴 내용은 게시글이 삭제될 수 있으며,\n서비스 이용이 일정 기간 제한될 수 있습니다.</string>
+    <string name="upload_image_title">배너에 등록할 대표사진을 등록해주세요.</string>
+    <string name="upload_image_isPost">홍보 포스터가 있나요?</string>
+    <string name="upload_image_dialog_title">배너사진 선택</string>
+    <string name="upload_image_dialog_camera">카메라에서 찍기</string>
+    <string name="upload_image_dialog_gallery">갤러리에서 가져오기</string>
+    <string name="upload_image_dialog_cancel">취소</string>
+    <string name="upload_place_title">이벤트가 진행되는 장소를 적어주세요.</string>
+    <string name="upload_place_hint">예) 캐플대학교 본관</string>
+    <string name="upload_date_title">진행되는 날짜를 선택하세요.</string>
+    <string name="upload_date_start_hint">시작날짜 선택</string>
+    <string name="upload_date_end_hint">종료날짜 선택</string>
+    <string name="upload_preview_title">이벤트가 완성됬어요</string>
+    <string name="upload_preview_complete">게시글을 등록해보세요!</string>
 </resources>
