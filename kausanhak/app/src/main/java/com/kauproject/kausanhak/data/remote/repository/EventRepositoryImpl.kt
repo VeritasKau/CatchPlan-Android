@@ -1,6 +1,7 @@
 package com.kauproject.kausanhak.data.remote.repository
 
 import com.kauproject.kausanhak.data.remote.response.GetEventResponse
+import com.kauproject.kausanhak.data.remote.response.GetPlaceResponse
 import com.kauproject.kausanhak.data.remote.service.event.GetEventService
 import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.Event

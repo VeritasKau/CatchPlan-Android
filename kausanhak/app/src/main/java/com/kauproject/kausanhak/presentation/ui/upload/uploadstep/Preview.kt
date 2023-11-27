@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.PromotionEvent
 import com.kauproject.kausanhak.presentation.anim.lottieanimation.LottieCongratsAnimation
+import com.kauproject.kausanhak.presentation.ui.promotion.PreviewPromotionCard
 import com.kauproject.kausanhak.presentation.ui.promotion.PromotionCard
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kauproject.kausanhak.presentation.ui.upload.UpLoadFormViewModel
@@ -68,19 +69,8 @@ fun Preview(
             color = colorResource(id = R.color.purple_main)
         )
         Spacer(modifier = Modifier.padding(vertical = 15.dp))
-        PromotionCard(event = event)
-        viewModel.onComplete()
-    }
-}
+        PreviewPromotionCard(event = event)
 
-@Preview(showBackground = true)
-@Composable
-private fun Exam(){
-    val viewModel: UpLoadFormViewModel = hiltViewModel()
-    KausanhakTheme {
-        Preview(
-            modifier = Modifier,
-            viewModel = viewModel
-        )
+        viewModel.onComplete()
     }
 }

@@ -116,7 +116,6 @@ fun EventDetailScreen(
 ){
     //val event = remember(eventId) { EventRepo.getEvent(eventId) }
     var showDatePicker by remember { mutableStateOf(false) }
-    var setDate by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val viewModel: EventDetailScreenViewModel = hiltViewModel()

@@ -27,7 +27,6 @@ import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 @Composable
 fun UpLoadPosterDialog(
     showDialog: (Boolean) -> Unit,
-    showCamera: (Boolean) -> Unit,
     showGallery: (Boolean) -> Unit
 ){
     Dialog(onDismissRequest = { showDialog(false) }) {
@@ -45,21 +44,6 @@ fun UpLoadPosterDialog(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
-                TextButton(
-                    onClick = {
-                        showCamera(true)
-                        showDialog(false)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = Color.Black,
-                        containerColor = Color.Transparent
-                    )
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.upload_image_dialog_camera),
-                        fontSize = 18.sp
-                    )
-                }
                 TextButton(
                     onClick = {
                         showGallery(true)

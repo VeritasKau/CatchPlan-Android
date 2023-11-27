@@ -118,7 +118,7 @@ fun EventCollection(
 }
 
 @Composable
-private fun EventCards(
+fun EventCards(
     events: List<Event>,
     onEventClick: (Int) -> Unit
 ){

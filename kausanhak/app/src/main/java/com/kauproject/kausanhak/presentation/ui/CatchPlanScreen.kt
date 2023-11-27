@@ -43,6 +43,8 @@ fun CatchPlanApp(
 
     LaunchedEffect(Unit){
         isMember = userDataRepository.getUserData().token != ""
+        Log.d("Location Test:", userDataRepository.getUserData().location)
+        Log.d("USER:",userDataRepository.getUserData().name)
     }
 
     val startScreen = if(isMember) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name

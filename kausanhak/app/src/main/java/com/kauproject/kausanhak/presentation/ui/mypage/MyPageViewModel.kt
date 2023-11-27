@@ -39,9 +39,7 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
-    fun deleteUser(
-        //context: Context
-    ): Flow<State<Int>> = flow {
+    fun deleteUser(): Flow<State<Int>> = flow {
         emit(State.Loading)
 
         val platform = userDataRepository.getUserData().platform

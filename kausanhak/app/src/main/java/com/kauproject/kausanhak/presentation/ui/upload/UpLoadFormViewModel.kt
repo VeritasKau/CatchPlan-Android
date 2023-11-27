@@ -1,15 +1,42 @@
 package com.kauproject.kausanhak.presentation.ui.upload
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.kauproject.kausanhak.data.remote.request.PostPromotionRequest
+import com.kauproject.kausanhak.data.remote.service.promotion.PostPromotionService
+import com.kauproject.kausanhak.domain.State
+import com.kauproject.kausanhak.presentation.util.UriUtil
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.lang.IllegalStateException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import okio.BufferedSink
+import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.http.Multipart
+import java.io.File
+import java.io.InputStream
 import javax.inject.Inject
 
 @HiltViewModel
 class UpLoadFormViewModel @Inject constructor(
-
+    private val postPromotionService: PostPromotionService
 ): ViewModel() {
 
     companion object{
@@ -63,11 +90,15 @@ class UpLoadFormViewModel @Inject constructor(
     val place: String
         get() = _place.value
 
+    //url
+    private val _url = mutableStateOf<String?>(null)
+    val url: String?
+        get() = _url.value
+
     // 미리보기 확인
     private val _complete = mutableStateOf<Boolean?>(null)
     val complete: Boolean?
         get() = _complete.value
-
 
 
     private var stepIndex = 0 // 현재 단계
@@ -96,6 +127,46 @@ class UpLoadFormViewModel @Inject constructor(
         onComplete()
     }
 
+    fun onPostPromotion(
+        context: Context
+    ): Flow<State<Int>> = flow{
+        emit(State.Loading)
+
+        val file = UriUtil.toFile(context, mainImageUri!!)
+        val requestImage = file.asRequestBody("image/*".toMediaTypeOrNull())
+
+        val body = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("text", title)
+            .addFormDataPart("place", place)
+            .addFormDataPart("url", "")
+            .addFormDataPart("detail2", content)
+            .addFormDataPart("duration", "$startDate~$endDate")
+            .addFormDataPart(
+                "image", file.name, requestImage
+            )
+            .addFormDataPart(
+                "detail", file.name, requestImage
+            )
+            .build()
+
+
+        val response = postPromotionService.postPromotion(
+            body = body
+        )
+
+        val statusCode = response.code()
+
+        if(statusCode == 200){
+            emit(State.Success(statusCode))
+        }else{
+            emit(State.ServerError(statusCode))
+        }
+    }.catch { e->
+        emit(State.Error(e))
+    }
+
+
     // value 관리
     fun onWriteContent(title: String, content: String){
         _title.value = title
@@ -105,12 +176,19 @@ class UpLoadFormViewModel @Inject constructor(
 
     fun onUpLoadPoster(uri: Uri?){
         _mainImageUri.value = uri
+        Log.d("TEST", "$uri")
         _isNextEnabled.value = getIsNextEnabled()
     }
 
     fun onWritePlace(place: String){
         _place.value = place
         _isNextEnabled.value = getIsNextEnabled()
+    }
+
+    fun onWriteURL(url: String?){
+        url?.let {
+            _url.value = it
+        }
     }
 
     fun onSelectedDate(start: String, end: String){
@@ -123,7 +201,6 @@ class UpLoadFormViewModel @Inject constructor(
         _complete.value = true
         _isNextEnabled.value = getIsNextEnabled()
     }
-
 
     private fun changeStepIndex(newStepIndex: Int){
         stepIndex = newStepIndex
@@ -159,6 +236,7 @@ class UpLoadFormViewModel @Inject constructor(
     }
 
 }
+
 data class UpLoadFormScreenData(
     val stepIndex: Int,
     val stepCount: Int,

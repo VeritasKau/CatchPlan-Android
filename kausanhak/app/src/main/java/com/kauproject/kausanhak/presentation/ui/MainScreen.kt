@@ -99,9 +99,7 @@ fun MainScreen(
                 navController = navController,
                 onLoginScreen = onLoginScreen,
                 onScrapScreen = { navController.navigate(Destination.EVENT_SCRAP_ROUTE) },
-                onProfileScreen = { navController.navigate(Destination.MYPAGE_PROFILE) },
                 onUpLoadScreen = { navController.navigate(Destination.UPLOAD_ROUTE) },
-                context = context
             )
         }
 

@@ -74,7 +74,7 @@ class MainActivity(): ComponentActivity() {
                     val address = getAddress(location.latitude, location.longitude)?.get(0)
                     lifecycleScope.launch {
                         address?.let {
-                            userDataRepository.setUserData("location", it.adminArea)
+                            userDataRepository.setUserData("location", "경기도")
                             Log.d("TEST LOCATION2", it.adminArea)
                         }
                     }

@@ -1,12 +1,22 @@
 package com.kauproject.kausanhak.presentation.ui.upload.uploadstep
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.Context
 import android.content.pm.PackageManager
+import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,6 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import com.kauproject.kausanhak.BuildConfig
@@ -51,9 +63,20 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kauproject.kausanhak.presentation.ui.upload.UpLoadFormViewModel
 import com.kauproject.kausanhak.presentation.ui.upload.uploadstep.dialog.UpLoadPosterDialog
+import com.kauproject.kausanhak.presentation.util.UriUtil
 import com.kauproject.kausanhak.presentation.util.clickable
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.Objects
 
 @Composable
@@ -87,30 +110,7 @@ private fun PreviewPromotionCard(
 ){
     var capturedImageUri by remember { mutableStateOf<Uri?>(viewModel.mainImageUri) }
     var showDialog by remember { mutableStateOf(false) }
-    var showCamera by remember { mutableStateOf(false) }
     var showGallery by remember { mutableStateOf(false) }
-
-    val context = LocalContext.current
-    val file = context.createImageFile()
-    val uri = FileProvider.getUriForFile(
-        Objects.requireNonNull(context),
-        BuildConfig.APPLICATION_ID + ".provider",
-        file
-    )
-    val cameraLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()){
-            capturedImageUri = uri
-        }
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ){
-        if(it){
-            cameraLauncher.launch(uri)
-        }else{
-            // 거절된경우 로직
-        }
-    }
-
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { it: Uri? ->
@@ -121,20 +121,8 @@ private fun PreviewPromotionCard(
     if(showDialog){
         UpLoadPosterDialog(
             showDialog = { showDialog = it },
-            showCamera = { showCamera = it },
             showGallery = { showGallery = it }
         )
-    }
-
-    // 카메라 접근
-    if(showCamera){
-        val permissionCheckResult =
-            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-        if(permissionCheckResult == PackageManager.PERMISSION_GRANTED){
-            cameraLauncher.launch(uri)
-        }else{
-            permissionLauncher.launch(Manifest.permission.CAMERA)
-        }
     }
 
     // 갤러리 접근
@@ -158,8 +146,7 @@ private fun PreviewPromotionCard(
                 .weight(0.9f)
         ) {
             if(capturedImageUri?.path?.isNotEmpty() == true || capturedImageUri != null){
-                // 카메라, 갤러리 접근 해제
-                showCamera = false
+                // 갤러리 접근 해제
                 showGallery = false
 
                 viewModel.onUpLoadPoster(uri = capturedImageUri)
@@ -175,6 +162,7 @@ private fun PreviewPromotionCard(
 
                 )
             }else{
+                showGallery = false
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -222,14 +210,4 @@ private fun PreviewPromotionCard(
 
     }
 
-}
-fun Context.createImageFile(): File {
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(java.util.Date())
-    val imageFileName = "JPEG_" + timeStamp + "_"
-    val image = File.createTempFile(
-        imageFileName,
-        ".jpg",
-        externalCacheDir
-    )
-    return image
 }

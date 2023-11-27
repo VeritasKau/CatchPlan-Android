@@ -56,6 +56,8 @@ fun Date(
     ) {
         PlaceTextField(viewModel = viewModel)
         Spacer(modifier = Modifier.padding(vertical = 30.dp))
+        URLTextField(viewModel = viewModel)
+        Spacer(modifier = Modifier.padding(vertical = 30.dp))
         DateButton(viewModel = viewModel)
     }
 
@@ -99,6 +101,48 @@ private fun PlaceTextField(
 }
 
 @Composable
+private fun URLTextField(
+    viewModel: UpLoadFormViewModel
+){
+    var urlTextFieldState by remember{ mutableStateOf(viewModel.url) }
+
+    Text(
+        text = stringResource(id = R.string.upload_url_title),
+        fontSize = 20.sp,
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold
+    )
+    Text(
+        text = stringResource(id = R.string.upload_url_subTitle),
+        fontSize = 16.sp,
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.SemiBold,
+        color = Color.LightGray
+    )
+    Spacer(modifier = Modifier.padding(vertical = 5.dp))
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth(),
+        value = urlTextFieldState ?: "",
+        onValueChange = { urlTextFieldState = it },
+        shape = RoundedCornerShape(5.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color.LightGray,
+            unfocusedBorderColor = Color.LightGray,
+            cursorColor = Color.Black
+        ),
+        placeholder = {
+            Text(
+                text = stringResource(id = R.string.upload_url_hint),
+                color = Color.LightGray,
+                fontWeight = FontWeight.Bold
+            )
+        },
+    )
+    viewModel.onWriteURL(urlTextFieldState)
+}
+
+@Composable
 private fun DateButton(
     viewModel: UpLoadFormViewModel
 ){
@@ -106,8 +150,8 @@ private fun DateButton(
     var showEndDialog by remember{ mutableStateOf(false) }
     var start by remember{ mutableStateOf(viewModel.startDate) }
     var end by remember { mutableStateOf(viewModel.endDate) }
-    var startColor = if(start != "시작날짜 선택") Color.Black else Color.LightGray
-    var endColor = if(end != "종료날짜 선택") Color.Black else Color.LightGray
+    val startColor = if(start != "시작날짜 선택") Color.Black else Color.LightGray
+    val endColor = if(end != "종료날짜 선택") Color.Black else Color.LightGray
 
     if(showStartDialog){
         ShowDatePicker(

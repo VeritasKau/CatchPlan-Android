@@ -11,6 +11,7 @@
     <color name="gray_1">#F4F3F3</color>
     <color name="gray_2">#D5D5D5</color>
     <color name="gray_3">#9A9A9A</color>
+    <color name="red_0">#F43131</color>
 
     <!--login-->
     <color name="kakao_login">#FFE812</color>

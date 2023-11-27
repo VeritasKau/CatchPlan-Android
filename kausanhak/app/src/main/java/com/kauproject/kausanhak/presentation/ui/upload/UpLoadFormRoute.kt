@@ -9,6 +9,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -26,7 +27,6 @@ fun UpLoadFormRoute(
     onComplete: () -> Unit
 ){
     val viewModel: UpLoadFormViewModel = hiltViewModel()
-
     val upLoadFormScreenData = viewModel.upLoadFormScreenData
 
     BackHandler {
@@ -35,7 +35,8 @@ fun UpLoadFormRoute(
         }
     }
 
-    UpLoadFromScreen(
+    UpLoadFormScreen(
+        viewModel = viewModel,
         upLoadFormScreenData = upLoadFormScreenData,
         isNextEnabled = viewModel.isNextEnabled,
         onClosePressed = onClosePressed,
