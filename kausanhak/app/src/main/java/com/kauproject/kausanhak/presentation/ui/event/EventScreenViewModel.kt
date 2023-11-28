@@ -25,7 +25,7 @@ class EventScreenViewModel @Inject constructor(
 ): ViewModel() {
     private val _collection = MutableStateFlow<List<EventCollection>>(emptyList())
     var collection = _collection.asStateFlow()
-    private val _isError = MutableStateFlow<String>("")
+    private val _isError = MutableStateFlow(false)
     var isError = _isError.asStateFlow()
 
     companion object{
@@ -38,13 +38,15 @@ class EventScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getEventCollection() {
-        eventRepository.fetchEvents().collect{ state->
-            when(state){
-                is State.Loading -> {  }
-                is State.Success -> { _collection.value = state.data }
-                is State.ServerError -> { _isError.value = state.code.toString() }
-                is State.Error -> { _isError.value = state.exception.toString() }
+    fun getEventCollection() {
+        viewModelScope.launch {
+            eventRepository.fetchEvents().collect{ state->
+                when(state){
+                    is State.Loading -> {  }
+                    is State.Success -> { _collection.value = state.data }
+                    is State.ServerError -> { _isError.value = true }
+                    is State.Error -> { _isError.value = true }
+                }
             }
         }
     }

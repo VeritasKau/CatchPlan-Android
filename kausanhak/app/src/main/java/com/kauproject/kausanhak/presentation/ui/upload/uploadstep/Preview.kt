@@ -14,16 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.model.PromotionEvent
 import com.kauproject.kausanhak.presentation.anim.lottieanimation.LottieCongratsAnimation
 import com.kauproject.kausanhak.presentation.ui.promotion.PreviewPromotionCard
-import com.kauproject.kausanhak.presentation.ui.promotion.PromotionCard
-import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kauproject.kausanhak.presentation.ui.upload.UpLoadFormViewModel
 
 @Composable

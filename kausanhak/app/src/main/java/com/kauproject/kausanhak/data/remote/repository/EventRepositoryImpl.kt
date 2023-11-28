@@ -1,20 +1,28 @@
 package com.kauproject.kausanhak.data.remote.repository
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
 import com.kauproject.kausanhak.data.remote.response.GetEventResponse
 import com.kauproject.kausanhak.data.remote.response.GetPlaceResponse
+import com.kauproject.kausanhak.data.remote.response.GetPromotionResponse
 import com.kauproject.kausanhak.data.remote.service.event.GetEventService
+import com.kauproject.kausanhak.data.remote.service.event.GetPlaceEventService
+import com.kauproject.kausanhak.data.remote.service.promotion.GetPromotionService
 import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.domain.model.EventCollection
 import com.kauproject.kausanhak.domain.repository.EventRepository
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 
 class EventRepositoryImpl(
-    private val getEventService: GetEventService
+    private val getEventService: GetEventService,
+    private val getPromotionService: GetPromotionService
 ): EventRepository {
     private var musicals = emptyList<Event>()
     private var campings = emptyList<Event>()
@@ -24,7 +32,13 @@ class EventRepositoryImpl(
     private var exhibitions = emptyList<Event>()
     private var kids = emptyList<Event>()
     private var koreas = emptyList<Event>()
-    private var eventCollection = emptyList<EventCollection>()
+    private var promotions = emptyList<Event>()
+
+    private val _eventCollection = MutableStateFlow<MutableList<EventCollection>>(mutableListOf())
+    private val eventCollection = _eventCollection.asStateFlow()
+
+    private val _allEventCollections = MutableStateFlow<MutableList<Event>>(mutableListOf())
+    private val allEventCollections = _allEventCollections.asStateFlow()
 
     override fun fetchEvents(): Flow<State<List<EventCollection>>> = flow {
         emit(State.Loading)
@@ -37,12 +51,13 @@ class EventRepositoryImpl(
         val exhibitionResponse = getEvent("exhibition")
         val kidsResponse = getEvent("kids")
         val koreaResponse = getEvent("korea")
+        val promotionResponse = getPromotionService.getPromotion()
 
         if (musicalsResponse.code() == 200 && campingsResponse.code() == 200 &&
             classicResponse.code() == 200 && concertResponse.code() == 200 &&
             dramaResponse.code() == 200 && exhibitionResponse.code() == 200 &&
-            kidsResponse.code() == 200 && koreaResponse.code() == 200
-            ) {
+            kidsResponse.code() == 200 && koreaResponse.code() == 200 && promotionResponse.code() == 200
+        ) {
             musicals = parseResponse(musicalsResponse)
             campings = parseResponse(campingsResponse)
             classics = parseResponse(classicResponse)
@@ -74,7 +89,7 @@ class EventRepositoryImpl(
             )
             val camping = EventCollection(
                 id = -5,
-                name = "캠핑/레저",
+                name = "레저/캠핑",
                 events = campings
             )
             val korea = EventCollection(
@@ -93,15 +108,31 @@ class EventRepositoryImpl(
                 events = kids
             )
 
-            eventCollection = listOf(
+            promotions = promotionResponse.body()?.map {
+                Event(
+                    id = (it.id?.times(1000)) ?: 0,
+                    name = it.text ?: "",
+                    place = it.place ?: "",
+                    date = it.duration ?: "",
+                    image = it.image ?: "",
+                    detailImage = it.detail ?: "",
+                    detailContent = it.detail2 ?: "",
+                    url = it.url ?: ""
+                )
+            } ?: emptyList()
+
+            _allEventCollections.value.addAll(promotions)
+            _eventCollection.value = listOf(
                 concert, exhibition, musical, drama, camping, korea, classic, kid
-            )
-            emit(State.Success(eventCollection))
-        }
-        else{
+            ).toMutableList()
+            _eventCollection.value.forEach { it ->
+                _allEventCollections.value.addAll(it.events)
+            }
+            emit(State.Success(_eventCollection.value))
+        } else {
             emit(State.ServerError(musicalsResponse.code()))
         }
-    }.catch { e->
+    }.catch { e ->
         emit(State.Error(e))
     }
 
@@ -123,17 +154,17 @@ class EventRepositoryImpl(
             )
         } ?: emptyList()
     }
-    override fun findEvent(eventId: Int) = getAllEventCollections().find { it.id == eventId }!!
 
-    override fun findEventCollection(eventCollectionId: Int): EventCollection = eventCollection.find { it.id == eventCollectionId }!!
+    override fun findEvent(eventId: Int) = allEventCollections.value.find { it.id == eventId }!!
 
-    private fun getAllEventCollections(): List<Event>{
-        val allEventCollections = mutableListOf<Event>()
+    override fun findEventCollection(eventCollectionId: Int): EventCollection =
+        eventCollection.value.find { it.id == eventCollectionId }!!
 
-        eventCollection.forEach { it->
-            allEventCollections.addAll(it.events)
+    override fun findEventCategory(category: String): EventCollection? {
+        return if (category != "") {
+            eventCollection.value.find { it.name == category }!!
+        } else {
+            null
         }
-
-        return allEventCollections
     }
 }

@@ -20,7 +20,7 @@ class PlaceEventRepositoryImpl(
         val statusCode = response.code()
 
         if(statusCode == 200){
-            placeEventList = response.body()?.map {
+            placeEventList = response.body()?.filter { it.status == 1 }?.map {
                 Event(
                     id = it.id ?: -1,
                     name = it.text ?: "",
@@ -39,5 +39,9 @@ class PlaceEventRepositoryImpl(
         }
     }.catch { e->
         emit(State.Error(e))
+    }
+
+    override fun getPlaceEvent(): List<Event> {
+        return placeEventList
     }
 }

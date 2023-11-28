@@ -1,10 +1,12 @@
 package com.kauproject.kausanhak.presentation.ui.promotion
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -21,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,38 +37,34 @@ import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.domain.model.PromotionEvent
 import com.kauproject.kausanhak.domain.model.mockTheaterEvents
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
+import com.kauproject.kausanhak.presentation.util.clickable
 
 @Composable
 fun PromotionCard(
-    event: Event
+    event: Event,
+    onEventClicked: (Int) -> Unit,
+    modifier: Modifier
 ){
     Card(
-        modifier = Modifier
-            .width(200.dp)
+        modifier = modifier
             .height(300.dp)
             .shadow(shape = RoundedCornerShape(10.dp), elevation = 5.dp)
+            .clickable { onEventClicked(event.id) }
         ,
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         )
     ) {
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(event.url)
-                .size(coil.size.Size.ORIGINAL)
-                .build()
-        )
-
         AsyncImage(
             modifier = Modifier
                 .weight(0.7f)
-            ,
+                .fillMaxSize(),
             model = ImageRequest.Builder(LocalContext.current)
-                .data(event.url)
-                .size(coil.size.Size.ORIGINAL)
+                .data(event.image)
+                .crossfade(true)
                 .build(),
             contentDescription = null,
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.Crop
         )
         Column(
             modifier = Modifier
@@ -82,7 +81,9 @@ fun PromotionCard(
             )
             Spacer(modifier = Modifier.padding(vertical = 1.dp))
             Text(
-                text = event.place
+                text = event.place,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
             Text(
@@ -93,7 +94,6 @@ fun PromotionCard(
         }
 
     }
-
 }
 
 @Composable
@@ -145,14 +145,4 @@ fun PreviewPromotionCard(
 
     }
 
-}
-
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewPromotionCard2(){
-    val event = mockTheaterEvents[0]
-    KausanhakTheme {
-        PromotionCard(event = event)
-    }
 }

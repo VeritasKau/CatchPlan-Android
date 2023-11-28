@@ -47,6 +47,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -114,19 +115,23 @@ fun EventDetailScreen(
     eventId: Int,
     navController: NavController
 ){
-    //val event = remember(eventId) { EventRepo.getEvent(eventId) }
     var showDatePicker by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val viewModel: EventDetailScreenViewModel = hiltViewModel()
-    val event = remember(eventId) { viewModel.findEvent(eventId) }
+
+    LaunchedEffect(viewModel){
+        viewModel.findEvent(eventId)
+    }
+
+    val event = viewModel.findEvent.collectAsState()
 
     Scaffold(
         modifier = Modifier,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
             EventDetailBottomBar(
-                event = event,
+                event = event.value,
                 onDateSelected = { showDatePicker = it },
                 viewModel = viewModel,
                 snackbarHostState = snackbarHostState
@@ -141,16 +146,16 @@ fun EventDetailScreen(
         ){
             val scroll = rememberScrollState(0)
             Header()
-            Body(scroll = scroll, event = event)
-            Title(event){ scroll.value }
-            EventImage(event) { scroll.value }
+            Body(scroll = scroll, event = event.value)
+            Title(event.value){ scroll.value }
+            EventImage(event.value) { scroll.value }
             BackArrow(backPress = {navController.navigateUp()})
 
             if(showDatePicker){
                 EventDatePickerDialog(
-                    onDateSelected = { viewModel.addEventDate(event.id, it, event.name, event.place, event.image) },
+                    onDateSelected = { viewModel.addEventDate(event.value.id, it, event.value.name, event.value.place, event.value.image) },
                     onDismiss = { showDatePicker = false },
-                    event = event,
+                    event = event.value,
                     scope = scope,
                     snackbarHostState = snackbarHostState
                 )
@@ -185,8 +190,7 @@ private fun EventDetailBottomBar(
     val scope = rememberCoroutineScope()
     val scrapComplete = stringResource(id = R.string.snack_scrap_complete)
     val scrapDelete = stringResource(id = R.string.snack_scrap_delete)
-
-    Log.d(TAG, "SCRAP TEST: ${isScrap.value}")
+    val urlError = stringResource(id = R.string.detail_url_error)
 
     Column(
         modifier = Modifier
@@ -273,7 +277,18 @@ private fun EventDetailBottomBar(
                 ,
                 shape = RoundedCornerShape(7.dp),
                 border = BorderStroke(0.5.dp, colorResource(id = R.color.purple_main)),
-                onClick = { uriHandler.openUri(event.url) }
+                onClick = {
+                    if(event.url != ""){
+                        uriHandler.openUri(event.url)
+                    } else{
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = urlError,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
+                }
             ) {
                 Text(
                     text = stringResource(id = R.string.detail_link),

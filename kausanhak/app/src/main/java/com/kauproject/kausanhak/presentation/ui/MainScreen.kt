@@ -1,14 +1,13 @@
 package com.kauproject.kausanhak.presentation.ui
 
+import FavoriteListScreen
+import PlaceListScreen
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Menu
@@ -16,18 +15,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
@@ -40,18 +35,18 @@ import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.presentation.anim.pageanimation.horizontallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedComposable
 import com.kauproject.kausanhak.presentation.anim.pageanimation.verticallyAnimatedComposable
+import com.kauproject.kausanhak.presentation.anim.pageanimation.verticallyArgumentAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.calendar.CalendarScreen
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotScreen
 import com.kauproject.kausanhak.presentation.ui.event.EventScreen
 import com.kauproject.kausanhak.presentation.ui.event.detail.EventDetailScreen
 import com.kauproject.kausanhak.presentation.ui.event.list.EventListScreen
 import com.kauproject.kausanhak.presentation.ui.mypage.MyPageScreen
-import com.kauproject.kausanhak.presentation.ui.mypage.profile.ProfileScreen
+import com.kauproject.kausanhak.presentation.ui.promotion.PromotionListScreen
 import com.kauproject.kausanhak.presentation.ui.promotion.PromotionScreen
 import com.kauproject.kausanhak.presentation.ui.recommend.RecommendScreen
 import com.kauproject.kausanhak.presentation.ui.scrap.ScrapScreen
 import com.kauproject.kausanhak.presentation.ui.theme.CALENDAR
-import com.kauproject.kausanhak.presentation.ui.theme.CHATBOT
 import com.kauproject.kausanhak.presentation.ui.theme.EVENT
 import com.kauproject.kausanhak.presentation.ui.theme.MYPAGE
 import com.kauproject.kausanhak.presentation.ui.theme.PROMOTION
@@ -103,6 +98,28 @@ fun MainScreen(
             )
         }
 
+        noAnimatedComposable(route = BottomNavItem.Promotion.screenRoute){
+            PromotionScreen(
+                navController = navController,
+                onPromotionClicked = { id->
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")
+                },
+                onPlaceClicked = { id->
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")
+                },
+                onFavoriteClicked = { id->
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")
+                },
+                onPromotionArrowClicked = { navController.navigate(Destination.PROMOTION_DETAIL_ROUTE) },
+                onPlaceArrowClicked = { navController.navigate(Destination.PLACE_DETAIL_ROUTE) },
+                onFavoriteArrowClicked = { navController.navigate(Destination.FAVORITE_DETAIL_ROUTE) },
+            )
+        }
+
+        noAnimatedComposable(route = BottomNavItem.Recommend.screenRoute){
+            RecommendScreen(navController = navController)
+        }
+
         verticallyAnimatedComposable(route = Destination.UPLOAD_ROUTE){
             UpLoadScreen(
                 onDoneButton = { navController.navigate(Destination.UPLOAD_FORM_ROUTE) },
@@ -127,15 +144,6 @@ fun MainScreen(
                 }
             )
         }
-
-        noAnimatedComposable(route = BottomNavItem.Promotion.screenRoute){
-            PromotionScreen(navController = navController)
-        }
-
-        noAnimatedComposable(route = BottomNavItem.Recommend.screenRoute){
-            RecommendScreen(navController = navController)
-        }
-
         composable(
             route = "${Destination.EVENT_DETAIL_ROUTE}/{${Destination.EVENT_DETAIL_ID}}",
             arguments = listOf(navArgument(Destination.EVENT_DETAIL_ID){
@@ -150,23 +158,11 @@ fun MainScreen(
                 navController = navController)
         }
 
-        composable(
+        verticallyArgumentAnimatedComposable(
             route = "${Destination.EVENT_ARROW_ROUTE}/{${Destination.EVENT_ARROW_ID}}",
             arguments = listOf(navArgument(Destination.EVENT_ARROW_ID){
                 type = NavType.IntType }
             ),
-            enterTransition = {
-                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(animDurationMillis))
-            },
-            exitTransition = {
-                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(animDurationMillis))
-            },
-            popEnterTransition = {
-                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(animDurationMillis))
-            },
-            popExitTransition = {
-                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(animDurationMillis))
-            },
         ){ backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val eventCollectionId = arguments.getInt(Destination.EVENT_ARROW_ID)
@@ -191,10 +187,29 @@ fun MainScreen(
             )
         }
 
-        horizontallyAnimatedComposable(route = Destination.MYPAGE_PROFILE){
-            ProfileScreen(
+        horizontallyAnimatedComposable(route = Destination.PLACE_DETAIL_ROUTE){
+            PlaceListScreen(
+                onEventClick = {id: Int ->
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")
+                },
                 navController = navController
             )
+        }
+
+        horizontallyAnimatedComposable(route = Destination.FAVORITE_DETAIL_ROUTE){
+            FavoriteListScreen(
+                onEventClick = {id: Int->
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")
+                },
+                navController = navController)
+        }
+
+        horizontallyAnimatedComposable(route = Destination.PROMOTION_DETAIL_ROUTE){
+            PromotionListScreen(
+                onEventClick = {id: Int->
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")
+                },
+                navController = navController)
         }
 
     }

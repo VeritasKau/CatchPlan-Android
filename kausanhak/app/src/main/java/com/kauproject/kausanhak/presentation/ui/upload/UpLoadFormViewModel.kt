@@ -76,6 +76,10 @@ class UpLoadFormViewModel @Inject constructor(
     val mainImageUri: Uri?
         get() = _mainImageUri.value
 
+    private val _contentImageUri = mutableStateOf<Uri?>(null)
+    val contentImageUri: Uri?
+        get() = _contentImageUri.value
+
     // 일정 등록
     private val _startDate = mutableStateOf<String>(START)
     val startDate: String
@@ -133,22 +137,24 @@ class UpLoadFormViewModel @Inject constructor(
         emit(State.Loading)
 
         val file = UriUtil.toFile(context, mainImageUri!!)
-        val requestImage = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val requestImage = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
 
-        val body = MultipartBody.Builder()
+        val builder = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("text", title)
             .addFormDataPart("place", place)
-            .addFormDataPart("url", "")
+            .addFormDataPart("url", url ?: "")
             .addFormDataPart("detail2", content)
             .addFormDataPart("duration", "$startDate~$endDate")
-            .addFormDataPart(
-                "image", file.name, requestImage
-            )
-            .addFormDataPart(
-                "detail", file.name, requestImage
-            )
-            .build()
+            .addFormDataPart("image", file.name, requestImage)
+
+        contentImageUri?.let { contentUri ->
+            val contentFile = UriUtil.toFile(context, contentUri)
+            val requestContentImage = contentFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            builder.addFormDataPart("detail", contentFile.name, requestContentImage)
+        }
+
+        val body = builder.build()
 
 
         val response = postPromotionService.postPromotion(
@@ -176,8 +182,11 @@ class UpLoadFormViewModel @Inject constructor(
 
     fun onUpLoadPoster(uri: Uri?){
         _mainImageUri.value = uri
-        Log.d("TEST", "$uri")
         _isNextEnabled.value = getIsNextEnabled()
+    }
+
+    fun onContentImage(uri: Uri?){
+        _contentImageUri.value = uri
     }
 
     fun onWritePlace(place: String){

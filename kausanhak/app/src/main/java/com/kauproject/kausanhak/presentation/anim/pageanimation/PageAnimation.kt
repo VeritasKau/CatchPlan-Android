@@ -61,6 +61,32 @@ fun NavGraphBuilder.verticallyAnimatedComposable(
     )
 }
 
+fun NavGraphBuilder.verticallyArgumentAnimatedComposable(
+    route: String,
+    arguments: List<NamedNavArgument>,
+    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit,
+) {
+    composable(
+        route = route,
+        arguments = arguments,
+        enterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(animDurationMillis))
+        },
+        exitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(animDurationMillis))
+        },
+        popEnterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(animDurationMillis))
+        },
+        popExitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(animDurationMillis))
+        },
+    ) { backStackEntry ->
+        content(backStackEntry)
+    }
+}
+
+
 fun NavGraphBuilder.noAnimatedComposable(
     route: String,
     content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit,
@@ -68,8 +94,18 @@ fun NavGraphBuilder.noAnimatedComposable(
     composable(
         route = route,
         content = content,
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None }
+        enterTransition = {
+            fadeIn(animationSpec = tween(durationMillis = 0))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(durationMillis = 0))
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(durationMillis = 0))
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(durationMillis = 0))
+        },
     )
 
 }

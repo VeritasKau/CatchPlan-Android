@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui.event.detail
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kauproject.kausanhak.data.remote.request.ScrapRequest
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -34,6 +36,9 @@ class EventDetailScreenViewModel @Inject constructor(
     private val _isScrap = MutableStateFlow(false)
     val isScrap = _isScrap.asStateFlow()
 
+    private val _findEvent = MutableStateFlow(Event())
+    val findEvent = _findEvent.asStateFlow()
+
     fun addEventDate(eventId: Int, date: String, name: String, place: String, image: String){
         viewModelScope.launch(Dispatchers.IO){
             eventDateRepository.addEvent(
@@ -47,18 +52,10 @@ class EventDetailScreenViewModel @Inject constructor(
             )
         }
     }
-
     fun addScrap(eventId: Int, date: String, name: String, place: String, image: String): Flow<State<Int>> = flow {
         emit(State.Loading)
 
-        val request = ScrapRequest(
-            eventId = eventId,
-            uniqueUserInfo = userDataRepository.getUserData().num
-        )
-        val response = scrapSignService.scrapSign(request)
-        val statusCode = response.code()
-
-        if(statusCode == 200){
+        if(eventId >= 30000){
             scrapRepository.addScrap(
                 ScrapEntity(
                     eventId = eventId,
@@ -68,10 +65,30 @@ class EventDetailScreenViewModel @Inject constructor(
                     image = image
                 )
             )
-            _isScrap.value = true
-            emit(State.Success(statusCode))
+            emit(State.Success(200))
         }else{
-            emit(State.ServerError(statusCode))
+            val request = ScrapRequest(
+                eventId = eventId,
+                uniqueUserInfo = userDataRepository.getUserData().num
+            )
+            val response = scrapSignService.scrapSign(request)
+            val statusCode = response.code()
+
+            if(statusCode == 200){
+                scrapRepository.addScrap(
+                    ScrapEntity(
+                        eventId = eventId,
+                        date = date,
+                        name = name,
+                        place = place,
+                        image = image
+                    )
+                )
+                _isScrap.value = true
+                emit(State.Success(statusCode))
+            }else{
+                emit(State.ServerError(statusCode))
+            }
         }
     }.catch { e->
         emit(State.Error(e))
@@ -90,8 +107,17 @@ class EventDetailScreenViewModel @Inject constructor(
         }
     }
 
-    fun findEvent(eventId: Int): Event{
-        return eventRepository.findEvent(eventId = eventId)
+    fun findEvent(eventId: Int){
+        viewModelScope.launch {
+            eventRepository.fetchEvents().collect { state->
+                when(state){
+                    is State.Loading -> {}
+                    is State.Success -> {_findEvent.value = eventRepository.findEvent(eventId)}
+                    is State.ServerError -> {}
+                    is State.Error -> {}
+                }
+            }
+        }
     }
 
 }

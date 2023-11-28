@@ -1,14 +1,14 @@
 package com.kauproject.kausanhak.domain.model
 
 data class Event(
-    val id: Int,
-    val name: String,
-    val place: String,
-    val date: String,
-    val image: String,
-    val detailImage: String,
-    val detailContent: String,
-    val url: String
+    val id: Int = 0,
+    val name: String = "",
+    val place: String = "",
+    val date: String = "",
+    val image: String = "",
+    val detailImage: String = "",
+    val detailContent: String = "",
+    val url: String = ""
 ) {
 }
 

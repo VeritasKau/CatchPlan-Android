@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaceEventRepository {
     fun fetchPlaceEvent(place: String): Flow<State<List<Event>>>
+    fun getPlaceEvent(): List<Event>
 }

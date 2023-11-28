@@ -145,7 +145,7 @@ private fun PreviewPromotionCard(
                 .fillMaxSize()
                 .weight(0.9f)
         ) {
-            if(capturedImageUri?.path?.isNotEmpty() == true || capturedImageUri != null){
+            if(capturedImageUri != null){
                 // 갤러리 접근 해제
                 showGallery = false
 
@@ -159,7 +159,6 @@ private fun PreviewPromotionCard(
                     ,
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds
-
                 )
             }else{
                 showGallery = false

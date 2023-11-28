@@ -21,7 +21,7 @@ class PromotionRepositoryImpl(
         if(statusCode == 200){
             promotionList = response.body()?.map {
                 Event(
-                    id = it.id ?: -1,
+                    id = (it.id?.times(1000)) ?: 0,
                     name = it.text ?: "",
                     place = it.place ?: "",
                     date = it.duration ?: "",
@@ -41,4 +41,5 @@ class PromotionRepositoryImpl(
     }
 
     override fun findPromotion(id: Int): Event = promotionList.find { it.id == id }!!
+    override fun getPromotion(): List<Event> = promotionList
 }

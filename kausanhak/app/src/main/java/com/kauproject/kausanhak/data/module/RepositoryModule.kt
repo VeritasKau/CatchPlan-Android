@@ -36,8 +36,8 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideEventRepository(getEventService: GetEventService): EventRepository{
-        return EventRepositoryImpl(getEventService)
+    fun provideEventRepository(getEventService: GetEventService, getPromotionService: GetPromotionService): EventRepository{
+        return EventRepositoryImpl(getEventService, getPromotionService)
     }
 
     @Singleton

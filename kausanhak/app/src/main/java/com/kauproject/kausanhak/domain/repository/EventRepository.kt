@@ -10,4 +10,5 @@ interface EventRepository {
     fun fetchEvents(): Flow<State<List<EventCollection>>>
     fun findEvent(eventId: Int): Event
     fun findEventCollection(eventCollectionId: Int): EventCollection
+    fun findEventCategory(category: String): EventCollection?
 }

@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface PromotionRepository {
     fun fetchPromotion(): Flow<State<List<Event>>>
     fun findPromotion(id: Int): Event
+    fun getPromotion(): List<Event>
 }

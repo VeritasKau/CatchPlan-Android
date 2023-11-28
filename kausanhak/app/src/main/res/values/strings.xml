@@ -99,6 +99,7 @@
     <string name="detail_back">back</string>
     <string name="detail_place">장소: </string>
     <string name="detail_sub_title">모든 행사를 한번에, 캐치플랜!</string>
+    <string name="detail_url_error">URL이 등록되지 않은 이벤트입니다.</string>
 
     <!--Snack Bar-->
     <string name="snack_confirm">일정등록 완료!</string>
@@ -147,4 +148,9 @@
     <string name="upload_date_end_hint">종료날짜 선택</string>
     <string name="upload_preview_title">이벤트가 완성됬어요</string>
     <string name="upload_preview_complete">게시글을 등록해보세요!</string>
+
+    <!--Promotion-->
+    <string name="promotion_title">캐치플랜이 추천하는 이벤트</string>
+    <string name="promotion_place_title">주변에 열리는 행사</string>
+    <string name="promotion_favorite_title">이런 행사는 어때요?</string>
 </resources>
