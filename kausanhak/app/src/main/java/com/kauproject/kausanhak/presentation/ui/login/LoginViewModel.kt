@@ -118,9 +118,9 @@ class LoginViewModel(
                         userDataRepository.setUserData("name", it.name!!)
                         userDataRepository.setUserData("gender", it.sex!!)
                         userDataRepository.setUserData("mbti", it.mbti!!)
-                        userDataRepository.setUserData("first", it.genre1!!)
-                        userDataRepository.setUserData("second", it.genre2!!)
-                        userDataRepository.setUserData("third", it.genre3!!)
+                        userDataRepository.setUserData("first", mapperToFav(it.genre1!!))
+                        userDataRepository.setUserData("second", mapperToFav(it.genre2!!))
+                        userDataRepository.setUserData("third", mapperToFav(it.genre3!!))
                     }
                 }
 
@@ -129,5 +129,13 @@ class LoginViewModel(
 
     }
 
+}
 
+private fun mapperToFav(fav: String): String {
+    return when(fav) {
+        "musical" -> "뮤지컬" "concert" -> "콘서트" "drama" -> "연극"
+        "classic" -> "클래식" "korea" -> "지역행사" "camping" -> "레저/캠핑"
+        "exhibition" -> "전시회/박물관" "kids" -> "아동/가족"
+        else -> ""
+    }
 }
