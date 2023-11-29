@@ -60,7 +60,7 @@ fun Content(
     ) {
         var titleTextFieldState by remember{ mutableStateOf(viewModel.title) }
         val maxChar = 20
-        var capturedImageUri by remember { mutableStateOf<Uri?>(viewModel.mainImageUri) }
+        var capturedImageUri by remember { mutableStateOf<Uri?>(viewModel.contentImageUri) }
         var showDialog by remember { mutableStateOf(false) }
         var showGallery by remember { mutableStateOf(false) }
         val galleryLauncher = rememberLauncherForActivityResult(
@@ -176,7 +176,10 @@ fun Content(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                 ,
-                                onClick = { capturedImageUri = null }
+                                onClick = {
+                                    capturedImageUri = null
+                                    viewModel.onContentImage(null)
+                                }
                             ) {
                                 Icon(
                                     modifier = Modifier

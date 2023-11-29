@@ -76,6 +76,8 @@ fun PromotionCard(
             Text(
                 text = event.name,
                 style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )

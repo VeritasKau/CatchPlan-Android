@@ -490,7 +490,6 @@ private fun EventImage(
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
-                placeholder = painterResource(id = R.drawable.sample),
                 contentScale = ContentScale.Crop
             )
 

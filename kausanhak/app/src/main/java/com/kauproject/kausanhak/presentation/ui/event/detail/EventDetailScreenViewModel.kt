@@ -55,7 +55,7 @@ class EventDetailScreenViewModel @Inject constructor(
     fun addScrap(eventId: Int, date: String, name: String, place: String, image: String): Flow<State<Int>> = flow {
         emit(State.Loading)
 
-        if(eventId >= 30000){
+        if(eventId >= 40000){
             scrapRepository.addScrap(
                 ScrapEntity(
                     eventId = eventId,

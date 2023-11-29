@@ -33,12 +33,8 @@ class EventRepositoryImpl(
     private var kids = emptyList<Event>()
     private var koreas = emptyList<Event>()
     private var promotions = emptyList<Event>()
-
-    private val _eventCollection = MutableStateFlow<MutableList<EventCollection>>(mutableListOf())
-    private val eventCollection = _eventCollection.asStateFlow()
-
-    private val _allEventCollections = MutableStateFlow<MutableList<Event>>(mutableListOf())
-    private val allEventCollections = _allEventCollections.asStateFlow()
+    private var eventCollection: MutableList<EventCollection> = mutableListOf()
+    private val allEventCollections: MutableList<Event> = mutableListOf()
 
     override fun fetchEvents(): Flow<State<List<EventCollection>>> = flow {
         emit(State.Loading)
@@ -121,14 +117,14 @@ class EventRepositoryImpl(
                 )
             } ?: emptyList()
 
-            _allEventCollections.value.addAll(promotions)
-            _eventCollection.value = listOf(
+            allEventCollections.addAll(promotions)
+            eventCollection = listOf(
                 concert, exhibition, musical, drama, camping, korea, classic, kid
             ).toMutableList()
-            _eventCollection.value.forEach { it ->
-                _allEventCollections.value.addAll(it.events)
+            eventCollection.forEach { it ->
+                allEventCollections.addAll(it.events)
             }
-            emit(State.Success(_eventCollection.value))
+            emit(State.Success(eventCollection))
         } else {
             emit(State.ServerError(musicalsResponse.code()))
         }
@@ -155,14 +151,14 @@ class EventRepositoryImpl(
         } ?: emptyList()
     }
 
-    override fun findEvent(eventId: Int) = allEventCollections.value.find { it.id == eventId }!!
+    override fun findEvent(eventId: Int) = allEventCollections.find { it.id == eventId }!!
 
     override fun findEventCollection(eventCollectionId: Int): EventCollection =
-        eventCollection.value.find { it.id == eventCollectionId }!!
+        eventCollection.find { it.id == eventCollectionId }!!
 
     override fun findEventCategory(category: String): EventCollection? {
         return if (category != "") {
-            eventCollection.value.find { it.name == category }!!
+            eventCollection.find { it.name == category }!!
         } else {
             null
         }

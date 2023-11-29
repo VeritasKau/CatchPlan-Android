@@ -57,10 +57,15 @@ class PromotionViewModel @Inject constructor(
     val isScrap: StateFlow<Boolean>
         get() = _isScrap.asStateFlow()
 
+    private val _location = MutableStateFlow("")
+    val location: StateFlow<String>
+        get() = _location.asStateFlow()
+
     init {
         viewModelScope.launch {
             fetchEvent()
             fetchRecommendEvent()
+            fetchLocation()
         }
     }
 
@@ -98,6 +103,12 @@ class PromotionViewModel @Inject constructor(
             val thirdEventList = eventRepository.findEventCategory(thirdFavorite)?.events ?: emptyList()
 
             _favorite.value = (firstEventList.take(5)) + (secondEventList.take(5)) + (thirdEventList.take(5))
+        }
+    }
+
+    private fun fetchLocation(){
+        viewModelScope.launch {
+            _location.value = userDataRepository.getUserData().location
         }
     }
 

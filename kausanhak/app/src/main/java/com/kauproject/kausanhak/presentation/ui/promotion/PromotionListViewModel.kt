@@ -17,7 +17,7 @@ class PromotionListViewModel @Inject constructor(
     private val eventRepository: EventRepository
 ): ViewModel() {
     fun getPromotionList(): List<Event>{
-        return promotionRepository.getPromotion()
+        return promotionRepository.getPromotion().reversed()
     }
 
     fun fetchEvent(){

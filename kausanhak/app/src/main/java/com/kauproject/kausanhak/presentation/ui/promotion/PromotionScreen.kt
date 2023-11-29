@@ -72,6 +72,7 @@ fun PromotionScreen(
     val promotion = viewModel.promotion.collectAsState()
     val placeEvent = viewModel.placeEvent.collectAsState()
     val favoriteEvent = viewModel.favorite.collectAsState()
+    val location = viewModel.location.collectAsState()
 
     val refreshScope = rememberCoroutineScope()
     var refreshing by remember{ mutableStateOf(false) }
@@ -130,7 +131,7 @@ fun PromotionScreen(
                     onPromotionArrowClicked = onPromotionArrowClicked
                 )
                 Spacer(modifier = Modifier.padding(vertical = 6.dp))
-                if(promotion.value.isNotEmpty()){
+                if(location.value != ""){
                     PlaceEventCards(
                         placeEvent = placeEvent.value,
                         onPlaceClicked = onPlaceClicked,
