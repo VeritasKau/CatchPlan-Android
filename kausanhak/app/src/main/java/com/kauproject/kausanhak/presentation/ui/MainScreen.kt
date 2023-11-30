@@ -3,26 +3,40 @@ package com.kauproject.kausanhak.presentation.ui
 import FavoriteListScreen
 import PlaceListScreen
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
@@ -117,7 +131,11 @@ fun MainScreen(
         }
 
         noAnimatedComposable(route = BottomNavItem.Recommend.screenRoute){
-            RecommendScreen(navController = navController)
+            RecommendScreen(
+                navController = navController,
+                onEventClicked = {id: Int ->
+                    navController.navigate("${Destination.EVENT_DETAIL_ROUTE}/$id")}
+            )
         }
 
         verticallyAnimatedComposable(route = Destination.UPLOAD_ROUTE){
@@ -217,6 +235,7 @@ fun MainScreen(
 
 
 // 하단바 구성
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatchPlanBottomBar(
     navController: NavHostController,
@@ -240,21 +259,27 @@ fun CatchPlanBottomBar(
     ){
         screens.forEach{screen ->
             NavigationBarItem(
-                modifier = Modifier
-                ,
+                modifier = Modifier,
                 icon = {
-                    Icon(
-                        modifier = Modifier
-                            .size(25.dp)
-                        ,
-                        imageVector = screen.icon, 
-                        contentDescription = null
-                    )   
+                    Column(
+                        modifier = Modifier.wrapContentSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp)
+                            ,
+                            imageVector = screen.icon,
+                            contentDescription = stringResource(id = screen.name),
+                        )
+                        Text(modifier = Modifier, text = stringResource(id = screen.name), fontSize = 10.sp)
+                    }
                 },
                 selected = currentRoute == screen.screenRoute,
                 onClick = {
-                    navController.navigate(screen.screenRoute){
-                        popUpTo(navController.graph.findStartDestination().id){
+                    navController.navigate(screen.screenRoute) {
+                        popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
                         launchSingleTop = true

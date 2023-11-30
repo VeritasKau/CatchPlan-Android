@@ -151,7 +151,7 @@ class EventRepositoryImpl(
         } ?: emptyList()
     }
 
-    override fun findEvent(eventId: Int) = allEventCollections.find { it.id == eventId }!!
+    override fun findEvent(eventId: Int): Event? = allEventCollections.find { it.id == eventId }
 
     override fun findEventCollection(eventCollectionId: Int): EventCollection =
         eventCollection.find { it.id == eventCollectionId }!!

@@ -1,15 +1,17 @@
 package com.kauproject.kausanhak.data.remote.service.recommend
 
-import com.kauproject.kausanhak.data.remote.response.RecommendResponse
+import com.kauproject.kausanhak.data.remote.request.RecommendRequest
+import com.kauproject.kausanhak.data.remote.response.GetRecommendResponse
+import okhttp3.ResponseBody
 import retrofit2.Response
-import retrofit2.http.GET
+import retrofit2.http.Body
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface RecommendService {
-    @GET("/combined_recommendation/")
+    @POST("/recommend")
     suspend fun getRecommend(
-        @Query("genre") genre: String,
-        @Query("mbti") mbti: String
-    ): Response<RecommendResponse>
+        @Body uniqueID: RecommendRequest,
+    ): Response<GetRecommendResponse>
 
 }

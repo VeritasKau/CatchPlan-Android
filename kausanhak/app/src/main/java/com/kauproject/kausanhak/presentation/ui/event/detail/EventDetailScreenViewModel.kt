@@ -112,7 +112,7 @@ class EventDetailScreenViewModel @Inject constructor(
             eventRepository.fetchEvents().collect { state->
                 when(state){
                     is State.Loading -> {}
-                    is State.Success -> {_findEvent.value = eventRepository.findEvent(eventId)}
+                    is State.Success -> {_findEvent.value = eventRepository.findEvent(eventId)!!}
                     is State.ServerError -> {}
                     is State.Error -> {}
                 }

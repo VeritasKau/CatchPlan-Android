@@ -3,6 +3,7 @@ package com.kauproject.kausanhak.presentation.ui.recommend
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kauproject.kausanhak.data.remote.request.RecommendRequest
 import com.kauproject.kausanhak.data.remote.service.recommend.RecommendService
 import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.Event
@@ -23,53 +24,35 @@ class RecommendScreenViewModel @Inject constructor(
     private val placeEventRepository: PlaceEventRepository
 ): ViewModel() {
     private val _names = MutableStateFlow<String?>(null)
-    var names = _names.asStateFlow()
-    private val _list = MutableStateFlow<MutableList<Event>>(mutableListOf())
-    val list = _list.asStateFlow()
+
+    private val _recommendList = MutableStateFlow<MutableList<Event>>(mutableListOf())
+    val recommendList = _recommendList.asStateFlow()
 
     init {
-        fetchEvent()
+        fetchRecommendEvent()
     }
 
-    private fun findEvent(eventId: Int): Event{
+    private fun findEvent(eventId: Int): Event? {
         return eventRepository.findEvent(eventId = eventId)
     }
 
 
-    private fun init(){
+    private fun fetchRecommendEvent(){
         viewModelScope.launch {
-            _names.value = userDataRepository.getUserData().name
-        }
-    }
-
-    private fun fetchEvent(){
-        viewModelScope.launch {
-            placeEventRepository.fetchPlaceEvent(userDataRepository.getUserData().location).collect{ state->
-                when(state){
-                    is State.Loading -> {}
-                    is State.Success -> { _list.value = state.data.toMutableList() }
-                    is State.ServerError -> {}
-                    is State.Error -> {}
-                }
-
-            }
-
-        }
-
-    }
-
-    private fun ex(){
-        viewModelScope.launch {
-            Log.d("TEST LOCATION", userDataRepository.getUserData().location)
-            Log.d("TEST", "genre:${userDataRepository.getUserData().firstFavorite}")
-            val response = recommendService.getRecommend(
-                genre = "musical",
-                mbti = userDataRepository.getUserData().mbti
+            val tmpList = mutableListOf<Event>()
+            val request = RecommendRequest(
+                uniqueUserInfo = userDataRepository.getUserData().num
             )
+            val response = recommendService.getRecommend(request)
             val statusCode = response.code()
 
             if(statusCode == 200){
-                Log.d("Success", "${response.body()?.combinedRecommendations?.firstOrNull()?.eventIds}")
+                response.body()?.recommendedEventId?.forEach { eventId->
+                    eventId?.let { id ->
+                        eventRepository.findEvent(id) }?.let{ event ->
+                        tmpList.add(event) }
+                }
+                _recommendList.value = tmpList
             }else{
                 Log.d("ERROR", "${response.errorBody()}")
             }

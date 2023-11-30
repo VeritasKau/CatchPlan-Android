@@ -85,6 +85,20 @@ fun LottieUpLoadAnimation(
     }
 
 }
+
+@Composable
+fun LottieBackgroundAnimation(
+    modifier: Modifier
+){
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_background))
+    Box(modifier = modifier){
+        LottieAnimation(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            isPlaying = true
+        )
+    }
+}
 @Composable
 fun LottieDotAnimation(
     modifier: Modifier,
