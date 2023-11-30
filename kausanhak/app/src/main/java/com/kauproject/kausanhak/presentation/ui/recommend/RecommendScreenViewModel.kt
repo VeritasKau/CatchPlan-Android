@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kauproject.kausanhak.data.remote.service.recommend.RecommendService
+import com.kauproject.kausanhak.domain.State
 import com.kauproject.kausanhak.domain.model.Event
 import com.kauproject.kausanhak.domain.repository.EventRepository
+import com.kauproject.kausanhak.domain.repository.PlaceEventRepository
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,13 +19,16 @@ import javax.inject.Inject
 class RecommendScreenViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val userDataRepository: UserDataRepository,
-    private val recommendService: RecommendService
+    private val recommendService: RecommendService,
+    private val placeEventRepository: PlaceEventRepository
 ): ViewModel() {
     private val _names = MutableStateFlow<String?>(null)
     var names = _names.asStateFlow()
+    private val _list = MutableStateFlow<MutableList<Event>>(mutableListOf())
+    val list = _list.asStateFlow()
 
     init {
-        ex()
+        fetchEvent()
     }
 
     private fun findEvent(eventId: Int): Event{
@@ -35,6 +40,22 @@ class RecommendScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _names.value = userDataRepository.getUserData().name
         }
+    }
+
+    private fun fetchEvent(){
+        viewModelScope.launch {
+            placeEventRepository.fetchPlaceEvent(userDataRepository.getUserData().location).collect{ state->
+                when(state){
+                    is State.Loading -> {}
+                    is State.Success -> { _list.value = state.data.toMutableList() }
+                    is State.ServerError -> {}
+                    is State.Error -> {}
+                }
+
+            }
+
+        }
+
     }
 
     private fun ex(){

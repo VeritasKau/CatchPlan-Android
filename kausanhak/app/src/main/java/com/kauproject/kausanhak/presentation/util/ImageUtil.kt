@@ -37,7 +37,6 @@ object UriUtil {
 
         val file = FileUtil.createTempFile(context, fileName)
         FileUtil.copyToFile(context, uri, file)
-        Log.d("TEST", "path:${file.path}")
         return File(file.absolutePath)
     }
 

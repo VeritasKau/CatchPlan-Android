@@ -170,5 +170,8 @@ dependencies {
 
     // Location
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    //Swipe Card
+    implementation 'com.github.YusufbekIbragimov:SwipeCard:1.0.1'
     
 }
