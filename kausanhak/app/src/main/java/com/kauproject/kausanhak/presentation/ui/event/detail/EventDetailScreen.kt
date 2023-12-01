@@ -176,9 +176,6 @@ private fun EventDetailBottomBar(
 ){
     viewModel.findScrap(eventId = event.id)
     val isScrap = viewModel.isScrap.collectAsState()
-    val scrapBtn =
-        if(isScrap.value) painterResource(id = R.drawable.ic_scrap_abled)
-        else painterResource(id = R.drawable.ic_scrap_enabled)
     val uriHandler = LocalUriHandler.current
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
@@ -191,6 +188,10 @@ private fun EventDetailBottomBar(
     val scrapComplete = stringResource(id = R.string.snack_scrap_complete)
     val scrapDelete = stringResource(id = R.string.snack_scrap_delete)
     val urlError = stringResource(id = R.string.detail_url_error)
+
+    val scrapBtn =
+        if(isScrap.value) painterResource(id = R.drawable.ic_scrap_abled)
+        else painterResource(id = R.drawable.ic_scrap_enabled)
 
     Column(
         modifier = Modifier
