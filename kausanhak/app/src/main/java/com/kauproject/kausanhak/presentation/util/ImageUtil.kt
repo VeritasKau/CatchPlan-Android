@@ -1,6 +1,8 @@
 package com.kauproject.kausanhak.presentation.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
@@ -14,19 +16,17 @@ object FileUtil {
         return File(storageDir, fileName)
     }
 
-    // 파일 내용 스트림 복사
-    fun copyToFile(context: Context, uri: Uri, file: File) {
+    // 압축 함수 추가
+    fun compressAndSave(context: Context, uri: Uri, file: File) {
         val inputStream = context.contentResolver.openInputStream(uri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
         val outputStream = FileOutputStream(file)
 
-        val buffer = ByteArray(4 * 1024)
-        while (true) {
-            val byteCount = inputStream!!.read(buffer)
-            if (byteCount < 0) break
-            outputStream.write(buffer, 0, byteCount)
-        }
+        // 압축할 품질과 함께 Bitmap을 압축하여 저장
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
 
         outputStream.flush()
+        outputStream.close()
     }
 }
 
@@ -36,7 +36,7 @@ object UriUtil {
         val fileName = getFileName(context, uri)
 
         val file = FileUtil.createTempFile(context, fileName)
-        FileUtil.copyToFile(context, uri, file)
+        FileUtil.compressAndSave(context, uri, file)
         return File(file.absolutePath)
     }
 

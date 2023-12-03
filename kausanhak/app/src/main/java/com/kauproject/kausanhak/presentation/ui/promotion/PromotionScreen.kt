@@ -131,7 +131,7 @@ fun PromotionScreen(
                     onPromotionArrowClicked = onPromotionArrowClicked
                 )
                 Spacer(modifier = Modifier.padding(vertical = 6.dp))
-                if(location.value != ""){
+                if(location.value != "" && placeEvent.value.isNotEmpty()){
                     PlaceEventCards(
                         placeEvent = placeEvent.value,
                         onPlaceClicked = onPlaceClicked,

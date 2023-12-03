@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kauproject.kausanhak.R
-import com.kauproject.kausanhak.presentation.anim.lottieanimation.LottieBackgroundAnimation
 import com.kauproject.kausanhak.presentation.ui.BottomNavItem
 import com.kauproject.kausanhak.presentation.ui.CatchPlanBottomBar
 import com.kauproject.kausanhak.presentation.ui.chatbot.ChatBotIcon
