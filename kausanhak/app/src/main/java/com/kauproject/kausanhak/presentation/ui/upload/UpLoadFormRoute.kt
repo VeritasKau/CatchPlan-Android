@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.kauproject.kausanhak.presentation.PurchaseHelper
 import com.kauproject.kausanhak.presentation.ui.upload.uploadstep.Content
 import com.kauproject.kausanhak.presentation.ui.upload.uploadstep.Date
 import com.kauproject.kausanhak.presentation.ui.upload.uploadstep.Preview
@@ -24,7 +25,8 @@ private const val CONTENT_ANIMATION_DURATION = 300
 fun UpLoadFormRoute(
     navController: NavHostController,
     onClosePressed: () -> Unit,
-    onComplete: () -> Unit
+    onComplete: () -> Unit,
+    purchaseHelper: PurchaseHelper
 ){
     val viewModel: UpLoadFormViewModel = hiltViewModel()
     val upLoadFormScreenData = viewModel.upLoadFormScreenData
@@ -42,7 +44,8 @@ fun UpLoadFormRoute(
         onClosePressed = onClosePressed,
         onPreviousPressed = { viewModel.onPreviousPressed() },
         onNextPressed = { viewModel.onNextPressed() },
-        onCompletePressed = { viewModel.onCompletePressed(onComplete) }
+        onCompletePressed = { viewModel.onCompletePressed(onComplete) },
+        purchaseHelper = purchaseHelper
     ) { paddingValues ->
         val modifier = Modifier.padding(paddingValues)
 

@@ -3,6 +3,7 @@ package com.kauproject.kausanhak.presentation.ui.chatbot
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kauproject.kausanhak.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +27,7 @@ class ChatBotViewModel: ViewModel() {
 
     companion object{
         const val TAG = "ChatBotVM"
-        const val CHAT_URL = "http://43.201.223.94/stream_chat"
+        const val CHAT_URL = BuildConfig.CHAT_URL
     }
     fun sendChat(content: String){
         _messageData.value = _messageData.value.toMutableList().apply {

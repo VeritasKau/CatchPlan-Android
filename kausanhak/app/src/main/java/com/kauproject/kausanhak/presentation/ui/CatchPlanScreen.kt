@@ -17,6 +17,7 @@ import com.kauproject.kausanhak.data.remote.service.info.GetUserInfoService
 import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
+import com.kauproject.kausanhak.presentation.PurchaseHelper
 import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedComposable
 import com.kauproject.kausanhak.presentation.anim.pageanimation.verticallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.ui.login.LoginScreen
@@ -36,6 +37,7 @@ fun CatchPlanApp(
     signInService: SignInService,
     checkMemberService: CheckMemberService,
     getUserInfoService: GetUserInfoService,
+    purchaseHelper: PurchaseHelper,
     context: Context
 ){
     val navController = rememberNavController()
@@ -88,7 +90,8 @@ fun CatchPlanApp(
                             inclusive = true
                         }
                     }
-                }
+                },
+                purchaseHelper = purchaseHelper
             )
         }
 

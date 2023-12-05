@@ -18,6 +18,7 @@ import com.kauproject.kausanhak.data.remote.service.info.GetUserInfoService
 import com.kauproject.kausanhak.data.remote.service.login.CheckMemberService
 import com.kauproject.kausanhak.data.remote.service.login.SignInService
 import com.kauproject.kausanhak.domain.repository.UserDataRepository
+import com.kauproject.kausanhak.presentation.PurchaseHelper
 import com.kauproject.kausanhak.presentation.ui.theme.KausanhakTheme
 import com.kauproject.kausanhak.presentation.util.RequestPermissionUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,6 +48,8 @@ class MainActivity(): ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = this@MainActivity
+        val purchaseHelper = PurchaseHelper(this)
+        purchaseHelper.billingSetup()
 
         getLocation()
 
@@ -57,6 +60,7 @@ class MainActivity(): ComponentActivity() {
                     signInService = signInService,
                     checkMemberService = checkMemberService,
                     getUserInfoService = getUserInfoService,
+                    purchaseHelper = purchaseHelper,
                     context = context
                 )
             }

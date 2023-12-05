@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui.upload
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -34,6 +35,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.kauproject.kausanhak.R
 import com.kauproject.kausanhak.domain.State
+import com.kauproject.kausanhak.presentation.PurchaseHelper
 import com.kauproject.kausanhak.presentation.anim.lottieanimation.LottieChatAnimation
 import com.kauproject.kausanhak.presentation.anim.lottieanimation.LottieLoadingAnimation
 import kotlinx.coroutines.launch
@@ -62,11 +66,11 @@ fun UpLoadFormScreen(
     onPreviousPressed: () -> Unit,
     onNextPressed: () -> Unit,
     onCompletePressed: () -> Unit,
+    purchaseHelper: PurchaseHelper,
     content: @Composable (PaddingValues) -> Unit
     ){
     val snackbarHostState = remember { SnackbarHostState() }
     var isLoading by remember{ mutableStateOf(false) }
-
     if(isLoading){
         LoadingDialog()
     }
@@ -97,7 +101,8 @@ fun UpLoadFormScreen(
                     onNextPressed = onNextPressed,
                     onCompletePressed = onCompletePressed,
                     viewModel = viewModel,
-                    isLoading = { isLoading = it }
+                    isLoading = { isLoading = it },
+                    purchaseHelper = purchaseHelper
                 )
             }
         )
@@ -115,10 +120,39 @@ private fun UpLoadFormBottomBar(
     onPreviousPressed: () -> Unit,
     onNextPressed: () -> Unit,
     onCompletePressed: () -> Unit,
-    isLoading: (Boolean) -> Unit
+    isLoading: (Boolean) -> Unit,
+    purchaseHelper: PurchaseHelper
 ){
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val buyEnabled by purchaseHelper.buyEnabled.collectAsState(false)
+    val consumeEnabled by purchaseHelper.consumeEnabled.collectAsState(false)
+
+    LaunchedEffect(buyEnabled, consumeEnabled){
+        if(consumeEnabled){
+            viewModel.onPostPromotion(context = context).collect{ state->
+                when(state){
+                    is State.Loading -> { isLoading(true) }
+                    is State.Success -> {
+                        isLoading(false)
+                        purchaseHelper.consumePurchase()
+                        onCompletePressed()
+                    }
+                    is State.ServerError -> {
+                        snackbarHostState.showSnackbar(
+                            message = "ServerError: ${state.code}",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                    is State.Error -> {
+                        snackbarHostState.showSnackbar(
+                            message = "Error: ${state.exception}",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     Surface(
         modifier = Modifier
@@ -157,31 +191,7 @@ private fun UpLoadFormBottomBar(
                         .weight(1f)
                         .height(48.dp)
                     ,
-                    onClick = {
-                        scope.launch {
-                            viewModel.onPostPromotion(context = context).collect{ state->
-                                when(state){
-                                    is State.Loading -> { isLoading(true) }
-                                    is State.Success -> {
-                                        isLoading(false)
-                                        onCompletePressed()
-                                    }
-                                    is State.ServerError -> {
-                                        snackbarHostState.showSnackbar(
-                                            message = "ServerError: ${state.code}",
-                                            duration = SnackbarDuration.Short
-                                        )
-                                    }
-                                    is State.Error -> {
-                                        snackbarHostState.showSnackbar(
-                                            message = "Error: ${state.exception}",
-                                            duration = SnackbarDuration.Short
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                              },
+                    onClick = { purchaseHelper.makePurchase() },
                     enabled = isNextButtonEnabled,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.purple_main),

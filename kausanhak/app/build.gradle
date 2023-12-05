@@ -27,9 +27,25 @@ android {
                 "KAKAO_NATIVE_KEY",
                 properties.getProperty("KAKAO_NATIVE_KEY")
         )
+        buildConfigField(
+                "String",
+                "BASE_URL",
+                properties.getProperty("BASE_URL")
+        )
+        buildConfigField(
+                "String",
+                "RECOMMEND_URL",
+                properties.getProperty("RECOMMEND_URL")
+        )
+        buildConfigField(
+                "String",
+                "CHAT_URL",
+                properties.getProperty("CHAT_URL")
+        )
         // manifest용
         manifestPlaceholders["KAKAO_NATIVE_KEY"] =
                 properties.getProperty("KAKAO_NATIVE_KEY_MF")
+
     }
     namespace 'com.kauproject.kausanhak'
     compileSdk 34
@@ -42,8 +58,8 @@ android {
         applicationId "com.kauproject.kausanhak"
         minSdk 26
         targetSdk 34
-        versionCode 2
-        versionName "2.0"
+        versionCode 5
+        versionName "2.3"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -173,5 +189,11 @@ dependencies {
 
     //Swipe Card
     implementation 'com.github.YusufbekIbragimov:SwipeCard:1.0.1'
+
+    // Google In App
+    implementation 'com.android.billingclient:billing:6.0.1'
+    implementation 'com.android.billingclient:billing-ktx:6.0.1'
+    implementation 'com.google.guava:guava:24.1-jre'
+    implementation 'com.google.guava:guava:27.0.1-android'
     
 }

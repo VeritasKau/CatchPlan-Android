@@ -46,6 +46,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kauproject.kausanhak.R
+import com.kauproject.kausanhak.presentation.PurchaseHelper
 import com.kauproject.kausanhak.presentation.anim.pageanimation.horizontallyAnimatedComposable
 import com.kauproject.kausanhak.presentation.anim.pageanimation.noAnimatedComposable
 import com.kauproject.kausanhak.presentation.anim.pageanimation.verticallyAnimatedComposable
@@ -75,7 +76,8 @@ private const val animDurationMillis = 400
 // 메인뷰
 @Composable
 fun MainScreen(
-    onLoginScreen: () -> Unit
+    onLoginScreen: () -> Unit,
+    purchaseHelper: PurchaseHelper
 ){
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -159,7 +161,8 @@ fun MainScreen(
                         route = BottomNavItem.Mypage.screenRoute,
                         navOptions = NavOptions.Builder().setPopUpTo(Destination.UPLOAD_ROUTE, inclusive = true).build()
                     )
-                }
+                },
+                purchaseHelper = purchaseHelper
             )
         }
         composable(

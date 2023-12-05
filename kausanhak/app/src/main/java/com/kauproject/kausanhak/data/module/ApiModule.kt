@@ -1,6 +1,7 @@
 package com.kauproject.kausanhak.data.module
 
 import android.content.Context
+import com.kauproject.kausanhak.BuildConfig
 import com.kauproject.kausanhak.data.remote.AppInterceptor
 import com.kauproject.kausanhak.data.remote.service.event.GetEventService
 import com.kauproject.kausanhak.data.remote.service.event.GetPlaceEventService
@@ -33,8 +34,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class ApiModule {
     companion object{
-        const val BASE_URL = "http://catchplan-env.eba-ngqypwbe.ap-northeast-2.elasticbeanstalk.com"
-        const val RECOMMEND_URL = "http://13.209.165.130"
+        const val BASE_URL = BuildConfig.BASE_URL
+        const val RECOMMEND_URL = BuildConfig.RECOMMEND_URL
     }
 
     @Qualifier

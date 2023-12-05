@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -21,7 +24,6 @@ import com.kauproject.kausanhak.domain.model.PromotionEvent
 import com.kauproject.kausanhak.presentation.anim.lottieanimation.LottieCongratsAnimation
 import com.kauproject.kausanhak.presentation.ui.promotion.PreviewPromotionCard
 import com.kauproject.kausanhak.presentation.ui.upload.UpLoadFormViewModel
-
 @Composable
 fun Preview(
     modifier: Modifier,
@@ -35,7 +37,7 @@ fun Preview(
         image = viewModel.mainImageUri,
         place = viewModel.place
     )
-
+    
     LottieCongratsAnimation(
         modifier = Modifier.fillMaxSize()
     )
