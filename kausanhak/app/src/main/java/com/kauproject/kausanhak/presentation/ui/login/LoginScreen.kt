@@ -66,6 +66,7 @@ fun LoginScreen(
     val isMember by loginViewModel.isMember.collectAsState()
 
     isMember?.let {
+        Log.d("TEST isMEMBER", "$isMember")
         if(it){
             onLoginButtonClicked(CatchPlanScreen.Main.name)
         }else{

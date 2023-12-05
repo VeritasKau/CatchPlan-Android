@@ -80,7 +80,6 @@ fun MainScreen(
     purchaseHelper: PurchaseHelper
 ){
     val navController = rememberNavController()
-    val context = LocalContext.current
 
     NavHost(
         navController = navController,

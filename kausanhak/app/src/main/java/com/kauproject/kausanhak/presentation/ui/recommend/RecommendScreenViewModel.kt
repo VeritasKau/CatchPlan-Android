@@ -32,11 +32,6 @@ class RecommendScreenViewModel @Inject constructor(
         fetchRecommendEvent()
     }
 
-    private fun findEvent(eventId: Int): Event? {
-        return eventRepository.findEvent(eventId = eventId)
-    }
-
-
     private fun fetchRecommendEvent(){
         viewModelScope.launch {
             val tmpList = mutableListOf<Event>()

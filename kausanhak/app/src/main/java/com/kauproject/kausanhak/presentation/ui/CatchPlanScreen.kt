@@ -5,11 +5,13 @@ import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.kauproject.kausanhak.R
@@ -41,15 +43,9 @@ fun CatchPlanApp(
     context: Context
 ){
     val navController = rememberNavController()
-    var isMember by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit){
-        isMember = userDataRepository.getUserData().token != ""
-        Log.d("Location Test:", userDataRepository.getUserData().location)
-        Log.d("USER:",userDataRepository.getUserData().name)
-    }
-
-    val startScreen = if(isMember) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name
+    val viewModel: CatchPlanScreenViewModel = hiltViewModel()
+    val isMember by viewModel.isMember.collectAsState()
+    val startScreen = if(isMember == true) CatchPlanScreen.Main.name else CatchPlanScreen.Login.name
 
     NavHost(
         modifier = Modifier,

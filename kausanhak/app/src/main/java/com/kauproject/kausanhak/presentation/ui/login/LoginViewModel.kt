@@ -49,12 +49,15 @@ class LoginViewModel(
                         val response = checkMemberService.checkMember(user?.id.toString())
                         val statusCode = response.code()
 
-                        if(statusCode == 200){
-                            _isMember.value = response.body()!! && userDataRepository.getUserData().token != ""
+                        if(statusCode == 200) {
+                            _isMember.value = response.body()!!
+                            Log.d("TEST CHECK", "${response.body()}")
+                            if (response.body()!!) {
+                                getUserInfo(user?.id.toString(), userDataRepository)
+                            }
+                            getToken(user?.id.toString(), userDataRepository)
                         }
                     }
-                    getToken(user?.id.toString(), userDataRepository)
-                    getUserInfo(user?.id.toString(), userDataRepository)
                 }
             }
         }else{
@@ -64,7 +67,7 @@ class LoginViewModel(
                     override fun onFailure(httpStatus: Int, message: String) {}
                     override fun onSuccess(result: NidProfileResponse) {
                         val userId = result.profile?.id.toString()
-                        Log.d("TEST", "$userId")
+
                         viewModelScope.launch {
                             userDataRepository.setUserData("userNum", result.profile?.id.toString())
                             userDataRepository.setUserData("platform", NAVER)
@@ -73,10 +76,13 @@ class LoginViewModel(
 
                             if(statusCode == 200){
                                 _isMember.value = response.body()!!
+                                Log.d("TEST CHECK", "${response.body()}")
+                                if(response.body()!!){
+                                    getUserInfo(userId, userDataRepository)
+                                }
+                                getToken(userId, userDataRepository)
                             }
                         }
-                        getToken(userId, userDataRepository)
-                        getUserInfo(userId, userDataRepository)
                     }
                 })
 
