@@ -64,6 +64,7 @@ class LoginViewModel(
                     override fun onFailure(httpStatus: Int, message: String) {}
                     override fun onSuccess(result: NidProfileResponse) {
                         val userId = result.profile?.id.toString()
+                        Log.d("TEST", "$userId")
                         viewModelScope.launch {
                             userDataRepository.setUserData("userNum", result.profile?.id.toString())
                             userDataRepository.setUserData("platform", NAVER)
@@ -87,18 +88,20 @@ class LoginViewModel(
         userId: String,
         userDataRepository: UserDataRepository
     ){
-        viewModelScope.launch {
-            val request = SignInRequest(
-                uniqueUserInfo = userId
-            )
-            val signInResponse = signInService.signInInform(request)
-            val token = signInResponse.body()?.accessToken
-            val statusCode = signInResponse.code()
+        if(userId != "" && userId.isNotBlank()){
+            viewModelScope.launch {
+                val request = SignInRequest(
+                    uniqueUserInfo = userId
+                )
+                val signInResponse = signInService.signInInform(request)
+                val token = signInResponse.body()?.accessToken
+                val statusCode = signInResponse.code()
 
-            if(statusCode == 200){
-                userDataRepository.setUserData("token", token!!)
-            }else{
-                Log.d("TokenError", "$statusCode")
+                if(statusCode == 200){
+                    userDataRepository.setUserData("token", token!!)
+                }else{
+                    Log.d("TokenError", "$statusCode")
+                }
             }
         }
     }
