@@ -1,5 +1,6 @@
 package com.kauproject.kausanhak.presentation.ui.promotion.favorite
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ fun FavoriteEventCards(
     onFavoriteClicked: (Int) -> Unit,
     onFavoriteArrowClicked: () -> Unit,
 ){
+    Log.d("TEST FAV", "$favoriteList")
     Column(
         modifier = Modifier
             .fillMaxSize()

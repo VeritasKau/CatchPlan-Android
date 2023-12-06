@@ -158,6 +158,7 @@ class EventRepositoryImpl(
 
     override fun findEventCategory(category: String): EventCollection? {
         return if (category != "") {
+            Log.d("TEST LOG", "$category")
             eventCollection.find { it.name == category }!!
         } else {
             null

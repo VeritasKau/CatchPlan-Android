@@ -116,6 +116,7 @@ class SettingViewModel @Inject constructor(
             sex = mapperToGender(userInfo.value.gender)
         )
         val response = informSaveService.informSave(request)
+        Log.d("TEST LOGIN", "$response")
         val statusCode = response.code()
 
         Log.d(TAG, "statusCode:$statusCode")
@@ -142,9 +143,9 @@ class SettingViewModel @Inject constructor(
 
 private fun mapperToFav(fav: String): String{
     return when(fav){
-        "뮤지컬" -> "musical" "콘서트" -> "concert" "연극" -> "drama"
+        "뮤지컬" -> "musical" "콘서트" -> "concert" "드라마" -> "drama"
         "클래식" -> "classic" "지역행사" -> "korea" "레저/캠핑" -> "camping"
-        "전시회/박물관" -> "exhibition" "아동/가족" -> "kids"
+        "연극" -> "exhibition" "아동/가족" -> "kids"
         else -> ""
     }
 }

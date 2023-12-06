@@ -142,9 +142,9 @@ class LoginViewModel(
 
 private fun mapperToFav(fav: String): String {
     return when(fav) {
-        "musical" -> "뮤지컬" "concert" -> "콘서트" "drama" -> "연극"
+        "musical" -> "뮤지컬" "concert" -> "콘서트" "drama" -> "드라마"
         "classic" -> "클래식" "korea" -> "지역행사" "camping" -> "레저/캠핑"
-        "exhibition" -> "전시회/박물관" "kids" -> "아동/가족"
+        "exhibition" -> "연극" "kids" -> "아동/가족"
         else -> ""
     }
 }
