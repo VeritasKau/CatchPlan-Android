@@ -58,8 +58,8 @@ android {
         applicationId "com.kauproject.kausanhak"
         minSdk 26
         targetSdk 34
-        versionCode 7
-        versionName "2.5"
+        versionCode 8
+        versionName "2.6"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -82,6 +82,7 @@ fun ChatBotScreen(
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     var scrollIsLateState by remember { mutableStateOf(false) }
+    var isChatInput by remember { mutableStateOf(false) }
 
     val cantScrollForward = !scrollState.canScrollForward // 더이상 스크롤 불가
 
@@ -97,7 +98,7 @@ fun ChatBotScreen(
             chatTopBar(
             backPress = { navController.navigateUp() }
         ) },
-        bottomBar = { InputChat(viewModel = viewModel) }
+        bottomBar = { InputChat(viewModel = viewModel, isChatInput = isChatInput) }
     ) {paddingValues ->
         Column(
             modifier = Modifier
@@ -111,11 +112,11 @@ fun ChatBotScreen(
                 state = scrollState
             ){
                 itemsIndexed(items = messageData) { _, message ->
-                    message.isMe?.let {
-                        if(it){
-                            ChatBubble(viewModel = viewModel, content = message.content ?: "")
+                    message.isMe?.let { me ->
+                        if(me){
+                            ChatBubble(isChatInput = {isChatInput = it}, content = message.content ?: "")
                         }else{
-                            ChatBotBubble(content = message.content ?: "", isInit = true)
+                            ChatBotBubble(content = message.content ?: "", isInit = true, isChatInput = {})
                         }
                     }
                 }
@@ -176,10 +177,11 @@ private fun chatTopBar(
 
 @Composable
 private fun InputChat(
-    viewModel: ChatBotViewModel
+    viewModel: ChatBotViewModel,
+    isChatInput: Boolean
 ){
     var textFieldState by remember{ mutableStateOf("") }
-    val focusManager = LocalFocusManager.current
+    val hint = if(isChatInput) stringResource(id = R.string.chat_input) else stringResource(id = R.string.chat_hint)
 
     Column(
         modifier = Modifier
@@ -207,6 +209,7 @@ private fun InputChat(
                 TextField(
                     modifier = Modifier
                     ,
+                    enabled = !isChatInput,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(
                         onSend = {
@@ -216,7 +219,7 @@ private fun InputChat(
                     ),
                     placeholder = {
                         Text(
-                            text = stringResource(id = R.string.chat_hint),
+                            text = hint,
                             color = Color.LightGray
                         ) },
                     value = textFieldState,
@@ -226,7 +229,10 @@ private fun InputChat(
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        cursorColor = Color.Black
                     ),
                     textStyle = TextStyle(
                         fontSize = 16.sp,
@@ -254,7 +260,7 @@ private fun InputChat(
 }
 @Composable
 private fun ChatBubble(
-    viewModel: ChatBotViewModel,
+    isChatInput: (Boolean) -> Unit,
     content: String
 ){
     Column {
@@ -286,13 +292,17 @@ private fun ChatBubble(
                 )
             }
         }
-        ChatBotBubble(content = content, isInit = false)
+        ChatBotBubble(content = content, isInit = false, isChatInput = isChatInput)
     }
 
 }
 
 @Composable
-private fun ChatBotBubble(content: String, isInit: Boolean) {
+private fun ChatBotBubble(
+    isChatInput: (Boolean) -> Unit,
+    content: String,
+    isInit: Boolean
+) {
     var answer by remember { mutableStateOf("") }
     val initText = stringResource(id = R.string.chatBot_base_chat)
 
@@ -319,6 +329,7 @@ private fun ChatBotBubble(content: String, isInit: Boolean) {
 
                 response.body?.source()?.let { source->
                     val buffer = okio.Buffer()
+                    isChatInput(true)
                     while(source.read(buffer, 128) != -1L){
                         val data = buffer.readUtf8()
 
@@ -326,6 +337,7 @@ private fun ChatBotBubble(content: String, isInit: Boolean) {
                             answer += data
                         }
                     }
+                    isChatInput(false)
                 }
             }
         }

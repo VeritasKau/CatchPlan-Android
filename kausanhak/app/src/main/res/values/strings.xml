@@ -51,6 +51,7 @@
 
     <!--Main-->
     <string name="choose_main">Choose Main</string>
+    <string name="main_check">로딩중..</string>
 
     <!--Scrap-->
     <string name="scrap_top_bar">스크랩한 행사</string>
@@ -91,6 +92,7 @@
 
     <!--Chat-->
     <string name="chat_hint">메세지 입력</string>
+    <string name="chat_input">답변중..</string>
 
     <!--Detail page-->
     <string name="detail_date_pick">일정등록</string>
