@@ -26,6 +26,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -81,6 +84,7 @@ fun ChatBotScreen(
     val messageData by viewModel.messageData.collectAsState()
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     var scrollIsLateState by remember { mutableStateOf(false) }
     var isChatInput by remember { mutableStateOf(false) }
 
@@ -98,6 +102,7 @@ fun ChatBotScreen(
             chatTopBar(
             backPress = { navController.navigateUp() }
         ) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = { InputChat(viewModel = viewModel, isChatInput = isChatInput) }
     ) {paddingValues ->
         Column(
@@ -114,9 +119,9 @@ fun ChatBotScreen(
                 itemsIndexed(items = messageData) { _, message ->
                     message.isMe?.let { me ->
                         if(me){
-                            ChatBubble(isChatInput = {isChatInput = it}, content = message.content ?: "")
+                            ChatBubble(isChatInput = {isChatInput = it}, content = message.content ?: "", snackbarHostState = snackbarHostState)
                         }else{
-                            ChatBotBubble(content = message.content ?: "", isInit = true, isChatInput = {})
+                            ChatBotBubble(content = message.content ?: "", isInit = true, isChatInput = {}, snackbarHostState = snackbarHostState)
                         }
                     }
                 }
@@ -270,7 +275,8 @@ private fun InputChat(
 @Composable
 private fun ChatBubble(
     isChatInput: (Boolean) -> Unit,
-    content: String
+    content: String,
+    snackbarHostState: SnackbarHostState
 ){
     Column {
         Row(
@@ -301,7 +307,7 @@ private fun ChatBubble(
                 )
             }
         }
-        ChatBotBubble(content = content, isInit = false, isChatInput = isChatInput)
+        ChatBotBubble(content = content, isInit = false, isChatInput = isChatInput, snackbarHostState = snackbarHostState)
     }
 
 }
@@ -310,49 +316,63 @@ private fun ChatBubble(
 private fun ChatBotBubble(
     isChatInput: (Boolean) -> Unit,
     content: String,
-    isInit: Boolean
+    isInit: Boolean,
+    snackbarHostState: SnackbarHostState
 ) {
     var answer by remember { mutableStateOf("") }
     val initText = stringResource(id = R.string.chatBot_base_chat)
 
-    if(content != "" && !isInit){
-        LaunchedEffect(Unit){
-            withContext(Dispatchers.IO){
-                val query = JSONObject()
-                query.put("content", content)
+    if (content != "" && !isInit) {
+        LaunchedEffect(Unit) {
+            try {
+                withContext(Dispatchers.IO) {
+                    val query = JSONObject()
+                    query.put("content", content)
 
-                val client = OkHttpClient.Builder()
-                    .connectTimeout(40, TimeUnit.SECONDS)
-                    .readTimeout(40, TimeUnit.SECONDS)
-                    .writeTimeout(40, TimeUnit.SECONDS)
-                    .build()
+                    val client = OkHttpClient.Builder()
+                        .connectTimeout(40, TimeUnit.SECONDS)
+                        .readTimeout(40, TimeUnit.SECONDS)
+                        .writeTimeout(40, TimeUnit.SECONDS)
+                        .build()
 
-                val request = Request.Builder()
-                    .url(ChatBotViewModel.CHAT_URL)
-                    .post(
-                        query.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                    )
-                    .build()
+                    val request = Request.Builder()
+                        .url(ChatBotViewModel.CHAT_URL)
+                        .post(
+                            query.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+                        )
+                        .build()
 
-                client.newCall(request).execute().use { response ->
-                    if(!response.isSuccessful) throw IOException("Unexpected code $response")
-
-                    response.body?.source()?.let { source->
-                        val buffer = okio.Buffer()
-                        isChatInput(true)
-                        while(source.read(buffer, 128) != -1L){
-                            val data = buffer.readUtf8()
-
-                            withContext(Dispatchers.Main){
-                                answer += data
-                            }
+                    client.newCall(request).execute().use { response ->
+                        if (!response.isSuccessful) {
+                            throw IOException("Unexpected code $response")
                         }
-                        isChatInput(false)
+
+                        response.body?.source()?.let { source ->
+                            val buffer = okio.Buffer()
+                            isChatInput(true)
+                            while (source.read(buffer, 128) != -1L) {
+                                val data = buffer.readUtf8()
+
+                                withContext(Dispatchers.Main) {
+                                    answer += data
+                                }
+                            }
+                            isChatInput(false)
+                        }
                     }
                 }
+            } catch (e: IOException) {
+                snackbarHostState.showSnackbar(
+                    message = "서버 통신이 불안정합니다.",
+                    duration = SnackbarDuration.Short
+                )
+            } catch (e: Exception) {
+                snackbarHostState.showSnackbar(
+                    message = "Error",
+                    duration = SnackbarDuration.Short
+                )
             }
         }
-
     }
 
     Row(
