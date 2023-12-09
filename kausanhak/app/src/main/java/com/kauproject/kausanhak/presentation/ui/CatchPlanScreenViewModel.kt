@@ -33,7 +33,6 @@ class CatchPlanScreenViewModel @Inject constructor(
             if(statusCode == 200){
                 response.body()?.let {
                     _isMember.value = it
-                    Log.d("TEST VM", "$it")
                 }
             }
         }

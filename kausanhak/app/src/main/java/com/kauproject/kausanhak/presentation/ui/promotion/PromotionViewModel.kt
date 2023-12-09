@@ -95,7 +95,6 @@ class PromotionViewModel @Inject constructor(
 
     fun fetchRecommendEvent(){
         viewModelScope.launch {
-            Log.d("TEST", "${userDataRepository.getUserData().firstFavorite} ${userDataRepository.getUserData().secondFavorite}")
             val firstFavorite = userDataRepository.getUserData().firstFavorite
             val secondFavorite = userDataRepository.getUserData().secondFavorite
             val thirdFavorite = userDataRepository.getUserData().thirdFavorite

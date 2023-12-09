@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -88,6 +90,9 @@ private fun PlaceTextField(
             unfocusedBorderColor = Color.LightGray,
             cursorColor = Color.Black
         ),
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done
+        ),
         placeholder = {
             Text(
                 text = stringResource(id = R.string.upload_place_hint),
@@ -130,6 +135,9 @@ private fun URLTextField(
             focusedBorderColor = Color.LightGray,
             unfocusedBorderColor = Color.LightGray,
             cursorColor = Color.Black
+        ),
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done
         ),
         placeholder = {
             Text(
@@ -281,15 +289,5 @@ private fun convertMillisToDate(millis: Long): String {
     return Instant.ofEpochMilli(millis)
         .atOffset(ZoneOffset.ofHours(9))
         .format(DateTimeFormatter.ofPattern("uuuu-MM-dd"))
-}
-
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewDate(){
-    val viewModel: UpLoadFormViewModel = hiltViewModel()
-    KausanhakTheme {
-        Date(modifier = Modifier, viewModel = viewModel)
-    }
 }
 

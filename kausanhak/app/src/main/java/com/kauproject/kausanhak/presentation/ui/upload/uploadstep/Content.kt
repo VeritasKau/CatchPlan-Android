@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
@@ -37,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -91,6 +93,9 @@ fun Content(
                     titleTextFieldState = it
                 }
             },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
             shape = RoundedCornerShape(5.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color.LightGray,
@@ -124,6 +129,9 @@ fun Content(
                     focusedBorderColor = Color.LightGray,
                     unfocusedBorderColor = Color.LightGray,
                     cursorColor = Color.Black
+                ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
                 ),
                 placeholder = {
                     Column {

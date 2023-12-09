@@ -240,20 +240,29 @@ private fun InputChat(
                     maxLines = 4
                 )
             }
-            Image(
+            IconButton(
                 modifier = Modifier
-                    .size(45.dp)
                     .weight(0.15f)
                     .padding(5.dp)
-                    .clickable {
-                        viewModel.sendChat(textFieldState)
-                        textFieldState = ""
-                    }
                     .wrapContentSize()
                 ,
-                painter = painterResource(id = R.drawable.ic_send),
-                contentDescription = null
-            )
+                onClick = {
+                    Log.d("CLICK!", "$textFieldState")
+                    viewModel.sendChat(textFieldState)
+                    textFieldState = ""
+                },
+                enabled = textFieldState != ""
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(45.dp)
+                        .wrapContentSize()
+                    ,
+                    painter = painterResource(id = R.drawable.ic_send),
+                    contentDescription = null
+                )
+            }
+
         }
     }
 
@@ -306,38 +315,40 @@ private fun ChatBotBubble(
     var answer by remember { mutableStateOf("") }
     val initText = stringResource(id = R.string.chatBot_base_chat)
 
-    LaunchedEffect(Unit){
-        withContext(Dispatchers.IO){
-            val query = JSONObject()
-            query.put("content", content)
+    if(content != "" && !isInit){
+        LaunchedEffect(Unit){
+            withContext(Dispatchers.IO){
+                val query = JSONObject()
+                query.put("content", content)
 
-            val client = OkHttpClient.Builder()
-                .connectTimeout(40, TimeUnit.SECONDS)
-                .readTimeout(40, TimeUnit.SECONDS)
-                .writeTimeout(40, TimeUnit.SECONDS)
-                .build()
-            
-            val request = Request.Builder()
-                .url(ChatBotViewModel.CHAT_URL)
-                .post(
-                    query.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                )
-                .build()
+                val client = OkHttpClient.Builder()
+                    .connectTimeout(40, TimeUnit.SECONDS)
+                    .readTimeout(40, TimeUnit.SECONDS)
+                    .writeTimeout(40, TimeUnit.SECONDS)
+                    .build()
 
-            client.newCall(request).execute().use { response ->
-                if(!response.isSuccessful) throw IOException("Unexpected code $response")
+                val request = Request.Builder()
+                    .url(ChatBotViewModel.CHAT_URL)
+                    .post(
+                        query.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+                    )
+                    .build()
 
-                response.body?.source()?.let { source->
-                    val buffer = okio.Buffer()
-                    isChatInput(true)
-                    while(source.read(buffer, 128) != -1L){
-                        val data = buffer.readUtf8()
+                client.newCall(request).execute().use { response ->
+                    if(!response.isSuccessful) throw IOException("Unexpected code $response")
 
-                        withContext(Dispatchers.Main){
-                            answer += data
+                    response.body?.source()?.let { source->
+                        val buffer = okio.Buffer()
+                        isChatInput(true)
+                        while(source.read(buffer, 128) != -1L){
+                            val data = buffer.readUtf8()
+
+                            withContext(Dispatchers.Main){
+                                answer += data
+                            }
                         }
+                        isChatInput(false)
                     }
-                    isChatInput(false)
                 }
             }
         }
