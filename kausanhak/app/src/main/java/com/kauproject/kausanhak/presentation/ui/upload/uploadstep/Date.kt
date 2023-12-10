@@ -57,9 +57,9 @@ fun Date(
         verticalArrangement = Arrangement.Center,
     ) {
         PlaceTextField(viewModel = viewModel)
-        Spacer(modifier = Modifier.padding(vertical = 30.dp))
+        Spacer(modifier = Modifier.padding(vertical = 15.dp))
         URLTextField(viewModel = viewModel)
-        Spacer(modifier = Modifier.padding(vertical = 30.dp))
+        Spacer(modifier = Modifier.padding(vertical = 15.dp))
         DateButton(viewModel = viewModel)
     }
 
