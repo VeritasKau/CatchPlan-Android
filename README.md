@@ -2,9 +2,9 @@
 
 # 🗒️ 모든행사를 한번에, 캐치플랜
 <p align="center">
-<img width = "200px" src='https://ifh.cc/g/C6JY3Q.png' border='0'>
-<img width = "200px" src='https://ifh.cc/g/1JTY1T.png' border='0'>
-<img width = "200px" src='https://ifh.cc/g/cyfXmJ.png' border='0'>
+<img width = "200px" src='https://github.com/user-attachments/assets/9e29346d-f423-4bd9-b471-cf3ea6364997' border='0'>
+<img width = "200px" src='https://github.com/user-attachments/assets/89fb83e2-4e35-409d-b647-56d221169ff8' border='0'>
+<img width = "200px" src='https://github.com/user-attachments/assets/e9a973e9-9f72-4a61-8219-223d2dddf2df' border='0'>
 </p>
 
 ## 2023.09 ~ 2023. 12
@@ -13,18 +13,15 @@
 
 <div align="center">
 
-# ***Play Store***
-📎 https://play.google.com/store/apps/details?id=com.kauproject.kausanhak
-
 <br>
 
 # ***Architecture***
-<img src='https://ifh.cc/g/rfTo3A.jpg'>
+<img src='https://github.com/user-attachments/assets/a09046b1-41f2-4b19-afbf-87b725acb435'>
 
 <br>
 
 # ***Flow Chart***
-<img src='https://ifh.cc/g/Bfnjav.png'>
+<img src='https://github.com/user-attachments/assets/3c533269-5226-49e6-a5a6-ad8200b2931f'>
 
 <br>
 
@@ -118,15 +115,15 @@
 
 |행사|행사 상세페이지|행사 상세페이지2|스크랩|
 |------|-----|-----|-----|
-|<img src='https://ifh.cc/g/cg2zOQ.jpg'>|<img src='https://ifh.cc/g/Z2dYSz.jpg'>|<img src='https://ifh.cc/g/wJKRnj.jpg'>|<img src='https://ifh.cc/g/ltsGB3.jpg'>|
+|<img src='https://github.com/user-attachments/assets/5a7e063b-d17c-48f1-8174-10ef0dd80ef8'>|<img src='https://github.com/user-attachments/assets/de7d5646-2253-4c58-af00-da06676ff957'>|<img src='https://github.com/user-attachments/assets/c299a3ed-6c09-4c4a-9385-559fef08d405'>|<img src='https://github.com/user-attachments/assets/be0d5248-043b-4308-a3e9-052891b5b236'>|
 
 |챗봇|추천|홍보글 작성|인앱결제|
 |------|-----|-----|-----|
-|<img src='https://ifh.cc/g/srGSQ2.png'>|<img src='https://ifh.cc/g/d8RF6r.jpg'>|<img src='https://ifh.cc/g/tWOkS8.jpg'>|<img src='https://ifh.cc/g/dLFaLo.jpg'>|
+|<img src='https://github.com/user-attachments/assets/32c4824c-05b5-4f04-bc2b-00c1285bdf75'>|<img src='https://github.com/user-attachments/assets/53157665-951c-4e75-b8ce-8568afa731c4'>|<img src='https://github.com/user-attachments/assets/fd678bc7-dd07-4bed-993e-bba64181bfdc'>|<img src='https://github.com/user-attachments/assets/ec60d3e5-95ab-41eb-adce-fcb25ebfd5ce'>|
 
 |캘린더|개인메모 작성|홍보게시판|선호장르기반 추천|
 |------|-----|-----|-----|
-|<img src='https://ifh.cc/g/aKKl0S.jpg'>|<img src='https://ifh.cc/g/PZHCYn.png'>|<img src='https://ifh.cc/g/qtrB5R.jpg'>|<img src='https://ifh.cc/g/OQV25l.jpg'>|
+|<img src='https://github.com/user-attachments/assets/52ccf09a-f981-40cd-b78e-7c92f79b451e'>|<img src='https://github.com/user-attachments/assets/abcaa337-df98-431c-818f-299e642d0f6f'>|<img src='https://github.com/user-attachments/assets/d5bb17e1-3554-4094-b2d2-ac88b2f5040b'>|<img src='https://github.com/user-attachments/assets/f10fb14a-dd44-4fee-ad3c-ad71cdd7a722'>|
 
 </br>
 
